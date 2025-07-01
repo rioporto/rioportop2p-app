@@ -96,7 +96,7 @@ const mockUsers: User[] = [
   },
 ]
 
-const kycLevelColors = {
+const kycLevelColors: Record<number, string> = {
   1: 'bg-yellow-100 text-yellow-800',
   2: 'bg-blue-100 text-blue-800',
   3: 'bg-green-100 text-green-800',
