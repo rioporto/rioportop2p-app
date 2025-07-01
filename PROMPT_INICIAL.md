@@ -38,9 +38,9 @@ Facilitar a compra e venda de Bitcoin e stablecoins com praticidade e segurança
 
 ----------------------------------------------------------------------
 4. TECNOLOGIAS E PADRÕES
-- Frontend: Vite + React 18 + TypeScript
-- UI: shadcn/ui + Tailwind CSS 3.4
-- Backend: Node.js e Python
+- Frontend: Next.js 14 + React 18 + TypeScript
+- UI: Tailwind CSS
+- Backend: Node.js (API Routes do Next.js) e Python (futuro)
 - Banco de dados: Supabase (free tier, escalável)
 - Autenticação: stack-auth.com + OTP via Resend
 - Versionamento: GitHub

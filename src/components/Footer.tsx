@@ -1,135 +1,138 @@
-import { Link } from 'react-router-dom'
-import { Bitcoin, Phone, MapPin, Building } from 'lucide-react'
-import { Separator } from '@/components/ui/separator'
+'use client';
 
-export default function Footer() {
-  const currentYear = new Date().getFullYear()
+import Link from 'next/link';
+import Image from 'next/image';
+import { 
+  MapPin, 
+  Phone, 
+  Building2, 
+  ExternalLink,
+  ChevronRight
+} from 'lucide-react';
+
+const Footer = () => {
+  const currentYear = new Date().getFullYear();
+
+  const quickLinks = [
+    { name: 'Cotação P2P', href: '/cotacao-p2p' },
+    { name: 'OTC', href: '/otc' },
+    { name: 'KYC', href: '/kyc' },
+    { name: 'Blog', href: '/blog' },
+    { name: 'FAQ', href: '/faq' }
+  ];
+
+  const legalLinks = [
+    { name: 'Termos de Uso', href: '/termos-de-uso' },
+    { name: 'Política de Privacidade', href: '/politica-de-privacidade' }
+  ];
 
   return (
-    <footer className="w-full border-t bg-background">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Company Info */}
+    <footer className="bg-gray-900 text-gray-300">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {/* Seção da Empresa */}
           <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Bitcoin className="h-6 w-6 text-primary" />
-              <span className="text-lg font-bold">Rio Porto P2P</span>
+            <div className="flex items-center space-x-2 mb-4">
+              <div className="text-xl font-bold text-white">Rio Porto P2P</div>
             </div>
-            <p className="text-sm text-muted-foreground">
-              Facilitando a compra e venda de Bitcoin com praticidade e segurança.
-            </p>
-            <div className="space-y-2">
-              <p className="text-xs text-muted-foreground">
-                <strong>CNPJ:</strong> 11.741.563/0001-57
-              </p>
-              <p className="text-xs text-muted-foreground">
-                <strong>Razão Social:</strong> RIO PORTO MEDIAÇÃO LTDA
-              </p>
+            <div className="space-y-2 text-sm">
+              <div className="flex items-start space-x-2">
+                <Building2 className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="font-semibold">CNPJ</p>
+                  <p>11.741.563/0001-57</p>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold">Links Rápidos</h3>
+          {/* Links Rápidos */}
+          <div>
+            <h3 className="text-white font-semibold text-lg mb-4">Links Rápidos</h3>
             <ul className="space-y-2">
-              <li>
-                <Link to="/cotacao" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Cotação P2P
-                </Link>
-              </li>
-              <li>
-                <Link to="/otc" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  OTC - Grandes Volumes
-                </Link>
-              </li>
-              <li>
-                <Link to="/kyc" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Verificação KYC
-                </Link>
-              </li>
-              <li>
-                <Link to="/blog" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link to="/faq" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                  FAQ
-                </Link>
-              </li>
+              {quickLinks.map((link) => (
+                <li key={link.name}>
+                  <Link 
+                    href={link.href}
+                    className="flex items-center space-x-1 text-sm hover:text-white transition-colors duration-200"
+                  >
+                    <ChevronRight className="w-3 h-3" />
+                    <span>{link.name}</span>
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Services */}
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold">Serviços</h3>
-            <ul className="space-y-2">
-              <li className="text-sm text-muted-foreground">Compra e Venda de Bitcoin</li>
-              <li className="text-sm text-muted-foreground">Operações OTC</li>
-              <li className="text-sm text-muted-foreground">Consultoria Cripto</li>
-              <li className="text-sm text-muted-foreground">Cursos e Treinamentos</li>
-            </ul>
-            <div className="mt-4">
-              <Link to="/sobre" className="text-sm text-primary hover:underline">
-                Sobre Nós →
-              </Link>
-            </div>
-          </div>
-
-          {/* Contact */}
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold">Contato</h3>
+          {/* Informações de Contato */}
+          <div>
+            <h3 className="text-white font-semibold text-lg mb-4">Contato</h3>
             <div className="space-y-3">
               <div className="flex items-start space-x-2">
-                <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
-                <p className="text-sm text-muted-foreground">
+                <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                <address className="text-sm not-italic">
                   Av. Marechal Câmara 160, sala 1107<br />
-                  Centro, Rio de Janeiro - RJ<br />
-                  CEP: 20020-907
-                </p>
+                  Centro, Rio de Janeiro - RJ
+                </address>
               </div>
               <div className="flex items-center space-x-2">
-                <Phone className="h-4 w-4 text-muted-foreground" />
+                <Phone className="w-4 h-4 flex-shrink-0" />
                 <a 
-                  href="https://wa.me/5521201877776" 
-                  target="_blank" 
+                  href="https://wa.me/552120187776"
+                  target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                  className="text-sm hover:text-white transition-colors duration-200 flex items-center space-x-1"
                 >
-                  +55 21 2018-7776
+                  <span>+55 21 2018-7776</span>
+                  <ExternalLink className="w-3 h-3" />
                 </a>
               </div>
-              <div className="mt-4">
-                <Link to="/contato" className="text-sm text-primary hover:underline">
-                  Fale Conosco →
-                </Link>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Building className="h-4 w-4 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground">
-                  CNAE: 66.19-3-99
-                </p>
-              </div>
             </div>
+          </div>
+
+          {/* Links Legais */}
+          <div>
+            <h3 className="text-white font-semibold text-lg mb-4">Legal</h3>
+            <ul className="space-y-2">
+              {legalLinks.map((link) => (
+                <li key={link.name}>
+                  <Link 
+                    href={link.href}
+                    className="text-sm hover:text-white transition-colors duration-200"
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
 
-        <Separator className="my-8" />
-
-        <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-          <p className="text-xs text-muted-foreground">
-            © {currentYear} Rio Porto Mediação LTDA. Todos os direitos reservados.
-          </p>
-          <div className="flex space-x-6">
-            <Link to="/termos" className="text-xs text-muted-foreground hover:text-primary transition-colors">
-              Termos de Uso
-            </Link>
-            <Link to="/privacidade" className="text-xs text-muted-foreground hover:text-primary transition-colors">
-              Política de Privacidade
-            </Link>
+        {/* Linha divisória */}
+        <div className="border-t border-gray-800 mt-8 pt-8">
+          <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
+            <p className="text-sm text-center sm:text-left">
+              © {currentYear} Todos os direitos reservados.
+            </p>
+            <div className="flex space-x-6">
+              <Link 
+                href="/termos-de-uso" 
+                className="text-sm hover:text-white transition-colors duration-200"
+              >
+                Termos
+              </Link>
+              <Link 
+                href="/politica-de-privacidade" 
+                className="text-sm hover:text-white transition-colors duration-200"
+              >
+                Privacidade
+              </Link>
+            </div>
           </div>
         </div>
       </div>
     </footer>
-  )
-}
+  );
+};
+
+export default Footer;

@@ -1,139 +1,159 @@
-import { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, Bitcoin, Moon, Sun } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+'use client'
 
-export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false)
-  const [isDark, setIsDark] = useState(true)
-  const location = useLocation()
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { Bitcoin, Menu, X, Sun, Moon } from 'lucide-react'
 
-  const toggleTheme = () => {
-    setIsDark(!isDark)
-    document.documentElement.classList.toggle('dark')
-  }
+const Navbar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isDarkMode, setIsDarkMode] = useState(false)
 
-  const navItems = [
-    { name: 'Início', path: '/' },
-    { name: 'Cotação P2P', path: '/cotacao' },
-    { name: 'OTC', path: '/otc' },
-    { name: 'KYC', path: '/kyc' },
-    { name: 'Blog', path: '/blog' },
-    { name: 'Cursos', path: '/cursos' },
-    { name: 'FAQ', path: '/faq' },
+  // Links do menu
+  const menuItems = [
+    { name: 'Home', href: '/' },
+    { name: 'Cotação P2P', href: '/cotacao-p2p' },
+    { name: 'OTC', href: '/otc' },
+    { name: 'KYC', href: '/kyc' },
+    { name: 'Blog', href: '/blog' },
+    { name: 'Cursos', href: '/cursos' },
+    { name: 'FAQ', href: '/faq' },
   ]
 
-  return (
-    <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <Bitcoin className="h-8 w-8 text-primary" />
-            <span className="text-xl font-bold">Rio Porto P2P</span>
-          </Link>
+  // Gerenciar tema
+  useEffect(() => {
+    // Verificar se há preferência salva no localStorage
+    const savedTheme = localStorage.getItem('theme')
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+      setIsDarkMode(true)
+      document.documentElement.classList.add('dark')
+    } else {
+      setIsDarkMode(false)
+      document.documentElement.classList.remove('dark')
+    }
+  }, [])
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex md:items-center md:space-x-6">
-            {navItems.map((item) => (
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode)
+    if (!isDarkMode) {
+      document.documentElement.classList.add('dark')
+      localStorage.setItem('theme', 'dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+      localStorage.setItem('theme', 'light')
+    }
+  }
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen)
+  }
+
+  return (
+    <nav className="bg-white dark:bg-gray-900 shadow-lg transition-colors duration-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          {/* Logo */}
+          <div className="flex items-center">
+            <Link href="/" className="flex items-center space-x-2">
+              <Bitcoin className="h-8 w-8 text-orange-500" />
+              <span className="text-xl font-bold text-gray-900 dark:text-white">
+                Rio Porto P2P
+              </span>
+            </Link>
+          </div>
+
+          {/* Menu Desktop */}
+          <div className="hidden md:flex items-center space-x-8">
+            {menuItems.map((item) => (
               <Link
-                key={item.path}
-                to={item.path}
-                className={cn(
-                  "text-sm font-medium transition-colors hover:text-primary",
-                  location.pathname === item.path
-                    ? "text-primary"
-                    : "text-muted-foreground"
-                )}
+                key={item.name}
+                href={item.href}
+                className="text-gray-700 dark:text-gray-300 hover:text-orange-500 dark:hover:text-orange-400 transition-colors duration-200 font-medium"
               >
                 {item.name}
               </Link>
             ))}
           </div>
 
-          {/* Right side buttons */}
-          <div className="flex items-center space-x-4">
-            <Button
-              variant="ghost"
-              size="icon"
+          {/* Ações do Desktop */}
+          <div className="hidden md:flex items-center space-x-4">
+            {/* Toggle Dark/Light Mode */}
+            <button
               onClick={toggleTheme}
-              className="hidden md:flex"
+              className="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+              aria-label="Toggle theme"
             >
-              {isDark ? (
+              {isDarkMode ? (
                 <Sun className="h-5 w-5" />
               ) : (
                 <Moon className="h-5 w-5" />
               )}
-            </Button>
-            
-            <Button variant="default" className="hidden md:flex">
-              Entrar
-            </Button>
+            </button>
 
-            {/* Mobile menu button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden"
-              onClick={() => setIsOpen(!isOpen)}
+            {/* Botão Entrar */}
+            <Link href="/login" className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200">
+              Entrar
+            </Link>
+          </div>
+
+          {/* Menu Mobile Button */}
+          <div className="md:hidden flex items-center space-x-2">
+            {/* Toggle Dark/Light Mode Mobile */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+              aria-label="Toggle theme"
             >
-              {isOpen ? (
+              {isDarkMode ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+            </button>
+
+            {/* Hamburger Menu */}
+            <button
+              onClick={toggleMenu}
+              className="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+              aria-label="Toggle menu"
+            >
+              {isMenuOpen ? (
                 <X className="h-6 w-6" />
               ) : (
                 <Menu className="h-6 w-6" />
               )}
-            </Button>
+            </button>
           </div>
         </div>
-      </div>
 
-      {/* Mobile Navigation */}
-      {isOpen && (
-        <div className="md:hidden border-t">
-          <div className="container mx-auto px-4 py-4 space-y-3">
-            {navItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                onClick={() => setIsOpen(false)}
-                className={cn(
-                  "block py-2 text-sm font-medium transition-colors hover:text-primary",
-                  location.pathname === item.path
-                    ? "text-primary"
-                    : "text-muted-foreground"
-                )}
-              >
-                {item.name}
-              </Link>
-            ))}
-            <div className="flex items-center justify-between pt-3 border-t">
-              <span className="text-sm text-muted-foreground">Tema</span>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={toggleTheme}
-              >
-                {isDark ? (
-                  <>
-                    <Sun className="h-4 w-4 mr-2" />
-                    Claro
-                  </>
-                ) : (
-                  <>
-                    <Moon className="h-4 w-4 mr-2" />
-                    Escuro
-                  </>
-                )}
-              </Button>
+        {/* Menu Mobile */}
+        {isMenuOpen && (
+          <div className="md:hidden">
+            <div className="px-2 pt-2 pb-3 space-y-1">
+              {menuItems.map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-orange-500 dark:hover:text-orange-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
+                >
+                  {item.name}
+                </Link>
+              ))}
+              
+              {/* Botão Entrar Mobile */}
+              <div className="px-3 py-2">
+                <Link href="/login" className="block w-full text-center bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200">
+                  Entrar
+                </Link>
+              </div>
             </div>
-            <Button variant="default" className="w-full">
-              Entrar
-            </Button>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </nav>
   )
 }
 
+export default Navbar
