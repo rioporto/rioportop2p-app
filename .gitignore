@@ -96,3 +96,6 @@ logs/
 # vercel-status.txt
 # .vercel-deploy-status
 # .vercel-deploy-history.log
+
+# MCP configuration (sensitive)
+.mcp-config.json
