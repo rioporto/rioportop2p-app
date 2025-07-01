@@ -25,6 +25,7 @@ export default function Home() {
                 P2P com Segurança
               </span>
             </h1>
+            {/* Deploy test: 01/07/2025 18:47 */}
             <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-600 dark:text-gray-300">
               A plataforma mais confiável do Rio de Janeiro para negociar Bitcoin pessoa a pessoa. 
               Taxas competitivas, atendimento humano e segurança garantida.
