@@ -7,6 +7,10 @@ import KYC from '@/pages/KYC'
 import Blog from '@/pages/Blog'
 import Cursos from '@/pages/Cursos'
 import FAQ from '@/pages/FAQ'
+import Sobre from '@/pages/Sobre'
+import Contato from '@/pages/Contato'
+import Termos from '@/pages/Termos'
+import Privacidade from '@/pages/Privacidade'
 
 function App() {
   return (
@@ -20,6 +24,10 @@ function App() {
           <Route path="blog" element={<Blog />} />
           <Route path="cursos" element={<Cursos />} />
           <Route path="faq" element={<FAQ />} />
+          <Route path="sobre" element={<Sobre />} />
+          <Route path="contato" element={<Contato />} />
+          <Route path="termos" element={<Termos />} />
+          <Route path="privacidade" element={<Privacidade />} />
         </Route>
       </Routes>
     </BrowserRouter>

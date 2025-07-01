@@ -69,6 +69,11 @@ export default function Footer() {
               <li className="text-sm text-muted-foreground">Consultoria Cripto</li>
               <li className="text-sm text-muted-foreground">Cursos e Treinamentos</li>
             </ul>
+            <div className="mt-4">
+              <Link to="/sobre" className="text-sm text-primary hover:underline">
+                Sobre Nós →
+              </Link>
+            </div>
           </div>
 
           {/* Contact */}
@@ -93,6 +98,11 @@ export default function Footer() {
                 >
                   +55 21 2018-7776
                 </a>
+              </div>
+              <div className="mt-4">
+                <Link to="/contato" className="text-sm text-primary hover:underline">
+                  Fale Conosco →
+                </Link>
               </div>
               <div className="flex items-center space-x-2">
                 <Building className="h-4 w-4 text-muted-foreground" />
