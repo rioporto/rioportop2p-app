@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Documentos de acompanhamento local
+RESUMO_PROJETO.md
+STATUS_ATUAL.md
+LOG_PROGRESSO.md
+CRONOGRAMA.md
+*_LOCAL.md

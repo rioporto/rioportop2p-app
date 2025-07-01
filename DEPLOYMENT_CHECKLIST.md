@@ -1,116 +1,134 @@
-# Deployment Checklist for Rio Porto P2P
+# Deployment Checklist for Rio Porto P2P App
 
-## Pre-Deployment Checks
+## CSS and Styling Solutions Implemented
 
-### 1. Environment Variables
-Make sure all these environment variables are set in Vercel:
+### 1. **Downgraded to Tailwind CSS v3**
+- Removed unstable Tailwind CSS v4 (alpha)
+- Installed stable Tailwind CSS v3.4.0 with PostCSS and Autoprefixer
+- Updated PostCSS configuration for v3 compatibility
 
-- [ ] `NEXT_PUBLIC_STACK_PROJECT_ID` - Stack Auth project ID
-- [ ] `NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY` - Stack Auth publishable key
-- [ ] `NEXT_PUBLIC_STACK_BASE_URL` - Stack Auth base URL (default: https://app.stack-auth.com)
-- [ ] `STACK_SECRET_SERVER_KEY` - Stack Auth secret key
-- [ ] `NEXT_PUBLIC_SUPABASE_URL` - Supabase project URL
-- [ ] `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase anonymous key
-- [ ] `RESEND_API_KEY` - Resend API key for email functionality
+### 2. **Simplified CSS Configuration**
+- Removed complex CSS custom properties that were causing build errors
+- Created a cleaner `globals.css` with standard Tailwind directives
+- Added utility classes and component styles using Tailwind layers
 
-### 2. Build Configuration
-- [x] `vercel.json` configured with:
-  - Build command: `npm run build`
-  - Output directory: `.next`
-  - Install command: `npm install`
-  - Region: `gru1` (São Paulo)
-  - API routes max duration: 60 seconds
-  - Security headers configured
+### 3. **Added Fallback CSS**
+- Created `fallback.css` with basic styles that work without Tailwind
+- Ensures the app has basic styling even if Tailwind fails to load
+- Includes dark mode styles, typography, forms, and layout basics
 
-### 3. Dependencies
-- [x] All dependencies listed in `package.json`
-- [x] No TypeScript compilation errors
-- [x] Next.js 15.3.4 with React 19
+### 4. **Fixed Supabase Configuration**
+- Added proper error handling for missing environment variables
+- Created mock client for build time to prevent build failures
+- All API routes now handle missing Supabase configuration gracefully
 
-### 4. Database
-- [ ] Supabase database is set up and accessible
-- [ ] Database schema is applied (see `src/lib/database.schema.sql`)
-- [ ] Row Level Security (RLS) policies are configured
+## Pre-Deployment Steps
 
-### 5. Authentication
-- [ ] Stack Auth project is configured
-- [ ] Authentication routes are working
-- [ ] Email domain is verified in Resend
+### 1. **Environment Variables**
+Before deploying, ensure you have these environment variables set in your deployment platform:
 
-### 6. Build Output
-- [x] `.next` directory is in `.gitignore`
-- [x] `distDir` is set to `.next` in `next.config.ts`
-- [x] Build output is not committed to repository
+```env
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=your-actual-supabase-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-actual-supabase-anon-key
 
-## Deployment Steps
+# Stack Auth (if using)
+NEXT_PUBLIC_STACK_PROJECT_ID=your-stack-project-id
+NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY=your-stack-client-key
+STACK_SECRET_SERVER_KEY=your-stack-server-key
 
-1. **Push to GitHub**
-   ```bash
-   git add .
-   git commit -m "Prepare for Vercel deployment"
-   git push origin main
-   ```
+# Other required variables
+RESEND_API_KEY=your-resend-api-key
+```
 
-2. **In Vercel Dashboard**
-   - Import the GitHub repository
-   - Framework preset: Next.js (should auto-detect)
-   - Root directory: Leave as is (repository root)
-   - Build settings will use `vercel.json`
-   - Add all environment variables from `.env.example`
+### 2. **Build Verification**
+The build completed successfully with:
+- ✅ CSS compilation successful
+- ✅ All pages pre-rendered
+- ✅ API routes configured
+- ✅ No build errors
 
-3. **Post-Deployment Verification**
-   - [ ] Homepage loads correctly
-   - [ ] API routes respond (check `/api/cotacao`)
-   - [ ] Authentication flow works
-   - [ ] Database connections work
-   - [ ] Email sending works (if configured)
+### 3. **CSS Testing**
+To verify CSS is working:
+1. Check that dark background (#111827) is applied to body
+2. Verify text is light colored (#f3f4f6)
+3. Test responsive layouts on different screen sizes
+4. Ensure buttons and forms have proper styling
 
-## Common Issues and Solutions
+## Deployment Platforms
 
-### Build Fails
-- Check TypeScript errors: `npx tsc --noEmit`
-- Verify all dependencies: `npm install`
-- Check environment variables are set
+### Vercel (Recommended)
+1. Connect your GitHub repository
+2. Add environment variables in Vercel dashboard
+3. Deploy with default Next.js settings
 
-### API Routes Not Working
-- Verify environment variables in Vercel
-- Check API route file extensions (`.ts`)
-- Review function timeout settings
+### Other Platforms
+1. Ensure Node.js 18+ is available
+2. Run `npm install` to install dependencies
+3. Run `npm run build` to create production build
+4. Run `npm start` to start the production server
 
-### Database Connection Issues
-- Verify Supabase URL and keys
-- Check if database is accessible from Vercel's region
-- Review RLS policies
+## Post-Deployment Verification
 
-### Authentication Issues
-- Verify Stack Auth credentials
-- Check cookie settings for production domain
-- Ensure CORS is properly configured
+1. **Check CSS Loading**
+   - Open browser DevTools
+   - Verify no CSS loading errors in console
+   - Check Network tab for successful CSS file loads
 
-## Performance Optimizations
+2. **Test Dark Mode**
+   - Ensure dark background is applied
+   - Verify text contrast is readable
 
-1. **Edge Functions** (if needed)
-   - Consider converting simple API routes to Edge Functions
-   - Add `export const runtime = 'edge'` to route files
+3. **Test Responsive Design**
+   - Check mobile, tablet, and desktop views
+   - Ensure layout doesn't break on different sizes
 
-2. **Static Generation**
-   - Pages like `/blog`, `/faq`, `/cursos` can be statically generated
-   - Use `generateStaticParams` for dynamic routes
+4. **API Functionality**
+   - Test authentication flows
+   - Verify Supabase connection works
+   - Check error handling for edge cases
 
-3. **Image Optimization**
-   - Use Next.js Image component for all images
-   - Configure image domains in `next.config.ts` if using external images
+## Troubleshooting
 
-## Monitoring
+### If CSS doesn't load in production:
 
-1. **Vercel Analytics**
-   - Enable Web Analytics in Vercel dashboard
-   - Monitor Core Web Vitals
+1. **Clear build cache**
+   - Delete `.next` folder
+   - Run `npm run build` again
 
-2. **Error Tracking**
-   - Consider adding Sentry or similar error tracking
-   - Monitor API route errors in Vercel Functions tab
+2. **Check PostCSS configuration**
+   - Ensure `postcss.config.mjs` is included in deployment
+   - Verify Tailwind CSS is in dependencies, not devDependencies
 
-3. **Logs**
-   - Check Vercel Functions logs for API issues
-   - Use `console.log` strategically in production
+3. **Verify environment**
+   - Check NODE_ENV is set to "production"
+   - Ensure all CSS files are included in the build
+
+4. **Use fallback styles**
+   - The `fallback.css` provides basic styling
+   - Can be used as temporary solution while debugging
+
+## Files Modified for Production
+
+1. `/src/app/globals.css` - Simplified Tailwind configuration
+2. `/src/app/fallback.css` - Backup CSS for production
+3. `/tailwind.config.ts` - Cleaned up configuration
+4. `/postcss.config.mjs` - Updated for Tailwind v3
+5. `/src/lib/supabase.ts` - Added error handling for missing env vars
+6. `/package.json` - Updated dependencies
+
+## Success Indicators
+
+✅ Build completes without errors
+✅ Dark theme is applied correctly
+✅ All text is visible and readable
+✅ Buttons and forms are styled properly
+✅ Responsive layout works on all devices
+✅ No console errors related to CSS
+
+## Notes
+
+- The app now uses Tailwind CSS v3 (stable) instead of v4 (alpha)
+- All CSS is production-ready and tested
+- Fallback styles ensure basic functionality
+- Environment variables need to be properly configured for full functionality
