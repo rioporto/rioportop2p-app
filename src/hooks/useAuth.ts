@@ -8,8 +8,14 @@ export function useAuth() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (!supabase) {
+      setLoading(false)
+      return
+    }
+
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then((result) => {
+      const { data: { session } } = result
       setSession(session)
       setUser(session?.user ?? null)
       setLoading(false)
@@ -31,6 +37,6 @@ export function useAuth() {
     user,
     session,
     loading,
-    signOut: () => supabase.auth.signOut(),
+    signOut: () => supabase?.auth.signOut(),
   }
 }
