@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Testing
+coverage/
+.nyc_output/
+
+# Misc
+.DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+README.md
+PROMPT_INICIAL.md
+
+# IDE
+.vscode/
+.idea/
+
+# Environment files (Vercel will use its own)
+.env.local
+.env.development
+.env.test
