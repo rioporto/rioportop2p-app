@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { signIn } from '@/lib/supabase'
+import { signIn, supabase } from '@/lib/supabase'
 
 export async function POST(request: NextRequest) {
+  if (!supabase) {
+    return NextResponse.json({ error: 'Service unavailable' }, { status: 503 })
+  }
+  
   try {
     const { email, password } = await request.json()
 

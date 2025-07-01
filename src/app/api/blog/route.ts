@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabase, getUser } from '@/lib/supabase'
 
 export async function GET(request: NextRequest) {
+  if (!supabase) {
+    return NextResponse.json({ error: 'Service unavailable' }, { status: 503 })
+  }
+  
   try {
     const searchParams = request.nextUrl.searchParams
     const category = searchParams.get('category')
@@ -54,6 +58,10 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  if (!supabase) {
+    return NextResponse.json({ error: 'Service unavailable' }, { status: 503 })
+  }
+  
   try {
     const { user, error: authError } = await getUser()
 

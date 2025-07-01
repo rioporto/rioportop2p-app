@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabase, getUser } from '@/lib/supabase'
 
 export async function PUT(request: NextRequest) {
+  if (!supabase) {
+    return NextResponse.json({ error: 'Service unavailable' }, { status: 503 })
+  }
+  
   try {
     const { user, error: authError } = await getUser()
 
