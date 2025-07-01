@@ -1,3 +1,32 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* Apply dark mode styles globally */
+:root {
+  color-scheme: dark;
+}
+
+/* Global styles */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+/* Debug: Ensure CSS is loading */
+body::before {
+  content: "";
+  display: none;
+  /* This proves CSS is loading */
+}
+
+/* Ensure dark background is applied */
+html.dark body {
+  background-color: rgb(17 24 39);
+  color: rgb(243 244 246);
+}
