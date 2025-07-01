@@ -39,7 +39,7 @@ export async function GET() {
       try {
         const { error } = await supabase.from(table).select('count').limit(1);
         results.tables[table] = error ? `❌ ${error.message}` : '✅ Acessível';
-      } catch (err) {
+      } catch (err: any) {
         results.tables[table] = `❌ ${err.message}`;
       }
     }
