@@ -14,6 +14,7 @@ const createStackClient = () => {
     projectId,
     publishableClientKey,
     baseUrl: process.env.NEXT_PUBLIC_STACK_BASE_URL || 'https://app.stack-auth.com',
+    tokenStore: 'cookie', // Use cookie-based token storage
   })
 }
 
@@ -33,7 +34,7 @@ const createStackServerApp = () => {
     projectId,
     secretServerKey,
     baseUrl: process.env.NEXT_PUBLIC_STACK_BASE_URL || 'https://app.stack-auth.com',
-  })
+  } as any)
 }
 
 export const stackServerApp = createStackServerApp()
