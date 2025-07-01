@@ -4,6 +4,9 @@ import Home from '@/pages/Home'
 import Cotacao from '@/pages/Cotacao'
 import OTC from '@/pages/OTC'
 import KYC from '@/pages/KYC'
+import Blog from '@/pages/Blog'
+import Cursos from '@/pages/Cursos'
+import FAQ from '@/pages/FAQ'
 
 function App() {
   return (
@@ -14,6 +17,9 @@ function App() {
           <Route path="cotacao" element={<Cotacao />} />
           <Route path="otc" element={<OTC />} />
           <Route path="kyc" element={<KYC />} />
+          <Route path="blog" element={<Blog />} />
+          <Route path="cursos" element={<Cursos />} />
+          <Route path="faq" element={<FAQ />} />
         </Route>
       </Routes>
     </BrowserRouter>

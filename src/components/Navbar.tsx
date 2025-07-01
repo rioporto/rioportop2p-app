@@ -21,6 +21,7 @@ export default function Navbar() {
     { name: 'KYC', path: '/kyc' },
     { name: 'Blog', path: '/blog' },
     { name: 'Cursos', path: '/cursos' },
+    { name: 'FAQ', path: '/faq' },
   ]
 
   return (
