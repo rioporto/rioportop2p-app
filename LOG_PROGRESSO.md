@@ -11,7 +11,7 @@
 - ✅ Implementar estrutura base com roteamento
 
 ### EM ANDAMENTO
-- 🔄 Pronto para começar desenvolvimento das funcionalidades principais
+- 🔄 Aguardando criação do repositório no GitHub e configuração do Vercel
 
 ### PRÓXIMAS TAREFAS
 - Criar formulário de cotação P2P
