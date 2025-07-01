@@ -6,7 +6,13 @@ export async function GET() {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  const results = {
+  const results: {
+    connection: boolean;
+    tables: Record<string, string>;
+    error: string | null;
+    credentials: Record<string, string>;
+    userCount?: number;
+  } = {
     connection: false,
     tables: {},
     error: null,
@@ -53,8 +59,8 @@ export async function GET() {
     results.connection = true;
     return NextResponse.json(results);
 
-  } catch (error) {
-    results.error = error.message;
+  } catch (error: any) {
+    results.error = error.message || 'Erro desconhecido';
     return NextResponse.json(results, { status: 500 });
   }
 }
