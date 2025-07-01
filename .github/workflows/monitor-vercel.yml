@@ -1,0 +1,52 @@
+name: Monitor Vercel Deployments
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  check-deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get Commit SHA
+        id: get-sha
+        run: echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Wait for Vercel Deployment
+        id: wait-for-vercel
+        uses: patrickedqvist/wait-for-vercel-preview@v1.3.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          max_timeout: 600
+          check_interval: 10
+
+      - name: Check Deployment Status
+        if: always()
+        run: |
+          if [ "${{ steps.wait-for-vercel.outcome }}" == "success" ]; then
+            echo "✅ Deploy successful!" > vercel-status.txt
+            echo "SUCCESS" > .vercel-deploy-status
+          else
+            echo "❌ Deploy failed!" > vercel-status.txt
+            echo "FAILED" > .vercel-deploy-status
+          fi
+          
+          echo "Commit: ${{ steps.get-sha.outputs.sha }}" >> vercel-status.txt
+          echo "Time: $(date)" >> vercel-status.txt
+          
+          # Salvar histórico
+          echo "$(date) - ${{ steps.get-sha.outputs.sha }} - ${{ steps.wait-for-vercel.outcome }}" >> .vercel-deploy-history.log
+
+      - name: Commit Status File
+        if: always()
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add vercel-status.txt .vercel-deploy-status .vercel-deploy-history.log 2>/dev/null || true
+          git commit -m "Update Vercel deployment status [skip ci]" || echo "No changes to commit"
+          git push || echo "No changes to push"
