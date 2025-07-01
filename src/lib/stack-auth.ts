@@ -1,4 +1,4 @@
-import { StackClient, StackServerApp } from '@stackframe/stack'
+import { StackClientApp, StackServerApp } from '@stackframe/stack'
 
 // Client-side configuration
 const createStackClient = () => {
@@ -10,8 +10,8 @@ const createStackClient = () => {
     return null as any
   }
   
-  return new StackClient({
-    appId,
+  return new StackClientApp({
+    projectId: appId,
     publishableClientKey,
     baseUrl: process.env.NEXT_PUBLIC_STACK_BASE_URL || 'https://app.stack-auth.com',
   })
@@ -30,7 +30,7 @@ const createStackServerApp = () => {
   }
   
   return new StackServerApp({
-    appId,
+    projectId: appId,
     secretServerKey,
     baseUrl: process.env.NEXT_PUBLIC_STACK_BASE_URL || 'https://app.stack-auth.com',
   })
