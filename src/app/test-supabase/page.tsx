@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { supabase } from '@/lib/supabase';
 
 export default function TestSupabase() {
   const [results, setResults] = useState<any>(null);
@@ -16,8 +16,7 @@ export default function TestSupabase() {
           error: null,
         };
 
-        // Teste de conexão
-        const supabase = createClient();
+        // Teste de conexão - usando instância importada
         
         // Testar acesso às tabelas
         const tables = ['users', 'transactions', 'courses', 'blog_posts', 'faqs'];
