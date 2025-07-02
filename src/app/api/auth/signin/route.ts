@@ -28,7 +28,9 @@ export async function POST(request: NextRequest) {
 
     // Definir cookies de sessão
     if (data.session) {
-      cookies().set('sb-access-token', data.session.access_token, {
+      const cookieStore = await cookies()
+      
+      cookieStore.set('sb-access-token', data.session.access_token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
@@ -36,7 +38,7 @@ export async function POST(request: NextRequest) {
         path: '/',
       })
 
-      cookies().set('sb-refresh-token', data.session.refresh_token, {
+      cookieStore.set('sb-refresh-token', data.session.refresh_token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',

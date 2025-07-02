@@ -18,8 +18,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Limpar cookies de sessão
-    cookies().delete('sb-access-token')
-    cookies().delete('sb-refresh-token')
+    const cookieStore = await cookies()
+    cookieStore.delete('sb-access-token')
+    cookieStore.delete('sb-refresh-token')
 
     return NextResponse.json(
       { message: 'Logout realizado com sucesso' },
