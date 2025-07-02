@@ -2,22 +2,36 @@
 
 import React, { useState, useEffect, useCallback } from 'react'
 import { useWhatsApp } from '@/lib/whatsapp'
-import { ArrowDownUp, TrendingUp, TrendingDown, Loader2 } from 'lucide-react'
+import { 
+  ArrowDownUp, 
+  TrendingUp, 
+  TrendingDown, 
+  Loader2,
+  Bitcoin,
+  Wallet,
+  Shield,
+  Zap,
+  MessageSquare,
+  ChevronDown,
+  Eye,
+  EyeOff,
+  Info
+} from 'lucide-react'
 
-// Lista de criptomoedas suportadas
+// Lista de criptomoedas suportadas com cores
 const SUPPORTED_CRYPTOS = [
-  { symbol: 'BTC', name: 'Bitcoin' },
-  { symbol: 'ETH', name: 'Ethereum' },
-  { symbol: 'USDT', name: 'Tether' },
-  { symbol: 'BNB', name: 'Binance Coin' },
-  { symbol: 'SOL', name: 'Solana' },
-  { symbol: 'XRP', name: 'Ripple' },
-  { symbol: 'ADA', name: 'Cardano' },
-  { symbol: 'DOGE', name: 'Dogecoin' },
-  { symbol: 'AVAX', name: 'Avalanche' },
-  { symbol: 'DOT', name: 'Polkadot' },
-  { symbol: 'MATIC', name: 'Polygon' },
-  { symbol: 'LTC', name: 'Litecoin' },
+  { symbol: 'BTC', name: 'Bitcoin', color: '#F7931A', icon: '₿' },
+  { symbol: 'ETH', name: 'Ethereum', color: '#627EEA', icon: 'Ξ' },
+  { symbol: 'USDT', name: 'Tether', color: '#26A17B', icon: '₮' },
+  { symbol: 'BNB', name: 'Binance Coin', color: '#F3BA2F', icon: 'BNB' },
+  { symbol: 'SOL', name: 'Solana', color: '#00FFA3', icon: 'SOL' },
+  { symbol: 'XRP', name: 'Ripple', color: '#23292F', icon: 'XRP' },
+  { symbol: 'ADA', name: 'Cardano', color: '#0033AD', icon: 'ADA' },
+  { symbol: 'DOGE', name: 'Dogecoin', color: '#C2A633', icon: 'Ð' },
+  { symbol: 'AVAX', name: 'Avalanche', color: '#E84142', icon: 'AVAX' },
+  { symbol: 'DOT', name: 'Polkadot', color: '#E6007A', icon: 'DOT' },
+  { symbol: 'MATIC', name: 'Polygon', color: '#8247E5', icon: 'MATIC' },
+  { symbol: 'LTC', name: 'Litecoin', color: '#BFBBBB', icon: 'Ł' },
 ]
 
 // Estrutura de taxas (spread) baseada no volume
@@ -49,6 +63,7 @@ export default function CotacaoDinamica() {
   const [brlValue, setBrlValue] = useState('')
   const [cryptoValue, setCryptoValue] = useState('')
   const [showDetails, setShowDetails] = useState(false)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
 
   // Dados do cliente
   const [clientData, setClientData] = useState({
@@ -191,46 +206,82 @@ export default function CotacaoDinamica() {
 
   const values = calculateValues()
   const currentPrice = cryptoPrices[selectedCrypto]
+  const selectedCryptoInfo = SUPPORTED_CRYPTOS.find(c => c.symbol === selectedCrypto)
 
   return (
-    <div className="min-h-screen py-8 px-4">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold mb-8 text-center">Cotação P2P em Tempo Real</h1>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-8 px-4">
+      <div className="max-w-7xl mx-auto">
+        {/* Header com gradiente */}
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-orange-600 bg-clip-text text-transparent">
+            Cotação P2P em Tempo Real
+          </h1>
+          <p className="text-xl text-gray-600 dark:text-gray-400">
+            Compre e venda criptomoedas com as melhores taxas do mercado
+          </p>
+        </div>
 
-        {/* Cards de Cotação */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        {/* Cards de Cotação - Design melhorado */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {SUPPORTED_CRYPTOS.slice(0, 4).map((crypto) => {
             const price = cryptoPrices[crypto.symbol]
+            const isSelected = selectedCrypto === crypto.symbol
+            
             return (
               <div
                 key={crypto.symbol}
                 onClick={() => setSelectedCrypto(crypto.symbol)}
-                className={`bg-card rounded-lg p-4 cursor-pointer transition-all ${
-                  selectedCrypto === crypto.symbol ? 'ring-2 ring-primary' : ''
+                className={`relative bg-white dark:bg-gray-800 rounded-xl p-5 cursor-pointer transition-all duration-200 hover:shadow-xl hover:scale-105 ${
+                  isSelected ? 'ring-2 ring-primary shadow-lg scale-105' : 'shadow-md'
                 }`}
               >
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-semibold">{crypto.symbol}</h3>
-                  {price && (
-                    <span className={`text-sm flex items-center ${
+                {isSelected && (
+                  <div className="absolute -top-2 -right-2 bg-primary text-white text-xs px-2 py-1 rounded-full">
+                    Selecionado
+                  </div>
+                )}
+                
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <div 
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold"
+                      style={{ backgroundColor: crypto.color }}
+                    >
+                      {crypto.icon}
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900 dark:text-white">{crypto.symbol}</h3>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{crypto.name}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {loadingPrices ? (
+                  <div className="flex items-center justify-center h-12">
+                    <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                  </div>
+                ) : price ? (
+                  <div>
+                    <p className="text-lg font-bold text-gray-900 dark:text-white">
+                      {price.price_brl.toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                      })}
+                    </p>
+                    <div className={`flex items-center gap-1 text-sm mt-1 ${
                       price.percent_change_24h >= 0 ? 'text-green-600' : 'text-red-600'
                     }`}>
-                      {price.percent_change_24h >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                      {Math.abs(price.percent_change_24h).toFixed(2)}%
-                    </span>
-                  )}
-                </div>
-                {loadingPrices ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : price ? (
-                  <p className="text-lg font-bold">
-                    {price.price_brl.toLocaleString('pt-BR', {
-                      style: 'currency',
-                      currency: 'BRL'
-                    })}
-                  </p>
+                      {price.percent_change_24h >= 0 ? 
+                        <TrendingUp className="w-3 h-3" /> : 
+                        <TrendingDown className="w-3 h-3" />
+                      }
+                      <span className="font-medium">
+                        {Math.abs(price.percent_change_24h).toFixed(2)}%
+                      </span>
+                    </div>
+                  </div>
                 ) : (
-                  <p className="text-gray-500">--</p>
+                  <p className="text-gray-400">--</p>
                 )}
               </div>
             )
@@ -238,152 +289,240 @@ export default function CotacaoDinamica() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Formulário Principal */}
+          {/* Formulário Principal - Design melhorado */}
           <div className="lg:col-span-2">
-            <form onSubmit={handleSubmit} className="bg-card rounded-lg p-6 space-y-6">
-              {/* Tipo de Operação */}
-              <div className="flex gap-4">
+            <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 space-y-6">
+              {/* Tipo de Operação - Pills melhorados */}
+              <div className="flex gap-2 p-1 bg-gray-100 dark:bg-gray-700 rounded-xl">
                 <button
                   type="button"
                   onClick={() => setOperationType('buy')}
-                  className={`flex-1 py-3 rounded-lg font-semibold transition-colors ${
+                  className={`flex-1 py-3 px-6 rounded-lg font-semibold transition-all duration-200 ${
                     operationType === 'buy'
-                      ? 'bg-green-600 text-white'
-                      : 'bg-gray-200 dark:bg-gray-700'
+                      ? 'bg-green-600 text-white shadow-lg transform scale-105'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900'
                   }`}
                 >
-                  Comprar
+                  <span className="flex items-center justify-center gap-2">
+                    <Wallet className="w-4 h-4" />
+                    Comprar
+                  </span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setOperationType('sell')}
-                  className={`flex-1 py-3 rounded-lg font-semibold transition-colors ${
+                  className={`flex-1 py-3 px-6 rounded-lg font-semibold transition-all duration-200 ${
                     operationType === 'sell'
-                      ? 'bg-red-600 text-white'
-                      : 'bg-gray-200 dark:bg-gray-700'
+                      ? 'bg-red-600 text-white shadow-lg transform scale-105'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900'
                   }`}
                 >
-                  Vender
+                  <span className="flex items-center justify-center gap-2">
+                    <Bitcoin className="w-4 h-4" />
+                    Vender
+                  </span>
                 </button>
               </div>
 
-              {/* Seletor de Criptomoeda */}
+              {/* Seletor de Criptomoeda - Dropdown customizado */}
               <div>
-                <label className="block text-sm font-medium mb-2">Criptomoeda</label>
-                <select
-                  value={selectedCrypto}
-                  onChange={(e) => setSelectedCrypto(e.target.value)}
-                  className="w-full p-3 border rounded-lg bg-background"
-                >
-                  {SUPPORTED_CRYPTOS.map((crypto) => (
-                    <option key={crypto.symbol} value={crypto.symbol}>
-                      {crypto.name} ({crypto.symbol})
-                    </option>
-                  ))}
-                </select>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Escolha a Criptomoeda
+                </label>
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                    className="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 flex items-center justify-between hover:border-primary transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div 
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold"
+                        style={{ backgroundColor: selectedCryptoInfo?.color }}
+                      >
+                        {selectedCryptoInfo?.icon}
+                      </div>
+                      <div className="text-left">
+                        <p className="font-semibold text-gray-900 dark:text-white">
+                          {selectedCryptoInfo?.name}
+                        </p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          {selectedCrypto}
+                        </p>
+                      </div>
+                    </div>
+                    <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${
+                      dropdownOpen ? 'rotate-180' : ''
+                    }`} />
+                  </button>
+
+                  {dropdownOpen && (
+                    <div className="absolute z-10 w-full mt-2 bg-white dark:bg-gray-700 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-600 max-h-64 overflow-y-auto">
+                      {SUPPORTED_CRYPTOS.map((crypto) => (
+                        <button
+                          key={crypto.symbol}
+                          type="button"
+                          onClick={() => {
+                            setSelectedCrypto(crypto.symbol)
+                            setDropdownOpen(false)
+                          }}
+                          className="w-full p-3 hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center gap-3 transition-colors"
+                        >
+                          <div 
+                            className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold"
+                            style={{ backgroundColor: crypto.color }}
+                          >
+                            {crypto.icon}
+                          </div>
+                          <div className="text-left flex-1">
+                            <p className="font-medium text-gray-900 dark:text-white">{crypto.name}</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">{crypto.symbol}</p>
+                          </div>
+                          {cryptoPrices[crypto.symbol] && (
+                            <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                              {cryptoPrices[crypto.symbol].price_brl.toLocaleString('pt-BR', {
+                                style: 'currency',
+                                currency: 'BRL'
+                              })}
+                            </p>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
 
-              {/* Valores */}
+              {/* Valores - Design melhorado */}
               <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium mb-2">
+                <div className="relative">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Valor em Reais (R$)
                   </label>
-                  <input
-                    type="text"
-                    value={brlValue}
-                    onChange={handleBRLChange}
-                    placeholder="R$ 0,00"
-                    className="w-full p-3 border rounded-lg text-lg bg-background"
-                  />
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={brlValue}
+                      onChange={handleBRLChange}
+                      placeholder="R$ 0,00"
+                      className={`w-full p-4 pl-12 border rounded-xl text-lg font-semibold bg-white dark:bg-gray-700 dark:text-white transition-all ${
+                        inputMode === 'brl' 
+                          ? 'border-primary ring-2 ring-primary/20' 
+                          : 'border-gray-300 dark:border-gray-600'
+                      }`}
+                    />
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
+                      R$
+                    </span>
+                  </div>
                 </div>
 
                 <div className="flex justify-center">
                   <button
                     type="button"
-                    className="p-2 rounded-full bg-gray-200 dark:bg-gray-700"
+                    className="p-3 rounded-full bg-gradient-to-r from-primary to-orange-600 text-white shadow-lg hover:shadow-xl transition-all hover:scale-110"
                     onClick={() => setInputMode(inputMode === 'brl' ? 'crypto' : 'brl')}
                   >
                     <ArrowDownUp className="w-5 h-5" />
                   </button>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Quantidade de {selectedCrypto}
-                  </label>
-                  <input
-                    type="text"
-                    value={cryptoValue}
-                    onChange={handleCryptoChange}
-                    placeholder="0.00000000"
-                    className="w-full p-3 border rounded-lg text-lg bg-background"
-                  />
-                </div>
+                {operationType === 'sell' && (
+                  <div className="relative">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Quantidade de {selectedCrypto}
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={cryptoValue}
+                        onChange={handleCryptoChange}
+                        placeholder="0.00000000"
+                        className={`w-full p-4 pr-16 border rounded-xl text-lg font-semibold bg-white dark:bg-gray-700 dark:text-white transition-all ${
+                          inputMode === 'crypto' 
+                            ? 'border-primary ring-2 ring-primary/20' 
+                            : 'border-gray-300 dark:border-gray-600'
+                        }`}
+                      />
+                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">
+                        {selectedCrypto}
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Mostrar/Esconder Detalhes */}
+              {/* Mostrar/Esconder Detalhes - Botão melhorado */}
               <button
                 type="button"
                 onClick={() => setShowDetails(!showDetails)}
-                className="text-primary text-sm hover:underline"
+                className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors font-medium"
               >
+                {showDetails ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 {showDetails ? 'Ocultar' : 'Mostrar'} dados pessoais
               </button>
 
-              {/* Dados Pessoais */}
+              {/* Dados Pessoais - Campos melhorados */}
               {showDetails && (
-                <div className="space-y-4 pt-4 border-t">
+                <div className="space-y-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium mb-2">Nome Completo *</label>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Nome Completo *
+                      </label>
                       <input
                         type="text"
                         required
                         value={clientData.name}
                         onChange={(e) => setClientData({ ...clientData, name: e.target.value })}
-                        className="w-full p-3 border rounded-lg bg-background"
+                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 dark:text-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2">CPF</label>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        CPF
+                      </label>
                       <input
                         type="text"
                         value={clientData.cpf}
                         onChange={(e) => setClientData({ ...clientData, cpf: e.target.value })}
                         placeholder="000.000.000-00"
-                        className="w-full p-3 border rounded-lg bg-background"
+                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 dark:text-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2">Telefone</label>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Telefone
+                      </label>
                       <input
                         type="tel"
                         value={clientData.phone}
                         onChange={(e) => setClientData({ ...clientData, phone: e.target.value })}
                         placeholder="(21) 99999-9999"
-                        className="w-full p-3 border rounded-lg bg-background"
+                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 dark:text-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-2">Email</label>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Email
+                      </label>
                       <input
                         type="email"
                         value={clientData.email}
                         onChange={(e) => setClientData({ ...clientData, email: e.target.value })}
-                        className="w-full p-3 border rounded-lg bg-background"
+                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 dark:text-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Forma de {operationType === 'buy' ? 'Pagamento' : 'Recebimento'}
                     </label>
                     <select
                       value={clientData.paymentMethod}
                       onChange={(e) => setClientData({ ...clientData, paymentMethod: e.target.value })}
-                      className="w-full p-3 border rounded-lg bg-background"
+                      className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 dark:text-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                     >
                       <option value="PIX">PIX</option>
                       <option value="TED">TED</option>
@@ -394,11 +533,11 @@ export default function CotacaoDinamica() {
                 </div>
               )}
 
-              {/* Botão Enviar */}
+              {/* Botão Enviar - Design melhorado */}
               <button
                 type="submit"
                 disabled={loading || !clientData.name || (!brlValue && !cryptoValue)}
-                className="w-full bg-primary text-white py-4 rounded-lg font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-gradient-to-r from-primary to-orange-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-xl transform hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
                 {loading ? (
                   <span className="flex items-center justify-center">
@@ -406,73 +545,95 @@ export default function CotacaoDinamica() {
                     Processando...
                   </span>
                 ) : (
-                  'Enviar Cotação via WhatsApp'
+                  <span className="flex items-center justify-center gap-2">
+                    <MessageSquare className="w-5 h-5" />
+                    Enviar Cotação via WhatsApp
+                  </span>
                 )}
               </button>
             </form>
           </div>
 
-          {/* Resumo da Operação */}
-          <div className="bg-card rounded-lg p-6 h-fit sticky top-4">
-            <h2 className="text-xl font-semibold mb-4">Resumo da Operação</h2>
+          {/* Resumo da Operação - Design melhorado */}
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 h-fit sticky top-4">
+            <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+              <Info className="w-6 h-6 text-primary" />
+              Resumo da Operação
+            </h2>
             
             {currentPrice && (values.brl > 0 || values.crypto > 0) ? (
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Operação:</span>
-                  <span className="font-semibold">
-                    {operationType === 'buy' ? 'COMPRA' : 'VENDA'}
-                  </span>
+              <div className="space-y-4">
+                <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600 dark:text-gray-400">Operação:</span>
+                    <span className={`font-bold px-3 py-1 rounded-full text-sm ${
+                      operationType === 'buy' 
+                        ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' 
+                        : 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300'
+                    }`}>
+                      {operationType === 'buy' ? 'COMPRA' : 'VENDA'}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600 dark:text-gray-400">Criptomoeda:</span>
+                    <div className="flex items-center gap-2">
+                      <div 
+                        className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold"
+                        style={{ backgroundColor: selectedCryptoInfo?.color }}
+                      >
+                        {selectedCryptoInfo?.icon}
+                      </div>
+                      <span className="font-semibold">{selectedCrypto}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600 dark:text-gray-400">Cotação:</span>
+                    <span className="font-semibold">
+                      {currentPrice.price_brl.toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                      })}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600 dark:text-gray-400">Quantidade:</span>
+                    <span className="font-semibold">
+                      {values.crypto.toFixed(8)} {selectedCrypto}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600 dark:text-gray-400">Valor:</span>
+                    <span className="font-semibold">
+                      {values.brl.toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                      })}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600 dark:text-gray-400">
+                      Taxa ({(values.taxRate * 100).toFixed(1)}%):
+                    </span>
+                    <span className="font-semibold text-orange-600">
+                      {values.tax.toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                      })}
+                    </span>
+                  </div>
                 </div>
 
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Criptomoeda:</span>
-                  <span className="font-semibold">{selectedCrypto}</span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Cotação:</span>
-                  <span className="font-semibold">
-                    {currentPrice.price_brl.toLocaleString('pt-BR', {
-                      style: 'currency',
-                      currency: 'BRL'
-                    })}
-                  </span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Quantidade:</span>
-                  <span className="font-semibold">
-                    {values.crypto.toFixed(8)} {selectedCrypto}
-                  </span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Valor:</span>
-                  <span className="font-semibold">
-                    {values.brl.toLocaleString('pt-BR', {
-                      style: 'currency',
-                      currency: 'BRL'
-                    })}
-                  </span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Taxa ({(values.taxRate * 100).toFixed(1)}%):</span>
-                  <span className="font-semibold">
-                    {values.tax.toLocaleString('pt-BR', {
-                      style: 'currency',
-                      currency: 'BRL'
-                    })}
-                  </span>
-                </div>
-
-                <div className="pt-3 border-t">
+                <div className="bg-gradient-to-r from-primary to-orange-600 rounded-xl p-4 text-white">
                   <div className="flex justify-between items-center">
                     <span className="text-lg font-semibold">
                       Total {operationType === 'buy' ? 'a Pagar' : 'a Receber'}:
                     </span>
-                    <span className="text-2xl font-bold text-primary">
+                    <span className="text-2xl font-bold">
                       {values.total.toLocaleString('pt-BR', {
                         style: 'currency',
                         currency: 'BRL'
@@ -481,63 +642,68 @@ export default function CotacaoDinamica() {
                   </div>
                 </div>
 
-                <div className="mt-4 p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
-                  <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                    💡 Dica: Volumes maiores têm taxas menores!
+                <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-xl p-4">
+                  <p className="text-sm text-yellow-800 dark:text-yellow-200 flex items-center gap-2">
+                    <Zap className="w-4 h-4" />
+                    Volumes maiores têm taxas menores!
                   </p>
                 </div>
               </div>
             ) : (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-12 text-gray-400">
+                <Bitcoin className="w-16 h-16 mx-auto mb-4 opacity-20" />
                 <p>Digite um valor para ver o resumo</p>
               </div>
             )}
 
-            {/* Tabela de Taxas */}
-            <div className="mt-6 pt-6 border-t">
-              <h3 className="font-semibold mb-3">Tabela de Taxas</h3>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span>Até R$ 1.000</span>
-                  <span className="font-medium">3,5%</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>R$ 1.001 - R$ 5.000</span>
-                  <span className="font-medium">3,0%</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>R$ 5.001 - R$ 10.000</span>
-                  <span className="font-medium">2,5%</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>R$ 10.001 - R$ 50.000</span>
-                  <span className="font-medium">2,0%</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Acima de R$ 50.000</span>
-                  <span className="font-medium">1,5%</span>
-                </div>
+            {/* Tabela de Taxas - Design melhorado */}
+            <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+              <h3 className="font-bold mb-4 text-gray-900 dark:text-white">Tabela de Taxas</h3>
+              <div className="space-y-2">
+                {[
+                  { range: 'Até R$ 1.000', rate: '3,5%' },
+                  { range: 'R$ 1.001 - R$ 5.000', rate: '3,0%' },
+                  { range: 'R$ 5.001 - R$ 10.000', rate: '2,5%' },
+                  { range: 'R$ 10.001 - R$ 50.000', rate: '2,0%' },
+                  { range: 'Acima de R$ 50.000', rate: '1,5%' },
+                ].map((item, index) => (
+                  <div key={index} className="flex justify-between py-2 px-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <span className="text-sm text-gray-600 dark:text-gray-400">{item.range}</span>
+                    <span className="text-sm font-bold text-primary">{item.rate}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         </div>
 
-        {/* Informações Adicionais */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-card rounded-lg p-4 text-center">
-            <h3 className="font-semibold mb-2">🚀 Operação Rápida</h3>
+        {/* Informações Adicionais - Cards melhorados */}
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 text-center shadow-lg hover:shadow-xl transition-shadow">
+            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Zap className="w-8 h-8 text-primary" />
+            </div>
+            <h3 className="font-bold text-lg mb-2">Operação Rápida</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Transferências em até 15 minutos após confirmação
             </p>
           </div>
-          <div className="bg-card rounded-lg p-4 text-center">
-            <h3 className="font-semibold mb-2">🔒 100% Seguro</h3>
+          
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 text-center shadow-lg hover:shadow-xl transition-shadow">
+            <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Shield className="w-8 h-8 text-green-600" />
+            </div>
+            <h3 className="font-bold text-lg mb-2">100% Seguro</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Empresa registrada com CNPJ e compliance completo
             </p>
           </div>
-          <div className="bg-card rounded-lg p-4 text-center">
-            <h3 className="font-semibold mb-2">💬 Suporte Humano</h3>
+          
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 text-center shadow-lg hover:shadow-xl transition-shadow">
+            <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+              <MessageSquare className="w-8 h-8 text-blue-600" />
+            </div>
+            <h3 className="font-bold text-lg mb-2">Suporte Humano</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Atendimento personalizado via WhatsApp
             </p>
