@@ -50,32 +50,6 @@ export const whatsappTemplates = {
     `Olá! 👋\n\nGostaria de agendar uma operação OTC.\n\n💼 Volume estimado: ${volume}\n📅 Disponibilidade: [informe seus horários]\n\nAguardo retorno para agendarmos.`,
 };
 
-// Componente React para botão do WhatsApp
-export function WhatsAppButton({ 
-  phone, 
-  message, 
-  className = '', 
-  children 
-}: { 
-  phone: string; 
-  message: string; 
-  className?: string; 
-  children: React.ReactNode;
-}) {
-  const link = getWhatsAppLink(phone, message);
-  
-  return (
-    <a
-      href={link}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`inline-flex items-center gap-2 ${className}`}
-    >
-      {children}
-    </a>
-  );
-}
-
 // Hook para usar WhatsApp
 export function useWhatsApp() {
   const sendMessage = (phone: string, message: string) => {
@@ -102,5 +76,6 @@ export function useWhatsApp() {
     sendToKYC,
     numbers: WHATSAPP_NUMBERS,
     templates: whatsappTemplates,
+    getWhatsAppLink,
   };
 }
