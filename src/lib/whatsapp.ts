@@ -14,7 +14,7 @@ export function formatWhatsAppNumber(phone: string): string {
   const cleaned = phone.replace(/\D/g, '');
   
   // Se não tem código do país, adiciona 55 (Brasil)
-  if (cleaned.length === 11 || cleaned.length === 10) {
+  if (cleaned.length === 11 || cleaned.length === 10 || cleaned.length === 9) {
     return '55' + cleaned;
   }
   
@@ -24,6 +24,16 @@ export function formatWhatsAppNumber(phone: string): string {
 // Gerar link do WhatsApp
 export function getWhatsAppLink(phone: string, message: string): string {
   const formattedPhone = formatWhatsAppNumber(phone);
+  const encodedMessage = encodeURIComponent(message);
+  return `https://wa.me/${formattedPhone}?text=${encodedMessage}`;
+}
+
+// Alias for backward compatibility
+export function createWhatsAppLink(phone: string, message?: string): string {
+  const formattedPhone = formatWhatsAppNumber(phone);
+  if (!message) {
+    return `https://wa.me/${formattedPhone}`;
+  }
   const encodedMessage = encodeURIComponent(message);
   return `https://wa.me/${formattedPhone}?text=${encodedMessage}`;
 }
