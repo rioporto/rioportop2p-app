@@ -18,20 +18,20 @@ import {
   Info
 } from 'lucide-react'
 
-// Lista de criptomoedas suportadas com classes Tailwind
+// Lista de criptomoedas suportadas
 const SUPPORTED_CRYPTOS = [
-  { symbol: 'BTC', name: 'Bitcoin', colorClass: 'bg-orange-500', icon: '₿' },
-  { symbol: 'ETH', name: 'Ethereum', colorClass: 'bg-indigo-500', icon: 'Ξ' },
-  { symbol: 'USDT', name: 'Tether', colorClass: 'bg-green-500', icon: '₮' },
-  { symbol: 'BNB', name: 'Binance Coin', colorClass: 'bg-yellow-500', icon: 'BNB' },
-  { symbol: 'SOL', name: 'Solana', colorClass: 'bg-purple-500', icon: 'SOL' },
-  { symbol: 'XRP', name: 'Ripple', colorClass: 'bg-gray-700', icon: 'XRP' },
-  { symbol: 'ADA', name: 'Cardano', colorClass: 'bg-blue-600', icon: 'ADA' },
-  { symbol: 'DOGE', name: 'Dogecoin', colorClass: 'bg-yellow-600', icon: 'Ð' },
-  { symbol: 'AVAX', name: 'Avalanche', colorClass: 'bg-red-500', icon: 'AVAX' },
-  { symbol: 'DOT', name: 'Polkadot', colorClass: 'bg-pink-500', icon: 'DOT' },
-  { symbol: 'MATIC', name: 'Polygon', colorClass: 'bg-purple-600', icon: 'MATIC' },
-  { symbol: 'LTC', name: 'Litecoin', colorClass: 'bg-gray-500', icon: 'Ł' },
+  { symbol: 'BTC', name: 'Bitcoin' },
+  { symbol: 'ETH', name: 'Ethereum' },
+  { symbol: 'USDT', name: 'Tether' },
+  { symbol: 'BNB', name: 'Binance Coin' },
+  { symbol: 'SOL', name: 'Solana' },
+  { symbol: 'XRP', name: 'Ripple' },
+  { symbol: 'ADA', name: 'Cardano' },
+  { symbol: 'DOGE', name: 'Dogecoin' },
+  { symbol: 'AVAX', name: 'Avalanche' },
+  { symbol: 'DOT', name: 'Polkadot' },
+  { symbol: 'MATIC', name: 'Polygon' },
+  { symbol: 'LTC', name: 'Litecoin' },
 ]
 
 // Estrutura de taxas (spread) baseada no volume
@@ -209,11 +209,11 @@ export default function CotacaoDinamica() {
   const selectedCryptoInfo = SUPPORTED_CRYPTOS.find(c => c.symbol === selectedCrypto)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-8 px-4">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
       <div className="max-w-7xl mx-auto">
-        {/* Header com gradiente */}
+        {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-orange-600 bg-clip-text text-transparent">
+          <h1 className="text-5xl font-bold mb-4 text-primary">
             Cotação P2P em Tempo Real
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-400">
@@ -221,7 +221,7 @@ export default function CotacaoDinamica() {
           </p>
         </div>
 
-        {/* Cards de Cotação - Design melhorado */}
+        {/* Cards de Cotação */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {SUPPORTED_CRYPTOS.slice(0, 4).map((crypto) => {
             const price = cryptoPrices[crypto.symbol]
@@ -231,8 +231,8 @@ export default function CotacaoDinamica() {
               <div
                 key={crypto.symbol}
                 onClick={() => setSelectedCrypto(crypto.symbol)}
-                className={`relative bg-white dark:bg-gray-800 rounded-xl p-5 cursor-pointer transition-all duration-200 hover:shadow-xl hover:scale-105 ${
-                  isSelected ? 'ring-2 ring-primary shadow-lg scale-105' : 'shadow-md'
+                className={`relative bg-white dark:bg-gray-800 rounded-xl p-5 cursor-pointer transition-all hover:shadow-lg ${
+                  isSelected ? 'ring-2 ring-primary shadow-lg' : 'shadow'
                 }`}
               >
                 {isSelected && (
@@ -242,16 +242,9 @@ export default function CotacaoDinamica() {
                 )}
                 
                 <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <div 
-                      className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${crypto.colorClass}`}
-                    >
-                      {crypto.icon}
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-gray-900 dark:text-white">{crypto.symbol}</h3>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{crypto.name}</p>
-                    </div>
+                  <div>
+                    <h3 className="font-bold text-gray-900 dark:text-white">{crypto.symbol}</h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{crypto.name}</p>
                   </div>
                 </div>
 
@@ -288,17 +281,17 @@ export default function CotacaoDinamica() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Formulário Principal - Design melhorado */}
+          {/* Formulário Principal */}
           <div className="lg:col-span-2">
             <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 space-y-6">
-              {/* Tipo de Operação - Pills melhorados */}
+              {/* Tipo de Operação */}
               <div className="flex gap-2 p-1 bg-gray-100 dark:bg-gray-700 rounded-xl">
                 <button
                   type="button"
                   onClick={() => setOperationType('buy')}
-                  className={`flex-1 py-3 px-6 rounded-lg font-semibold transition-all duration-200 ${
+                  className={`flex-1 py-3 px-6 rounded-lg font-semibold transition-all ${
                     operationType === 'buy'
-                      ? 'bg-green-600 text-white shadow-lg transform scale-105'
+                      ? 'bg-green-600 text-white shadow-lg'
                       : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                   }`}
                 >
@@ -310,9 +303,9 @@ export default function CotacaoDinamica() {
                 <button
                   type="button"
                   onClick={() => setOperationType('sell')}
-                  className={`flex-1 py-3 px-6 rounded-lg font-semibold transition-all duration-200 ${
+                  className={`flex-1 py-3 px-6 rounded-lg font-semibold transition-all ${
                     operationType === 'sell'
-                      ? 'bg-red-500 text-white shadow-lg transform scale-105'
+                      ? 'bg-red-500 text-white shadow-lg'
                       : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                   }`}
                 >
@@ -323,101 +316,47 @@ export default function CotacaoDinamica() {
                 </button>
               </div>
 
-              {/* Seletor de Criptomoeda - Dropdown customizado */}
+              {/* Seletor de Criptomoeda */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Escolha a Criptomoeda
                 </label>
-                <div className="relative">
-                  <button
-                    type="button"
-                    onClick={() => setDropdownOpen(!dropdownOpen)}
-                    className="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 flex items-center justify-between hover:border-primary transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div 
-                        className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${selectedCryptoInfo?.colorClass || 'bg-gray-500'}`}
-                      >
-                        {selectedCryptoInfo?.icon}
-                      </div>
-                      <div className="text-left">
-                        <p className="font-semibold text-gray-900 dark:text-white">
-                          {selectedCryptoInfo?.name}
-                        </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {selectedCrypto}
-                        </p>
-                      </div>
-                    </div>
-                    <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${
-                      dropdownOpen ? 'rotate-180' : ''
-                    }`} />
-                  </button>
-
-                  {dropdownOpen && (
-                    <div className="absolute z-10 w-full mt-2 bg-white dark:bg-gray-700 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-600 max-h-64 overflow-y-auto">
-                      {SUPPORTED_CRYPTOS.map((crypto) => (
-                        <button
-                          key={crypto.symbol}
-                          type="button"
-                          onClick={() => {
-                            setSelectedCrypto(crypto.symbol)
-                            setDropdownOpen(false)
-                          }}
-                          className="w-full p-3 hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center gap-3 transition-colors"
-                        >
-                          <div 
-                            className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${crypto.colorClass}`}
-                          >
-                            {crypto.icon}
-                          </div>
-                          <div className="text-left flex-1">
-                            <p className="font-medium text-gray-900 dark:text-white">{crypto.name}</p>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">{crypto.symbol}</p>
-                          </div>
-                          {cryptoPrices[crypto.symbol] && (
-                            <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
-                              {cryptoPrices[crypto.symbol].price_brl.toLocaleString('pt-BR', {
-                                style: 'currency',
-                                currency: 'BRL'
-                              })}
-                            </p>
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <select
+                  value={selectedCrypto}
+                  onChange={(e) => setSelectedCrypto(e.target.value)}
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                >
+                  {SUPPORTED_CRYPTOS.map((crypto) => (
+                    <option key={crypto.symbol} value={crypto.symbol}>
+                      {crypto.name} ({crypto.symbol})
+                    </option>
+                  ))}
+                </select>
               </div>
 
-              {/* Valores - Design melhorado */}
+              {/* Valores */}
               <div className="space-y-4">
                 <div className="relative">
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Valor em Reais (R$)
                   </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={brlValue}
-                      onChange={handleBRLChange}
-                      placeholder="R$ 0,00"
-                      className={`w-full p-4 pl-12 border rounded-xl text-lg font-semibold bg-white dark:bg-gray-700 dark:text-white transition-all ${
-                        inputMode === 'brl' 
-                          ? 'border-primary ring-2 ring-primary/20' 
-                          : 'border-gray-300 dark:border-gray-600'
-                      }`}
-                    />
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
-                      R$
-                    </span>
-                  </div>
+                  <input
+                    type="text"
+                    value={brlValue}
+                    onChange={handleBRLChange}
+                    placeholder="R$ 0,00"
+                    className={`w-full p-4 border rounded-xl text-lg font-semibold bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
+                      inputMode === 'brl' 
+                        ? 'border-primary ring-2 ring-primary ring-opacity-20' 
+                        : 'border-gray-300 dark:border-gray-600'
+                    }`}
+                  />
                 </div>
 
                 <div className="flex justify-center">
                   <button
                     type="button"
-                    className="p-3 rounded-full bg-gradient-to-r from-primary to-orange-600 text-white shadow-lg hover:shadow-xl transition-all hover:scale-110"
+                    className="p-3 rounded-full bg-primary text-white shadow-lg hover:shadow-xl transition-all"
                     onClick={() => setInputMode(inputMode === 'brl' ? 'crypto' : 'brl')}
                   >
                     <ArrowDownUp className="w-5 h-5" />
@@ -429,27 +368,22 @@ export default function CotacaoDinamica() {
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Quantidade de {selectedCrypto}
                     </label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        value={cryptoValue}
-                        onChange={handleCryptoChange}
-                        placeholder="0.00000000"
-                        className={`w-full p-4 pr-16 border rounded-xl text-lg font-semibold bg-white dark:bg-gray-700 dark:text-white transition-all ${
-                          inputMode === 'crypto' 
-                            ? 'border-primary ring-2 ring-primary/20' 
-                            : 'border-gray-300 dark:border-gray-600'
-                        }`}
-                      />
-                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">
-                        {selectedCrypto}
-                      </span>
-                    </div>
+                    <input
+                      type="text"
+                      value={cryptoValue}
+                      onChange={handleCryptoChange}
+                      placeholder="0.00000000"
+                      className={`w-full p-4 border rounded-xl text-lg font-semibold bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
+                        inputMode === 'crypto' 
+                          ? 'border-primary ring-2 ring-primary ring-opacity-20' 
+                          : 'border-gray-300 dark:border-gray-600'
+                      }`}
+                    />
                   </div>
                 )}
               </div>
 
-              {/* Mostrar/Esconder Detalhes - Botão melhorado */}
+              {/* Mostrar/Esconder Detalhes */}
               <button
                 type="button"
                 onClick={() => setShowDetails(!showDetails)}
@@ -459,7 +393,7 @@ export default function CotacaoDinamica() {
                 {showDetails ? 'Ocultar' : 'Mostrar'} dados pessoais
               </button>
 
-              {/* Dados Pessoais - Campos melhorados */}
+              {/* Dados Pessoais */}
               {showDetails && (
                 <div className="space-y-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -472,7 +406,7 @@ export default function CotacaoDinamica() {
                         required
                         value={clientData.name}
                         onChange={(e) => setClientData({ ...clientData, name: e.target.value })}
-                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 dark:text-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       />
                     </div>
                     <div>
@@ -484,7 +418,7 @@ export default function CotacaoDinamica() {
                         value={clientData.cpf}
                         onChange={(e) => setClientData({ ...clientData, cpf: e.target.value })}
                         placeholder="000.000.000-00"
-                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 dark:text-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       />
                     </div>
                     <div>
@@ -496,7 +430,7 @@ export default function CotacaoDinamica() {
                         value={clientData.phone}
                         onChange={(e) => setClientData({ ...clientData, phone: e.target.value })}
                         placeholder="(21) 99999-9999"
-                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 dark:text-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       />
                     </div>
                     <div>
@@ -507,7 +441,7 @@ export default function CotacaoDinamica() {
                         type="email"
                         value={clientData.email}
                         onChange={(e) => setClientData({ ...clientData, email: e.target.value })}
-                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 dark:text-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       />
                     </div>
                   </div>
@@ -519,7 +453,7 @@ export default function CotacaoDinamica() {
                     <select
                       value={clientData.paymentMethod}
                       onChange={(e) => setClientData({ ...clientData, paymentMethod: e.target.value })}
-                      className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 dark:text-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                      className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     >
                       <option value="PIX">PIX</option>
                       <option value="TED">TED</option>
@@ -530,11 +464,11 @@ export default function CotacaoDinamica() {
                 </div>
               )}
 
-              {/* Botão Enviar - Design melhorado */}
+              {/* Botão Enviar */}
               <button
                 type="submit"
                 disabled={loading || !clientData.name || (!brlValue && !cryptoValue)}
-                className="w-full bg-gradient-to-r from-primary to-orange-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-xl transform hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                className="w-full bg-primary text-white py-4 rounded-xl font-bold text-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <span className="flex items-center justify-center">
@@ -551,7 +485,7 @@ export default function CotacaoDinamica() {
             </form>
           </div>
 
-          {/* Resumo da Operação - Design melhorado */}
+          {/* Resumo da Operação */}
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 h-fit sticky top-4">
             <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
               <Info className="w-6 h-6 text-primary" />
@@ -574,14 +508,7 @@ export default function CotacaoDinamica() {
 
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600 dark:text-gray-400">Criptomoeda:</span>
-                    <div className="flex items-center gap-2">
-                      <div 
-                        className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold ${selectedCryptoInfo?.colorClass || 'bg-gray-500'}`}
-                      >
-                        {selectedCryptoInfo?.icon}
-                      </div>
-                      <span className="font-semibold">{selectedCrypto}</span>
-                    </div>
+                    <span className="font-semibold">{selectedCrypto}</span>
                   </div>
 
                   <div className="flex justify-between items-center">
@@ -624,7 +551,7 @@ export default function CotacaoDinamica() {
                   </div>
                 </div>
 
-                <div className="bg-gradient-to-r from-primary to-orange-600 rounded-xl p-4 text-white">
+                <div className="bg-primary rounded-xl p-4 text-white">
                   <div className="flex justify-between items-center">
                     <span className="text-lg font-semibold">
                       Total {operationType === 'buy' ? 'a Pagar' : 'a Receber'}:
@@ -638,7 +565,7 @@ export default function CotacaoDinamica() {
                   </div>
                 </div>
 
-                <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-xl p-4">
+                <div className="bg-yellow-50 dark:bg-yellow-900 dark:bg-opacity-20 rounded-xl p-4">
                   <p className="text-sm text-yellow-800 dark:text-yellow-200 flex items-center gap-2">
                     <Zap className="w-4 h-4" />
                     Volumes maiores têm taxas menores!
@@ -652,7 +579,7 @@ export default function CotacaoDinamica() {
               </div>
             )}
 
-            {/* Tabela de Taxas - Design melhorado */}
+            {/* Tabela de Taxas */}
             <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
               <h3 className="font-bold mb-4 text-gray-900 dark:text-white">Tabela de Taxas</h3>
               <div className="space-y-2">
@@ -673,10 +600,10 @@ export default function CotacaoDinamica() {
           </div>
         </div>
 
-        {/* Informações Adicionais - Cards melhorados */}
+        {/* Informações Adicionais */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 text-center shadow-lg hover:shadow-xl transition-shadow">
-            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 text-center shadow-lg">
+            <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Zap className="w-8 h-8 text-primary" />
             </div>
             <h3 className="font-bold text-lg mb-2">Operação Rápida</h3>
@@ -685,8 +612,8 @@ export default function CotacaoDinamica() {
             </p>
           </div>
           
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 text-center shadow-lg hover:shadow-xl transition-shadow">
-            <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 text-center shadow-lg">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Shield className="w-8 h-8 text-green-600" />
             </div>
             <h3 className="font-bold text-lg mb-2">100% Seguro</h3>
@@ -695,8 +622,8 @@ export default function CotacaoDinamica() {
             </p>
           </div>
           
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 text-center shadow-lg hover:shadow-xl transition-shadow">
-            <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 text-center shadow-lg">
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <MessageSquare className="w-8 h-8 text-blue-600" />
             </div>
             <h3 className="font-bold text-lg mb-2">Suporte Humano</h3>
