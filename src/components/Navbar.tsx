@@ -8,6 +8,9 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  
+  // ERRO PROPOSITAL: variável não definida
+  const testError: string = undefinedVariable
 
   // Links do menu
   const menuItems = [
