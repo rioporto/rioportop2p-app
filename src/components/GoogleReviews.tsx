@@ -49,7 +49,16 @@ export function GoogleReviews({ placeId = 'ChIJfbBquYSBmQARFwAerehRUew' }: Googl
 
       service.getDetails(request, (place, status) => {
         if (status === google.maps.places.PlacesServiceStatus.OK && place) {
-          setReviews(place.reviews || []);
+          // Type-safe conversion of Google reviews to our Review interface
+          const convertedReviews: Review[] = (place.reviews || []).map(review => ({
+            author_name: review.author_name || '',
+            rating: review.rating || 0,
+            text: review.text || '',
+            relative_time_description: review.relative_time_description || '',
+            profile_photo_url: review.profile_photo_url || ''
+          }));
+          
+          setReviews(convertedReviews);
           setRating(place.rating || 0);
           setTotalReviews(place.user_ratings_total || 0);
           setLoading(false);
