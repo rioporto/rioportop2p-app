@@ -99,20 +99,7 @@ const Navbar = () => {
           </div>
 
           {/* Menu Mobile Button */}
-          <div className="md:hidden flex items-center space-x-2">
-            {/* Toggle Dark/Light Mode Mobile */}
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
-              aria-label="Toggle theme"
-            >
-              {isDarkMode ? (
-                <Sun className="h-5 w-5" />
-              ) : (
-                <Moon className="h-5 w-5" />
-              )}
-            </button>
-
+          <div className="flex md:hidden items-center">
             {/* Hamburger Menu */}
             <button
               onClick={toggleMenu}
