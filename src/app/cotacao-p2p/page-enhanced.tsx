@@ -1,8 +1,7 @@
 'use client'
 
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { useWhatsApp } from '@/lib/whatsapp'
-import CryptoSelect from '@/components/CryptoSelect'
 import { 
   ArrowDownUp, 
   TrendingUp, 
@@ -16,7 +15,11 @@ import {
   ChevronDown,
   Eye,
   EyeOff,
-  Info
+  Info,
+  Search,
+  AlertCircle,
+  RefreshCw,
+  X
 } from 'lucide-react'
 
 // Lista de criptomoedas suportadas
@@ -51,29 +54,204 @@ interface CryptoPrice {
   percent_change_24h: number
 }
 
-interface CryptoListItem {
-  symbol: string
-  name: string
-  price_brl?: number
-  percent_change_24h?: number
+// Component for crypto search dropdown
+const CryptoSearchSelect = ({ 
+  selectedCrypto, 
+  onSelectCrypto, 
+  cryptoPrices,
+  loadingPrices,
+  error,
+  onRetry
+}: {
+  selectedCrypto: string
+  onSelectCrypto: (symbol: string) => void
+  cryptoPrices: Record<string, CryptoPrice>
+  loadingPrices: boolean
+  error: string | null
+  onRetry: () => void
+}) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [allCryptos, setAllCryptos] = useState<Array<{ symbol: string; name: string }>>(SUPPORTED_CRYPTOS)
+  const [loadingSearch, setLoadingSearch] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  // Fetch top 300 cryptos when search is initiated
+  const fetchTop300Cryptos = async () => {
+    if (allCryptos.length > SUPPORTED_CRYPTOS.length) return // Already fetched
+    
+    try {
+      setLoadingSearch(true)
+      const response = await fetch('/api/cotacao?top=true')
+      const data = await response.json()
+      
+      if (data.success && data.data) {
+        setAllCryptos(data.data)
+      }
+    } catch (error) {
+      console.error('Erro ao buscar lista de criptomoedas:', error)
+    } finally {
+      setLoadingSearch(false)
+    }
+  }
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query)
+    if (query && allCryptos.length === SUPPORTED_CRYPTOS.length) {
+      fetchTop300Cryptos()
+    }
+  }
+
+  const filteredCryptos = searchQuery
+    ? allCryptos.filter(
+        crypto =>
+          crypto.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          crypto.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : allCryptos
+
+  const selectedCryptoInfo = allCryptos.find(c => c.symbol === selectedCrypto)
+
+  return (
+    <div ref={dropdownRef}>
+      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        Escolha a Criptomoeda
+      </label>
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => setIsOpen(!isOpen)}
+          className="w-full p-4 border-2 border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-medium text-lg focus:border-primary focus:outline-none transition-colors flex items-center justify-between"
+        >
+          <span>
+            {selectedCrypto} - {selectedCryptoInfo?.name || selectedCrypto}
+          </span>
+          <ChevronDown className={`w-5 h-5 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        </button>
+
+        {isOpen && (
+          <div className="absolute z-50 w-full mt-2 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-xl shadow-xl max-h-96 overflow-hidden">
+            <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-3">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  placeholder="Buscar criptomoeda..."
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-primary"
+                  autoFocus
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                  >
+                    <X className="w-4 h-4 text-gray-400 hover:text-gray-600" />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className="overflow-y-auto max-h-80">
+              {loadingSearch && searchQuery && (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                  <span className="ml-2 text-gray-600 dark:text-gray-400">Buscando criptomoedas...</span>
+                </div>
+              )}
+
+              {!loadingSearch && filteredCryptos.length === 0 && (
+                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                  <p>Nenhuma criptomoeda encontrada</p>
+                  <p className="text-sm mt-2">Tente outro termo de busca</p>
+                </div>
+              )}
+
+              {!loadingSearch && filteredCryptos.length > 0 && (
+                <div className="py-2">
+                  {filteredCryptos.map((crypto) => {
+                    const price = cryptoPrices[crypto.symbol]
+                    const isSelected = selectedCrypto === crypto.symbol
+                    
+                    return (
+                      <button
+                        key={crypto.symbol}
+                        type="button"
+                        onClick={() => {
+                          onSelectCrypto(crypto.symbol)
+                          setIsOpen(false)
+                          setSearchQuery('')
+                        }}
+                        className={`w-full px-4 py-3 text-left hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center justify-between ${
+                          isSelected ? 'bg-orange-50 dark:bg-orange-900/20' : ''
+                        }`}
+                      >
+                        <div>
+                          <span className="font-medium text-gray-900 dark:text-white">
+                            {crypto.symbol}
+                          </span>
+                          <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
+                            {crypto.name}
+                          </span>
+                        </div>
+                        {loadingPrices && isSelected ? (
+                          <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
+                        ) : price ? (
+                          <div className="text-right">
+                            <p className="text-sm font-medium text-gray-900 dark:text-white">
+                              {price.price_brl.toLocaleString('pt-BR', {
+                                style: 'currency',
+                                currency: 'BRL',
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                              })}
+                            </p>
+                            <p className={`text-xs ${price.percent_change_24h >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                              {price.percent_change_24h >= 0 ? '+' : ''}{price.percent_change_24h.toFixed(2)}%
+                            </p>
+                          </div>
+                        ) : null}
+                      </button>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
 }
 
-export default function CotacaoDinamica() {
+export default function CotacaoDinamicaEnhanced() {
   const { sendMessage, numbers, templates } = useWhatsApp()
   
   // Estados
   const [loading, setLoading] = useState(false)
   const [loadingPrices, setLoadingPrices] = useState(true)
-  const [loadingCryptoList, setLoadingCryptoList] = useState(true)
   const [cryptoPrices, setCryptoPrices] = useState<Record<string, CryptoPrice>>({})
-  const [cryptoList, setCryptoList] = useState<CryptoListItem[]>([])
   const [operationType, setOperationType] = useState<'buy' | 'sell'>('buy')
   const [selectedCrypto, setSelectedCrypto] = useState('BTC')
   const [inputMode, setInputMode] = useState<'brl' | 'crypto'>('brl')
   const [brlValue, setBrlValue] = useState('')
   const [cryptoValue, setCryptoValue] = useState('')
   const [showDetails, setShowDetails] = useState(false)
-  const [cryptoError, setCryptoError] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const [isRetrying, setIsRetrying] = useState(false)
 
   // Dados do cliente
   const [clientData, setClientData] = useState({
@@ -87,102 +265,67 @@ export default function CotacaoDinamica() {
   // Buscar cotações ao carregar
   useEffect(() => {
     fetchAllPrices()
-    fetchCryptoList()
     const interval = setInterval(fetchAllPrices, 30000) // Atualiza a cada 30 segundos
     return () => clearInterval(interval)
   }, [])
 
-  // Fetch custom crypto when selectedCrypto changes
+  // Fetch when selected crypto changes
   useEffect(() => {
     const isSupportedCrypto = SUPPORTED_CRYPTOS.some(c => c.symbol === selectedCrypto)
-    if (!isSupportedCrypto && selectedCrypto) {
-      fetchAllPrices()
+    if (!isSupportedCrypto && selectedCrypto && !cryptoPrices[selectedCrypto]) {
+      fetchSingleCrypto(selectedCrypto)
     }
   }, [selectedCrypto])
 
-  const fetchAllPrices = async () => {
+  const fetchAllPrices = async (retry = false) => {
     try {
-      setLoadingPrices(true)
-      
-      // Check if selectedCrypto is in SUPPORTED_CRYPTOS
-      const isSupportedCrypto = SUPPORTED_CRYPTOS.some(c => c.symbol === selectedCrypto)
-      
-      let response
-      if (isSupportedCrypto) {
-        // Fetch all supported cryptos
-        const symbols = SUPPORTED_CRYPTOS.map(c => c.symbol).join(',')
-        response = await fetch(`/api/cotacao?multiple=${symbols}`)
+      if (retry) {
+        setIsRetrying(true)
       } else {
-        // Make a single API call for the custom crypto
-        response = await fetch(`/api/cotacao?symbol=${selectedCrypto}`)
+        setLoadingPrices(true)
       }
+      setError(null)
       
-      const data = await response.json()
-      
-      if (data.success) {
-        if (isSupportedCrypto && data.data) {
-          // Multiple cryptos response
-          setCryptoPrices(data.data)
-        } else if (!isSupportedCrypto && data.data) {
-          // Single custom crypto response
-          setCryptoPrices(prev => ({
-            ...prev,
-            [selectedCrypto]: {
-              symbol: data.data.symbol || selectedCrypto,
-              name: data.data.name || selectedCrypto, // Use name from API or symbol as fallback
-              price_brl: data.data.price,
-              percent_change_24h: data.data.change24h || 0
-            }
-          }))
-          setCryptoError('') // Clear error on success
-        }
-      } else {
-        console.error('Erro na resposta da API:', data.error)
-        // If it's a custom crypto and there was an error, remove it from the prices
-        if (!isSupportedCrypto) {
-          setCryptoPrices(prev => {
-            const newPrices = { ...prev }
-            delete newPrices[selectedCrypto]
-            return newPrices
-          })
-          setCryptoError(`Não foi possível encontrar a cotação para ${selectedCrypto}. Verifique se o ticker está correto.`)
-        }
-      }
-    } catch (error) {
-      console.error('Erro ao buscar cotações:', error)
-      // If it's a custom crypto and there was an error, remove it from the prices
-      const isSupportedCrypto = SUPPORTED_CRYPTOS.some(c => c.symbol === selectedCrypto)
-      if (!isSupportedCrypto) {
-        setCryptoPrices(prev => {
-          const newPrices = { ...prev }
-          delete newPrices[selectedCrypto]
-          return newPrices
-        })
-        setCryptoError(`Erro ao buscar cotação para ${selectedCrypto}. Tente novamente.`)
-      }
-    } finally {
-      setLoadingPrices(false)
-    }
-  }
-
-  const fetchCryptoList = async () => {
-    try {
-      setLoadingCryptoList(true)
-      const response = await fetch('/api/cotacao?top=true')
+      // Fetch all supported cryptos
+      const symbols = SUPPORTED_CRYPTOS.map(c => c.symbol).join(',')
+      const response = await fetch(`/api/cotacao?multiple=${symbols}`)
       const data = await response.json()
       
       if (data.success && data.data) {
-        setCryptoList(data.data)
+        setCryptoPrices(data.data)
+      } else {
+        throw new Error(data.error || 'Falha ao carregar cotações')
       }
     } catch (error) {
-      console.error('Erro ao buscar lista de criptomoedas:', error)
-      // Fallback to supported cryptos list
-      setCryptoList(SUPPORTED_CRYPTOS.map(crypto => ({
-        symbol: crypto.symbol,
-        name: crypto.name
-      })))
+      console.error('Erro ao buscar cotações:', error)
+      setError('Não foi possível carregar as cotações. Por favor, tente novamente.')
     } finally {
-      setLoadingCryptoList(false)
+      setLoadingPrices(false)
+      setIsRetrying(false)
+    }
+  }
+
+  const fetchSingleCrypto = async (symbol: string) => {
+    try {
+      setLoadingPrices(true)
+      const response = await fetch(`/api/cotacao?symbol=${symbol}`)
+      const data = await response.json()
+      
+      if (data.success && data.data) {
+        setCryptoPrices(prev => ({
+          ...prev,
+          [symbol]: {
+            symbol: data.data.symbol || symbol,
+            name: data.data.name || symbol,
+            price_brl: data.data.price,
+            percent_change_24h: data.data.change24h || 0
+          }
+        }))
+      }
+    } catch (error) {
+      console.error(`Erro ao buscar cotação para ${symbol}:`, error)
+    } finally {
+      setLoadingPrices(false)
     }
   }
 
@@ -294,8 +437,6 @@ export default function CotacaoDinamica() {
 
   const values = calculateValues()
   const currentPrice = cryptoPrices[selectedCrypto]
-  const selectedCryptoInfo = cryptoList.find(c => c.symbol === selectedCrypto) || 
-    SUPPORTED_CRYPTOS.find(c => c.symbol === selectedCrypto)
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
@@ -309,6 +450,24 @@ export default function CotacaoDinamica() {
             Compre e venda criptomoedas com as melhores taxas do mercado
           </p>
         </div>
+
+        {/* Error State */}
+        {error && (
+          <div className="mb-8 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+              <p className="text-red-800 dark:text-red-200">{error}</p>
+            </div>
+            <button
+              onClick={() => fetchAllPrices(true)}
+              disabled={isRetrying}
+              className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+            >
+              <RefreshCw className={`w-4 h-4 ${isRetrying ? 'animate-spin' : ''}`} />
+              {isRetrying ? 'Tentando...' : 'Tentar novamente'}
+            </button>
+          </div>
+        )}
 
         {/* Cards de Cotação */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -337,7 +496,7 @@ export default function CotacaoDinamica() {
                   </div>
                 </div>
 
-                {loadingPrices ? (
+                {loadingPrices && !error ? (
                   <div className="flex items-center justify-center h-12">
                     <Loader2 className="w-5 h-5 animate-spin text-primary" />
                   </div>
@@ -362,7 +521,7 @@ export default function CotacaoDinamica() {
                     </div>
                   </div>
                 ) : (
-                  <p className="text-gray-400">--</p>
+                  <p className="text-gray-400 text-sm">Indisponível</p>
                 )}
               </div>
             )
@@ -394,7 +553,7 @@ export default function CotacaoDinamica() {
                   onClick={() => setOperationType('sell')}
                   className={`flex-1 py-4 px-6 rounded-xl font-bold text-lg transition-all ${
                     operationType === 'sell'
-                      ? 'bg-red-500 text-white shadow-lg hover:bg-red-600'
+                      ? 'bg-red-600 text-white shadow-lg hover:bg-red-700'
                       : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600'
                   }`}
                 >
@@ -405,34 +564,15 @@ export default function CotacaoDinamica() {
                 </button>
               </div>
 
-              {/* Seletor de Criptomoeda */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Escolha a Criptomoeda
-                </label>
-                <CryptoSelect
-                  value={selectedCrypto}
-                  onChange={(value) => {
-                    setSelectedCrypto(value)
-                    setCryptoError('') // Clear error when selecting a crypto
-                  }}
-                  cryptos={cryptoList.map(crypto => ({
-                    symbol: crypto.symbol,
-                    name: crypto.name,
-                    price_brl: crypto.price_brl
-                  }))}
-                  loading={loadingCryptoList}
-                  onAddCustom={(ticker) => {
-                    setSelectedCrypto(ticker)
-                    setCryptoError('')
-                  }}
-                />
-                {cryptoError && (
-                  <div className="mt-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                    <p className="text-sm text-red-600 dark:text-red-400">{cryptoError}</p>
-                  </div>
-                )}
-              </div>
+              {/* Seletor de Criptomoeda com Busca */}
+              <CryptoSearchSelect
+                selectedCrypto={selectedCrypto}
+                onSelectCrypto={setSelectedCrypto}
+                cryptoPrices={cryptoPrices}
+                loadingPrices={loadingPrices}
+                error={error}
+                onRetry={() => fetchAllPrices(true)}
+              />
 
               {/* Valores */}
               <div className="space-y-4">
@@ -567,7 +707,7 @@ export default function CotacaoDinamica() {
               {/* Botão Enviar */}
               <button
                 type="submit"
-                disabled={loading || !clientData.name || (!brlValue && !cryptoValue)}
+                disabled={loading || !clientData.name || (!brlValue && !cryptoValue) || !currentPrice}
                 className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-5 rounded-xl font-bold text-lg hover:from-orange-600 hover:to-orange-700 hover:shadow-xl transform hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
                 {loading ? (
@@ -672,16 +812,10 @@ export default function CotacaoDinamica() {
                   </p>
                 </div>
               </div>
-            ) : cryptoError && !SUPPORTED_CRYPTOS.some(c => c.symbol === selectedCrypto) ? (
-              <div className="text-center py-12">
-                <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                  <p className="text-red-600 dark:text-red-400 font-medium mb-2">
-                    Cotação não disponível
-                  </p>
-                  <p className="text-sm text-red-500 dark:text-red-300">
-                    {cryptoError}
-                  </p>
-                </div>
+            ) : loadingPrices ? (
+              <div className="text-center py-12 text-gray-400">
+                <Loader2 className="w-16 h-16 mx-auto mb-4 animate-spin opacity-20" />
+                <p>Carregando cotação...</p>
               </div>
             ) : (
               <div className="text-center py-12 text-gray-400">

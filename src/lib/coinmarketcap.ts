@@ -51,11 +51,11 @@ export async function getCryptoQuote(symbol: string): Promise<CryptoQuote | null
   }
 }
 
-// Buscar top 300 criptomoedas com preço em BRL
-export async function getTop300Cryptos(): Promise<CryptoQuote[]> {
+// Buscar top 300 criptomoedas por market cap
+export async function getTop300Cryptos(): Promise<Array<{ symbol: string; name: string; price_brl?: number; percent_change_24h?: number }>> {
   try {
     const response = await fetch(
-      `${CMC_BASE_URL}/cryptocurrency/listings/latest?limit=300&convert=BRL`,
+      `${CMC_BASE_URL}/cryptocurrency/listings/latest?limit=300&convert=BRL&sort=market_cap&sort_dir=desc`,
       {
         headers: {
           'X-CMC_PRO_API_KEY': CMC_API_KEY,
@@ -72,13 +72,10 @@ export async function getTop300Cryptos(): Promise<CryptoQuote[]> {
     const data = await response.json();
     
     return data.data.map((crypto: any) => ({
-      id: crypto.id,
-      name: crypto.name,
       symbol: crypto.symbol,
-      price_brl: crypto.quote.BRL.price,
-      percent_change_24h: crypto.quote.BRL.percent_change_24h,
-      market_cap_brl: crypto.quote.BRL.market_cap,
-      volume_24h_brl: crypto.quote.BRL.volume_24h
+      name: crypto.name,
+      price_brl: crypto.quote?.BRL?.price,
+      percent_change_24h: crypto.quote?.BRL?.percent_change_24h
     }));
   } catch (error) {
     console.error('Erro ao buscar top 300:', error);

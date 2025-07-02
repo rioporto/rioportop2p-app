@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react'
 import { useWhatsApp } from '@/lib/whatsapp'
-import CryptoSelect from '@/components/CryptoSelect'
+import CryptoSearchSelect from '@/components/CryptoSearchSelect'
 import { 
   ArrowDownUp, 
   TrendingUp, 
@@ -73,6 +73,9 @@ export default function CotacaoDinamica() {
   const [brlValue, setBrlValue] = useState('')
   const [cryptoValue, setCryptoValue] = useState('')
   const [showDetails, setShowDetails] = useState(false)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [customCrypto, setCustomCrypto] = useState('')
+  const [isCustomCryptoMode, setIsCustomCryptoMode] = useState(false)
   const [cryptoError, setCryptoError] = useState('')
 
   // Dados do cliente
@@ -394,7 +397,7 @@ export default function CotacaoDinamica() {
                   onClick={() => setOperationType('sell')}
                   className={`flex-1 py-4 px-6 rounded-xl font-bold text-lg transition-all ${
                     operationType === 'sell'
-                      ? 'bg-red-500 text-white shadow-lg hover:bg-red-600'
+                      ? 'bg-red-600 text-white shadow-lg hover:bg-red-700'
                       : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600'
                   }`}
                 >
@@ -410,26 +413,81 @@ export default function CotacaoDinamica() {
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Escolha a Criptomoeda
                 </label>
-                <CryptoSelect
-                  value={selectedCrypto}
-                  onChange={(value) => {
-                    setSelectedCrypto(value)
-                    setCryptoError('') // Clear error when selecting a crypto
-                  }}
-                  cryptos={cryptoList.map(crypto => ({
-                    symbol: crypto.symbol,
-                    name: crypto.name,
-                    price_brl: crypto.price_brl
-                  }))}
-                  loading={loadingCryptoList}
-                  onAddCustom={(ticker) => {
-                    setSelectedCrypto(ticker)
-                    setCryptoError('')
-                  }}
-                />
-                {cryptoError && (
-                  <div className="mt-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                    <p className="text-sm text-red-600 dark:text-red-400">{cryptoError}</p>
+                {!isCustomCryptoMode ? (
+                  <div className="space-y-2">
+                    <CryptoSearchSelect
+                      value={selectedCrypto}
+                      onChange={(value) => {
+                        setSelectedCrypto(value)
+                        setCryptoError('') // Clear error when selecting a crypto
+                      }}
+                      cryptoList={cryptoList}
+                      loading={loadingCryptoList}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsCustomCryptoMode(true)
+                        setCustomCrypto('')
+                      }}
+                      className="w-full py-2 px-4 text-sm text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-900/10 rounded-lg transition-colors font-medium"
+                    >
+                      Não encontrou? Adicionar criptomoeda personalizada
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={customCrypto}
+                        onChange={(e) => setCustomCrypto(e.target.value.toUpperCase())}
+                        onKeyPress={(e) => {
+                          if (e.key === 'Enter' && customCrypto && customCrypto.trim()) {
+                            setSelectedCrypto(customCrypto.trim())
+                            setCryptoError('')
+                            setIsCustomCryptoMode(false)
+                            setCustomCrypto('')
+                          }
+                        }}
+                        placeholder="Ex: PEPE, SHIB, LINK"
+                        className="flex-1 p-4 border-2 border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-medium text-lg focus:border-primary focus:outline-none transition-colors uppercase"
+                        autoFocus
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (customCrypto && customCrypto.trim()) {
+                            setSelectedCrypto(customCrypto.trim())
+                            setCryptoError('') // Clear any previous error
+                          }
+                          setIsCustomCryptoMode(false)
+                          setCustomCrypto('')
+                        }}
+                        disabled={!customCrypto || !customCrypto.trim()}
+                        className="px-6 py-4 bg-orange-500 text-white rounded-xl font-medium hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        OK
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsCustomCryptoMode(false)
+                          setCustomCrypto('')
+                        }}
+                        className="px-6 py-4 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-medium hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      Digite o símbolo da criptomoeda (ticker) que deseja cotar
+                    </p>
+                    {cryptoError && (
+                      <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                        <p className="text-sm text-red-600 dark:text-red-400">{cryptoError}</p>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
