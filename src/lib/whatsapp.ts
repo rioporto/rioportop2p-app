@@ -2,9 +2,10 @@
 
 // Números de WhatsApp da empresa
 export const WHATSAPP_NUMBERS = {
-  support: process.env.NEXT_PUBLIC_WHATSAPP_SUPPORT || '5521999999999',
-  sales: process.env.NEXT_PUBLIC_WHATSAPP_SALES || '5521999999999',
-  kyc: process.env.NEXT_PUBLIC_WHATSAPP_KYC || '5521999999999',
+  main: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '552120187776',
+  support: process.env.NEXT_PUBLIC_WHATSAPP_SUPPORT || '552120187776',
+  sales: process.env.NEXT_PUBLIC_WHATSAPP_SALES || '552120187776',
+  kyc: process.env.NEXT_PUBLIC_WHATSAPP_KYC || '552120187776',
 };
 
 // Formatar número para WhatsApp (remover caracteres especiais)
@@ -29,11 +30,59 @@ export function getWhatsAppLink(phone: string, message: string): string {
 
 // Templates de mensagens
 export const whatsappTemplates = {
-  // Mensagem inicial de compra
+  // Mensagem completa de cotação para compra
+  quoteBuy: (data: {
+    name: string;
+    cpf?: string;
+    amount: number;
+    crypto: string;
+    cryptoAmount: number;
+    price: number;
+    total: number;
+    paymentMethod?: string;
+  }) => 
+    `🔥 *SOLICITAÇÃO DE COMPRA - RIO PORTO P2P*\n\n` +
+    `👤 *Cliente:* ${data.name}\n` +
+    (data.cpf ? `📄 *CPF:* ${data.cpf}\n` : '') +
+    `📅 *Data:* ${new Date().toLocaleString('pt-BR')}\n\n` +
+    `💰 *DETALHES DA OPERAÇÃO:*\n` +
+    `• Cripto: ${data.crypto}\n` +
+    `• Quantidade: ${data.cryptoAmount.toFixed(8)} ${data.crypto}\n` +
+    `• Valor em R$: ${data.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` +
+    `• Cotação: ${data.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` +
+    `• Total: ${data.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` +
+    (data.paymentMethod ? `• Pagamento: ${data.paymentMethod}\n` : '') +
+    `\n📱 Mensagem enviada via rioportop2p-app.vercel.app`,
+  
+  // Mensagem completa de cotação para venda
+  quoteSell: (data: {
+    name: string;
+    cpf?: string;
+    amount: number;
+    crypto: string;
+    cryptoAmount: number;
+    price: number;
+    total: number;
+    receivingMethod?: string;
+  }) => 
+    `🔥 *SOLICITAÇÃO DE VENDA - RIO PORTO P2P*\n\n` +
+    `👤 *Cliente:* ${data.name}\n` +
+    (data.cpf ? `📄 *CPF:* ${data.cpf}\n` : '') +
+    `📅 *Data:* ${new Date().toLocaleString('pt-BR')}\n\n` +
+    `💰 *DETALHES DA OPERAÇÃO:*\n` +
+    `• Cripto: ${data.crypto}\n` +
+    `• Quantidade: ${data.cryptoAmount.toFixed(8)} ${data.crypto}\n` +
+    `• Valor em R$: ${data.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` +
+    `• Cotação: ${data.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` +
+    `• Total a Receber: ${data.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}\n` +
+    (data.receivingMethod ? `• Recebimento: ${data.receivingMethod}\n` : '') +
+    `\n📱 Mensagem enviada via rioportop2p-app.vercel.app`,
+  
+  // Mensagem simples de compra
   buyBitcoin: (amount: number, price: number) => 
     `Olá! 👋\n\nGostaria de comprar Bitcoin:\n\n💰 Quantidade: R$ ${amount.toLocaleString('pt-BR')}\n📊 Cotação vista: R$ ${price.toLocaleString('pt-BR')}\n\nPor favor, me informe as opções de pagamento disponíveis.`,
   
-  // Mensagem inicial de venda
+  // Mensagem simples de venda
   sellBitcoin: (amount: number, price: number) => 
     `Olá! 👋\n\nGostaria de vender Bitcoin:\n\n💰 Quantidade: R$ ${amount.toLocaleString('pt-BR')}\n📊 Cotação vista: R$ ${price.toLocaleString('pt-BR')}\n\nPor favor, me informe como podemos proceder.`,
   
