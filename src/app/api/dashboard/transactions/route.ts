@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Formatar transações para o formato esperado pelo frontend
-    const formattedTransactions = transactions?.map(tx => {
+    const formattedTransactions = transactions?.map((tx: any) => {
       // Determinar crypto e valor baseado no tipo
       let crypto = ''
       let amount = 0

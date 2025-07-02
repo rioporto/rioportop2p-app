@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
       const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
       const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
 
-      transactions.forEach(tx => {
+      transactions.forEach((tx: any) => {
         // Volume total em BRL
         if (tx.type === 'buy') {
           stats.totalVolume += tx.from_amount
