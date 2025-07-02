@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { signOut, supabase } from '@/lib/supabase'
+import { cookies } from 'next/headers'
 
 export async function POST(request: NextRequest) {
   if (!supabase) {
@@ -16,14 +17,18 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Limpar cookies de sessão
+    cookies().delete('sb-access-token')
+    cookies().delete('sb-refresh-token')
+
     return NextResponse.json(
-      { message: 'Logout successful' },
+      { message: 'Logout realizado com sucesso' },
       { status: 200 }
     )
   } catch (error) {
     console.error('Signout error:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Erro interno do servidor' },
       { status: 500 }
     )
   }
