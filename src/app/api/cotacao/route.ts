@@ -1,79 +1,170 @@
-import { NextResponse } from 'next/server'
+import { NextResponse, NextRequest } from 'next/server'
+import { getCryptoQuote, getMultipleCryptoQuotes, getTop300Cryptos } from '@/lib/coinmarketcap'
 
-// Simulação de dados de cotação
-// Em produção, isso viria de uma API real como CoinGecko, Binance, etc.
-const generateMockPrice = () => {
-  const basePrice = 250000 // R$ 250.000 base
-  const variation = (Math.random() - 0.5) * 10000 // Variação de +-R$ 5.000
-  return basePrice + variation
-}
+// Cache de fallback caso a API falhe
+let fallbackCache: any = null;
+let fallbackTimestamp = 0;
 
-const generateMockData = () => {
-  const currentPrice = generateMockPrice()
-  const change24h = (Math.random() - 0.5) * 10 // -5% a +5%
-  const previousPrice = currentPrice / (1 + change24h / 100)
-  
-  return {
-    symbol: 'BTC',
-    currency: 'BRL',
-    price: currentPrice,
-    previousPrice: previousPrice,
-    change24h: change24h,
-    change24hValue: currentPrice - previousPrice,
-    high24h: currentPrice * 1.02,
-    low24h: currentPrice * 0.98,
-    volume24h: Math.random() * 1000000000 + 500000000, // R$ 500M - 1.5B
-    marketCap: currentPrice * 19500000, // ~19.5M BTC em circulação
-    lastUpdate: new Date().toISOString(),
-    source: 'Rio Porto P2P Aggregator',
-    p2pPremium: 2.5, // Premium médio P2P em %
-    p2pOffers: {
-      buy: {
-        bestPrice: currentPrice * 1.025,
-        worstPrice: currentPrice * 1.04,
-        averagePrice: currentPrice * 1.03,
-        activeOffers: Math.floor(Math.random() * 50) + 20
-      },
-      sell: {
-        bestPrice: currentPrice * 0.975,
-        worstPrice: currentPrice * 0.96,
-        averagePrice: currentPrice * 0.97,
-        activeOffers: Math.floor(Math.random() * 50) + 20
-      }
-    }
-  }
-}
-
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    // Simular delay de API real
-    await new Promise(resolve => setTimeout(resolve, 100))
+    const { searchParams } = new URL(request.url);
+    const symbol = searchParams.get('symbol') || 'BTC';
+    const multiple = searchParams.get('multiple');
+    const top = searchParams.get('top');
+
+    // Buscar top 300 criptos
+    if (top === 'true') {
+      const cryptos = await getTop300Cryptos();
+      
+      if (cryptos.length === 0 && fallbackCache) {
+        // Usar cache se API falhar
+        return NextResponse.json({
+          success: true,
+          data: fallbackCache,
+          timestamp: Date.now(),
+          cached: true
+        });
+      }
+
+      // Salvar no cache
+      if (cryptos.length > 0) {
+        fallbackCache = cryptos;
+        fallbackTimestamp = Date.now();
+      }
+
+      return NextResponse.json({
+        success: true,
+        data: cryptos,
+        timestamp: Date.now()
+      });
+    }
+
+    // Buscar múltiplas moedas
+    if (multiple) {
+      const symbols = multiple.split(',').map(s => s.trim().toUpperCase());
+      const quotes = await getMultipleCryptoQuotes(symbols);
+      
+      return NextResponse.json({
+        success: true,
+        data: quotes,
+        timestamp: Date.now()
+      });
+    }
+
+    // Buscar uma moeda específica
+    const quote = await getCryptoQuote(symbol.toUpperCase());
     
-    const data = generateMockData()
-    
+    if (!quote) {
+      // Fallback para dados mockados se API falhar
+      const mockPrice = 250000 + (Math.random() - 0.5) * 10000;
+      const change24h = (Math.random() - 0.5) * 10;
+      
+      return NextResponse.json({
+        success: true,
+        data: {
+          symbol: symbol.toUpperCase(),
+          currency: 'BRL',
+          price: mockPrice,
+          previousPrice: mockPrice / (1 + change24h / 100),
+          change24h: change24h,
+          change24hValue: mockPrice * (change24h / 100),
+          high24h: mockPrice * 1.02,
+          low24h: mockPrice * 0.98,
+          volume24h: Math.random() * 1000000000 + 500000000,
+          marketCap: mockPrice * 19500000,
+          lastUpdate: new Date().toISOString(),
+          source: 'Mock Data (API unavailable)',
+          p2pPremium: 2.5,
+          p2pOffers: {
+            buy: {
+              bestPrice: mockPrice * 1.025,
+              worstPrice: mockPrice * 1.04,
+              averagePrice: mockPrice * 1.03,
+              activeOffers: Math.floor(Math.random() * 50) + 20
+            },
+            sell: {
+              bestPrice: mockPrice * 0.975,
+              worstPrice: mockPrice * 0.96,
+              averagePrice: mockPrice * 0.97,
+              activeOffers: Math.floor(Math.random() * 50) + 20
+            }
+          }
+        },
+        timestamp: Date.now(),
+        cached: true
+      });
+    }
+
+    // Dados reais da API
+    const currentPrice = quote.price_brl;
+    const change24h = quote.percent_change_24h;
+    const previousPrice = currentPrice / (1 + change24h / 100);
+
+    const data = {
+      symbol: quote.symbol,
+      name: quote.name,
+      currency: 'BRL',
+      price: currentPrice,
+      previousPrice: previousPrice,
+      change24h: change24h,
+      change24hValue: currentPrice - previousPrice,
+      high24h: currentPrice * 1.02, // Estimativa
+      low24h: currentPrice * 0.98,  // Estimativa
+      volume24h: quote.volume_24h_brl,
+      marketCap: quote.market_cap_brl,
+      lastUpdate: new Date().toISOString(),
+      source: 'CoinMarketCap',
+      p2pPremium: 2.5, // Premium médio P2P em %
+      p2pOffers: {
+        buy: {
+          bestPrice: currentPrice * 1.025,
+          worstPrice: currentPrice * 1.04,
+          averagePrice: currentPrice * 1.03,
+          activeOffers: Math.floor(Math.random() * 50) + 20
+        },
+        sell: {
+          bestPrice: currentPrice * 0.975,
+          worstPrice: currentPrice * 0.96,
+          averagePrice: currentPrice * 0.97,
+          activeOffers: Math.floor(Math.random() * 50) + 20
+        }
+      }
+    };
+
     return NextResponse.json({
       success: true,
       data: data,
       timestamp: Date.now()
     }, {
       headers: {
-        'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=59',
+        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
       }
-    })
+    });
+
   } catch (error) {
-    console.error('Error fetching price data:', error)
-    return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to fetch price data',
-        timestamp: Date.now()
+    console.error('Error fetching price data:', error);
+    
+    // Retornar dados mockados em caso de erro
+    const mockPrice = 250000 + (Math.random() - 0.5) * 10000;
+    const change24h = (Math.random() - 0.5) * 10;
+    
+    return NextResponse.json({
+      success: false,
+      error: 'API temporariamente indisponível',
+      data: {
+        symbol: 'BTC',
+        currency: 'BRL',
+        price: mockPrice,
+        change24h: change24h,
+        lastUpdate: new Date().toISOString(),
+        source: 'Mock Data',
       },
-      { status: 500 }
-    )
+      timestamp: Date.now()
+    }, { status: 200 }); // Retorna 200 mesmo com erro para não quebrar o frontend
   }
 }
 
-// Endpoint para histórico de preços
+// Endpoint para histórico de preços (mantido como estava)
 export async function POST(request: Request) {
   try {
     const { period = '24h' } = await request.json()
@@ -98,7 +189,7 @@ export async function POST(request: Request) {
     }[period as keyof typeof periods] || 60 * 60 * 1000
     
     const history = []
-    let currentPrice = generateMockPrice()
+    let currentPrice = 250000 + (Math.random() - 0.5) * 10000
     
     for (let i = points - 1; i >= 0; i--) {
       const timestamp = now - (i * intervalMs)
