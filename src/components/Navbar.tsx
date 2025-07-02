@@ -17,6 +17,7 @@ const Navbar = () => {
     { name: 'Blog', href: '/blog' },
     { name: 'Cursos', href: '/cursos' },
     { name: 'FAQ', href: '/faq' },
+    { name: 'Contato', href: '/contato' },
   ]
 
   // Gerenciar tema
