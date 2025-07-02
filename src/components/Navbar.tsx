@@ -7,6 +7,7 @@ import { Bitcoin, Menu, X, Sun, Moon } from 'lucide-react'
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
 
   // Links do menu
   const menuItems = [
@@ -35,6 +36,16 @@ const Navbar = () => {
     }
   }, [])
 
+  // Detectar scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10)
+    }
+    
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode)
     if (!isDarkMode) {
@@ -51,88 +62,116 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="bg-white dark:bg-gray-900 shadow-lg transition-colors duration-200">
+    <nav className={`fixed w-full top-0 z-50 transition-all duration-300 ${
+      scrolled 
+        ? 'bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl shadow-lg' 
+        : 'bg-white dark:bg-slate-900'
+    }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+        <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center space-x-2">
-              <Bitcoin className="h-8 w-8 text-orange-500" />
-              <span className="text-xl font-bold text-gray-900 dark:text-white">
+            <Link href="/" className="flex items-center space-x-2 group">
+              <div className="relative">
+                <div className="absolute inset-0 bg-orange-500 rounded-lg blur-md opacity-20 group-hover:opacity-30 transition-opacity"></div>
+                <Bitcoin className="h-8 w-8 text-orange-500 relative" />
+              </div>
+              <span className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
                 Rio Porto P2P
               </span>
             </Link>
           </div>
 
-          {/* Menu Desktop */}
-          <div className="hidden md:flex items-center space-x-8">
+          {/* Desktop Navigation - Hidden on mobile */}
+          <div className="hidden lg:flex items-center space-x-1">
             {menuItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-gray-700 dark:text-gray-300 hover:text-orange-500 dark:hover:text-orange-400 transition-colors duration-200 font-medium"
+                className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-gray-100 dark:hover:bg-slate-800/50 transition-all duration-200"
               >
                 {item.name}
               </Link>
             ))}
           </div>
 
-          {/* Ações do Desktop */}
-          <div className="hidden md:flex items-center space-x-4">
+          {/* Desktop Actions - Hidden on mobile */}
+          <div className="hidden lg:flex items-center space-x-3">
             {/* Toggle Dark/Light Mode */}
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+              className="p-2.5 rounded-lg bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-700 transition-all duration-200"
               aria-label="Toggle theme"
             >
               {isDarkMode ? (
-                <Sun className="h-5 w-5" />
+                <Sun className="h-4 w-4" />
               ) : (
-                <Moon className="h-5 w-5" />
+                <Moon className="h-4 w-4" />
               )}
             </button>
 
             {/* Botão Entrar */}
-            <Link href="/login" className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200">
+            <Link 
+              href="/login" 
+              className="px-5 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg font-medium hover:from-orange-600 hover:to-orange-700 transition-all duration-200 shadow-lg shadow-orange-500/25"
+            >
               Entrar
             </Link>
           </div>
 
-          {/* Menu Mobile Button */}
-          <div className="flex md:hidden items-center">
-            {/* Hamburger Menu */}
-            <button
-              onClick={toggleMenu}
-              className="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
-              aria-label="Toggle menu"
-            >
-              {isMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
-            </button>
-          </div>
+          {/* Mobile Menu Button - Only shows on mobile */}
+          <button
+            onClick={toggleMenu}
+            className="lg:hidden p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors duration-200"
+            aria-label="Toggle menu"
+          >
+            {isMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
+          </button>
         </div>
 
-        {/* Menu Mobile */}
+        {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1">
+          <div className="lg:hidden border-t border-gray-200 dark:border-slate-800">
+            <div className="px-2 py-3 space-y-1">
               {menuItems.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
                   onClick={() => setIsMenuOpen(false)}
-                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-orange-500 dark:hover:text-orange-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
+                  className="block px-3 py-2 rounded-lg text-base font-medium text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors duration-200"
                 >
                   {item.name}
                 </Link>
               ))}
               
-              {/* Botão Entrar Mobile */}
-              <div className="px-3 py-2">
-                <Link href="/login" className="block w-full text-center bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200">
+              {/* Mobile Actions */}
+              <div className="pt-3 mt-3 border-t border-gray-200 dark:border-slate-800 space-y-2">
+                <button
+                  onClick={toggleTheme}
+                  className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
+                >
+                  {isDarkMode ? (
+                    <>
+                      <Sun className="h-5 w-5" />
+                      <span>Modo Claro</span>
+                    </>
+                  ) : (
+                    <>
+                      <Moon className="h-5 w-5" />
+                      <span>Modo Escuro</span>
+                    </>
+                  )}
+                </button>
+                
+                <Link 
+                  href="/login" 
+                  className="block w-full text-center px-3 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg font-medium hover:from-orange-600 hover:to-orange-700 transition-all duration-200"
+                  onClick={() => setIsMenuOpen(false)}
+                >
                   Entrar
                 </Link>
               </div>

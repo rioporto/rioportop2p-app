@@ -298,14 +298,14 @@ export default function CotacaoDinamica() {
     SUPPORTED_CRYPTOS.find(c => c.symbol === selectedCrypto)
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4">
+    <div className="min-h-screen py-8 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold mb-4 text-gray-900 dark:text-white">
-            Cotação <span className="text-orange-500">P2P</span> em Tempo Real
+          <h1 className="text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+            Cotação <span className="bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">P2P</span> em Tempo Real
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-400">
+          <p className="text-lg lg:text-xl text-gray-600 dark:text-slate-400">
             Compre e venda criptomoedas com as melhores taxas do mercado
           </p>
         </div>
@@ -320,12 +320,14 @@ export default function CotacaoDinamica() {
               <div
                 key={crypto.symbol}
                 onClick={() => setSelectedCrypto(crypto.symbol)}
-                className={`relative bg-white dark:bg-gray-800 rounded-xl p-5 cursor-pointer transition-all hover:shadow-xl hover:transform hover:scale-105 ${
-                  isSelected ? 'ring-2 ring-orange-500 shadow-xl transform scale-105' : 'shadow-md'
+                className={`relative bg-white dark:bg-slate-800/50 backdrop-blur-sm rounded-xl p-5 cursor-pointer transition-all duration-200 border border-gray-200 dark:border-slate-700/50 ${
+                  isSelected 
+                    ? 'ring-2 ring-orange-500 shadow-xl transform scale-105 border-orange-500' 
+                    : 'hover:shadow-lg hover:transform hover:scale-105 hover:border-orange-500/50'
                 }`}
               >
                 {isSelected && (
-                  <div className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-full font-medium">
+                  <div className="absolute -top-2 -right-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-xs px-2 py-1 rounded-full font-medium shadow-lg shadow-orange-500/25">
                     Selecionado
                   </div>
                 )}
@@ -372,16 +374,16 @@ export default function CotacaoDinamica() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Formulário Principal */}
           <div className="lg:col-span-2">
-            <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 space-y-6">
+            <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700/50 p-8 space-y-6">
               {/* Tipo de Operação */}
               <div className="flex gap-3">
                 <button
                   type="button"
                   onClick={() => setOperationType('buy')}
-                  className={`flex-1 py-4 px-6 rounded-xl font-bold text-lg transition-all ${
+                  className={`flex-1 py-4 px-6 rounded-xl font-bold text-lg transition-all duration-200 ${
                     operationType === 'buy'
-                      ? 'bg-green-500 text-white shadow-lg hover:bg-green-600'
-                      : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600'
+                      ? 'bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg shadow-green-500/25 hover:from-green-600 hover:to-green-700'
+                      : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-slate-600'
                   }`}
                 >
                   <span className="flex items-center justify-center gap-2">
@@ -392,10 +394,10 @@ export default function CotacaoDinamica() {
                 <button
                   type="button"
                   onClick={() => setOperationType('sell')}
-                  className={`flex-1 py-4 px-6 rounded-xl font-bold text-lg transition-all ${
+                  className={`flex-1 py-4 px-6 rounded-xl font-bold text-lg transition-all duration-200 ${
                     operationType === 'sell'
-                      ? 'bg-red-500 text-white shadow-lg hover:bg-red-600'
-                      : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600'
+                      ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg shadow-red-500/25 hover:from-red-600 hover:to-red-700'
+                      : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-slate-600'
                   }`}
                 >
                   <span className="flex items-center justify-center gap-2">
@@ -407,7 +409,7 @@ export default function CotacaoDinamica() {
 
               {/* Seletor de Criptomoeda */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                   Escolha a Criptomoeda
                 </label>
                 <CryptoSelect
