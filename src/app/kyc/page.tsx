@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import Link from 'next/link'
 import { 
   Shield, 
   CheckCircle, 
@@ -237,13 +238,16 @@ export default function KYCPage() {
                   </ul>
                 </div>
                 
-                <button className={`w-full py-2 rounded-lg font-semibold transition ${
-                  level.color === 'blue' ? 'bg-blue-600 text-white hover:bg-blue-700' :
-                  level.color === 'green' ? 'bg-green-600 text-white hover:bg-green-700' :
-                  'bg-purple-600 text-white hover:bg-purple-700'
-                }`}>
+                <Link 
+                  href={`/kyc/verify?level=${level.level}`}
+                  className={`block w-full py-2 rounded-lg font-semibold transition text-center ${
+                    level.color === 'blue' ? 'bg-blue-600 text-white hover:bg-blue-700' :
+                    level.color === 'green' ? 'bg-green-600 text-white hover:bg-green-700' :
+                    'bg-purple-600 text-white hover:bg-purple-700'
+                  }`}
+                >
                   Verificar Nível {level.level}
-                </button>
+                </Link>
               </div>
             ))}
           </div>
@@ -315,12 +319,20 @@ export default function KYCPage() {
             Complete sua verificação em minutos e desbloqueie todos os recursos da plataforma
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+            <Link 
+              href="/kyc/verify?level=2"
+              className="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition text-center"
+            >
               Iniciar Verificação Agora
-            </button>
-            <button className="border-2 border-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-purple-600 transition">
+            </Link>
+            <a 
+              href="https://wa.me/552120187776?text=Olá! Preciso de ajuda com a verificação KYC."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border-2 border-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-purple-600 transition text-center"
+            >
               Falar com Suporte
-            </button>
+            </a>
           </div>
         </div>
       </section>

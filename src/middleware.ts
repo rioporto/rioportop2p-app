@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 // Rotas que requerem autenticação
-const protectedRoutes = ['/dashboard', '/profile', '/settings']
+const protectedRoutes = ['/dashboard', '/profile', '/settings', '/transactions', '/otc']
 
 // Rotas públicas que redirecionam se autenticado
 const authRoutes = ['/login', '/signup']

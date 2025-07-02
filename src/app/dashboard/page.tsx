@@ -389,12 +389,12 @@ export default function DashboardPage() {
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Transações Recentes</h2>
-                <button
-                  onClick={() => setActiveTab('transactions')}
+                <Link
+                  href="/transactions"
                   className="text-sm text-orange-600 hover:text-orange-700"
                 >
                   Ver todas
-                </button>
+                </Link>
               </div>
               
               <div className="space-y-3">
