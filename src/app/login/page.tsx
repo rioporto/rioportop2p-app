@@ -4,9 +4,11 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Bitcoin, Mail, Lock, Eye, EyeOff, Loader2, AlertCircle } from 'lucide-react'
+import { useNotification } from '@/contexts/NotificationContext'
 
 export default function LoginPage() {
   const router = useRouter()
+  const { addNotification } = useNotification()
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
@@ -33,6 +35,14 @@ export default function LoginPage() {
       if (!response.ok) {
         throw new Error(data.error || 'Erro ao fazer login')
       }
+
+      // Mostrar notificação de sucesso
+      addNotification({
+        type: 'success',
+        title: 'Login realizado!',
+        message: 'Bem-vindo de volta à Rio Porto P2P',
+        duration: 3000
+      })
 
       // Redirecionar para dashboard
       router.push('/dashboard')

@@ -5,6 +5,7 @@ import { useWhatsApp } from '@/lib/whatsapp'
 import CryptoSelect from '@/components/CryptoSelect'
 import PriceChart from '@/components/PriceChart'
 import FeeCalculator from '@/components/FeeCalculator'
+import { useNotification } from '@/contexts/NotificationContext'
 import { 
   ArrowDownUp, 
   TrendingUp, 
@@ -63,6 +64,7 @@ interface CryptoListItem {
 
 export default function CotacaoDinamica() {
   const { sendMessage, numbers, templates } = useWhatsApp()
+  const { addNotification } = useNotification()
   
   // Estados
   const [loading, setLoading] = useState(false)
@@ -294,6 +296,33 @@ export default function CotacaoDinamica() {
       : templates.quoteSell(messageData)
 
     sendMessage(numbers.main, message)
+    
+    // Mostrar notificação de sucesso
+    addNotification({
+      type: 'success',
+      title: 'Cotação enviada!',
+      message: `Sua ${operationType === 'buy' ? 'compra' : 'venda'} de ${values.crypto.toFixed(8)} ${selectedCrypto} foi enviada para análise.`,
+      duration: 5000,
+      actions: [
+        {
+          label: 'Abrir WhatsApp',
+          onClick: () => window.open(`https://wa.me/${numbers.main.replace(/\D/g, '')}`, '_blank')
+        }
+      ]
+    })
+    
+    // Limpar formulário
+    setBrlValue('')
+    setCryptoValue('')
+    setClientData({
+      name: '',
+      cpf: '',
+      phone: '',
+      email: '',
+      paymentMethod: 'PIX'
+    })
+    setShowDetails(false)
+    
     setLoading(false)
   }
 
