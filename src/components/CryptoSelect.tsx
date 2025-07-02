@@ -115,7 +115,7 @@ export default function CryptoSelect({
           </div>
 
           {/* Lista de opções */}
-          <div className="max-h-64 overflow-y-auto">
+          <div className="max-h-64 overflow-y-auto bg-slate-900/95">
             {loading ? (
               <div className="p-4 text-center text-slate-400">
                 <div className="animate-pulse">Carregando...</div>
@@ -129,9 +129,22 @@ export default function CryptoSelect({
                     onClick={() => handleSelect(crypto.symbol)}
                     className={`w-full p-3 flex items-center justify-between transition-all duration-150 ${
                       value === crypto.symbol 
-                        ? 'bg-orange-500/10 border-l-2 border-orange-500' 
-                        : 'hover:bg-slate-800/50 border-l-2 border-transparent'
+                        ? 'bg-slate-800/70 border-l-2 border-orange-500' 
+                        : 'hover:bg-slate-800/40 border-l-2 border-transparent'
                     }`}
+                    style={{
+                      backgroundColor: value === crypto.symbol ? 'rgba(30, 41, 59, 0.7)' : 'transparent',
+                    }}
+                    onMouseEnter={(e) => {
+                      if (value !== crypto.symbol) {
+                        e.currentTarget.style.backgroundColor = 'rgba(30, 41, 59, 0.4)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (value !== crypto.symbol) {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                      }
+                    }}
                   >
                     <div className="flex items-center gap-3">
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center ${

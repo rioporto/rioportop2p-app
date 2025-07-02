@@ -119,18 +119,34 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* Mobile Menu Button - Only shows on mobile */}
-          <button
-            onClick={toggleMenu}
-            className="lg:hidden p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors duration-200"
-            aria-label="Toggle menu"
-          >
-            {isMenuOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
-          </button>
+          {/* Mobile Actions */}
+          <div className="flex items-center gap-2 lg:hidden">
+            {/* Mobile Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors duration-200"
+              aria-label="Toggle theme"
+            >
+              {isDarkMode ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+            </button>
+            
+            {/* Mobile Menu Button */}
+            <button
+              onClick={toggleMenu}
+              className="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors duration-200"
+              aria-label="Toggle menu"
+            >
+              {isMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
@@ -149,24 +165,7 @@ const Navbar = () => {
               ))}
               
               {/* Mobile Actions */}
-              <div className="pt-3 mt-3 border-t border-gray-200 dark:border-slate-800 space-y-2">
-                <button
-                  onClick={toggleTheme}
-                  className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
-                >
-                  {isDarkMode ? (
-                    <>
-                      <Sun className="h-5 w-5" />
-                      <span>Modo Claro</span>
-                    </>
-                  ) : (
-                    <>
-                      <Moon className="h-5 w-5" />
-                      <span>Modo Escuro</span>
-                    </>
-                  )}
-                </button>
-                
+              <div className="pt-3 mt-3 border-t border-gray-200 dark:border-slate-800">
                 <Link 
                   href="/login" 
                   className="block w-full text-center px-3 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg font-medium hover:from-orange-600 hover:to-orange-700 transition-all duration-200"
