@@ -213,8 +213,8 @@ export default function CotacaoDinamica() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold mb-4 text-primary">
-            Cotação P2P em Tempo Real
+          <h1 className="text-5xl font-bold mb-4 text-gray-900 dark:text-white">
+            Cotação <span className="text-orange-500">P2P</span> em Tempo Real
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-400">
             Compre e venda criptomoedas com as melhores taxas do mercado
@@ -231,12 +231,12 @@ export default function CotacaoDinamica() {
               <div
                 key={crypto.symbol}
                 onClick={() => setSelectedCrypto(crypto.symbol)}
-                className={`relative bg-white dark:bg-gray-800 rounded-xl p-5 cursor-pointer transition-all hover:shadow-lg ${
-                  isSelected ? 'ring-2 ring-primary shadow-lg' : 'shadow'
+                className={`relative bg-white dark:bg-gray-800 rounded-xl p-5 cursor-pointer transition-all hover:shadow-xl hover:transform hover:scale-105 ${
+                  isSelected ? 'ring-2 ring-orange-500 shadow-xl transform scale-105' : 'shadow-md'
                 }`}
               >
                 {isSelected && (
-                  <div className="absolute -top-2 -right-2 bg-primary text-white text-xs px-2 py-1 rounded-full">
+                  <div className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-full font-medium">
                     Selecionado
                   </div>
                 )}
@@ -285,32 +285,32 @@ export default function CotacaoDinamica() {
           <div className="lg:col-span-2">
             <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 space-y-6">
               {/* Tipo de Operação */}
-              <div className="flex gap-2 p-1 bg-gray-100 dark:bg-gray-700 rounded-xl">
+              <div className="flex gap-3">
                 <button
                   type="button"
                   onClick={() => setOperationType('buy')}
-                  className={`flex-1 py-3 px-6 rounded-lg font-semibold transition-all ${
+                  className={`flex-1 py-4 px-6 rounded-xl font-bold text-lg transition-all ${
                     operationType === 'buy'
-                      ? 'bg-green-600 text-white shadow-lg'
-                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                      ? 'bg-green-500 text-white shadow-lg hover:bg-green-600'
+                      : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600'
                   }`}
                 >
                   <span className="flex items-center justify-center gap-2">
-                    <Wallet className="w-4 h-4" />
+                    <Wallet className="w-5 h-5" />
                     Comprar
                   </span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setOperationType('sell')}
-                  className={`flex-1 py-3 px-6 rounded-lg font-semibold transition-all ${
+                  className={`flex-1 py-4 px-6 rounded-xl font-bold text-lg transition-all ${
                     operationType === 'sell'
-                      ? 'bg-red-500 text-white shadow-lg'
-                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                      ? 'bg-orange-500 text-white shadow-lg hover:bg-orange-600'
+                      : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600'
                   }`}
                 >
                   <span className="flex items-center justify-center gap-2">
-                    <Bitcoin className="w-4 h-4" />
+                    <Bitcoin className="w-5 h-5" />
                     Vender
                   </span>
                 </button>
@@ -324,10 +324,10 @@ export default function CotacaoDinamica() {
                 <select
                   value={selectedCrypto}
                   onChange={(e) => setSelectedCrypto(e.target.value)}
-                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  className="w-full p-4 border-2 border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-medium text-lg focus:border-primary focus:outline-none transition-colors"
                 >
                   {SUPPORTED_CRYPTOS.map((crypto) => (
-                    <option key={crypto.symbol} value={crypto.symbol}>
+                    <option key={crypto.symbol} value={crypto.symbol} className="py-2">
                       {crypto.name} ({crypto.symbol})
                     </option>
                   ))}
@@ -345,21 +345,21 @@ export default function CotacaoDinamica() {
                     value={brlValue}
                     onChange={handleBRLChange}
                     placeholder="R$ 0,00"
-                    className={`w-full p-4 border rounded-xl text-lg font-semibold bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
+                    className={`w-full p-4 border-2 rounded-xl text-xl font-semibold bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-all ${
                       inputMode === 'brl' 
-                        ? 'border-primary ring-2 ring-primary ring-opacity-20' 
-                        : 'border-gray-300 dark:border-gray-600'
-                    }`}
+                        ? 'border-primary focus:border-primary' 
+                        : 'border-gray-300 dark:border-gray-600 focus:border-gray-400'
+                    } focus:outline-none`}
                   />
                 </div>
 
                 <div className="flex justify-center">
                   <button
                     type="button"
-                    className="p-3 rounded-full bg-primary text-white shadow-lg hover:shadow-xl transition-all"
+                    className="p-4 rounded-full bg-orange-500 text-white shadow-lg hover:bg-orange-600 hover:shadow-xl transition-all transform hover:scale-110"
                     onClick={() => setInputMode(inputMode === 'brl' ? 'crypto' : 'brl')}
                   >
-                    <ArrowDownUp className="w-5 h-5" />
+                    <ArrowDownUp className="w-6 h-6" />
                   </button>
                 </div>
 
@@ -373,11 +373,11 @@ export default function CotacaoDinamica() {
                       value={cryptoValue}
                       onChange={handleCryptoChange}
                       placeholder="0.00000000"
-                      className={`w-full p-4 border rounded-xl text-lg font-semibold bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
+                      className={`w-full p-4 border-2 rounded-xl text-xl font-semibold bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-all ${
                         inputMode === 'crypto' 
-                          ? 'border-primary ring-2 ring-primary ring-opacity-20' 
-                          : 'border-gray-300 dark:border-gray-600'
-                      }`}
+                          ? 'border-primary focus:border-primary' 
+                          : 'border-gray-300 dark:border-gray-600 focus:border-gray-400'
+                      } focus:outline-none`}
                     />
                   </div>
                 )}
@@ -387,9 +387,9 @@ export default function CotacaoDinamica() {
               <button
                 type="button"
                 onClick={() => setShowDetails(!showDetails)}
-                className="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors font-medium"
+                className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-all font-medium"
               >
-                {showDetails ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {showDetails ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 {showDetails ? 'Ocultar' : 'Mostrar'} dados pessoais
               </button>
 
@@ -468,16 +468,16 @@ export default function CotacaoDinamica() {
               <button
                 type="submit"
                 disabled={loading || !clientData.name || (!brlValue && !cryptoValue)}
-                className="w-full bg-primary text-white py-4 rounded-xl font-bold text-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-5 rounded-xl font-bold text-lg hover:from-orange-600 hover:to-orange-700 hover:shadow-xl transform hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
                 {loading ? (
                   <span className="flex items-center justify-center">
-                    <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                    <Loader2 className="w-6 h-6 animate-spin mr-3" />
                     Processando...
                   </span>
                 ) : (
-                  <span className="flex items-center justify-center gap-2">
-                    <MessageSquare className="w-5 h-5" />
+                  <span className="flex items-center justify-center gap-3">
+                    <MessageSquare className="w-6 h-6" />
                     Enviar Cotação via WhatsApp
                   </span>
                 )}
@@ -488,7 +488,7 @@ export default function CotacaoDinamica() {
           {/* Resumo da Operação */}
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 h-fit sticky top-4">
             <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-              <Info className="w-6 h-6 text-primary" />
+              <Info className="w-6 h-6 text-orange-500" />
               Resumo da Operação
             </h2>
             
@@ -551,7 +551,7 @@ export default function CotacaoDinamica() {
                   </div>
                 </div>
 
-                <div className="bg-primary rounded-xl p-4 text-white">
+                <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl p-4 text-white">
                   <div className="flex justify-between items-center">
                     <span className="text-lg font-semibold">
                       Total {operationType === 'buy' ? 'a Pagar' : 'a Receber'}:
@@ -592,7 +592,7 @@ export default function CotacaoDinamica() {
                 ].map((item, index) => (
                   <div key={index} className="flex justify-between py-2 px-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     <span className="text-sm text-gray-600 dark:text-gray-400">{item.range}</span>
-                    <span className="text-sm font-bold text-primary">{item.rate}</span>
+                    <span className="text-sm font-bold text-orange-500">{item.rate}</span>
                   </div>
                 ))}
               </div>
@@ -604,7 +604,7 @@ export default function CotacaoDinamica() {
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 text-center shadow-lg">
             <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Zap className="w-8 h-8 text-primary" />
+              <Zap className="w-8 h-8 text-orange-500" />
             </div>
             <h3 className="font-bold text-lg mb-2">Operação Rápida</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
