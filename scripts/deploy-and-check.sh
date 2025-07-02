@@ -72,6 +72,11 @@ sleep 5
 # 5. Verificar o deploy
 print_status "Verificando status do deploy no Vercel..."
 
+# Carregar .env.local se existir
+if [ -f .env.local ]; then
+    export $(cat .env.local | grep -v '^#' | xargs)
+fi
+
 # Verificar se VERCEL_TOKEN está configurado
 if [ -z "$VERCEL_TOKEN" ]; then
     print_warning "VERCEL_TOKEN não configurado. Não é possível verificar o status do deploy."
