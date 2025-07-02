@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { useWhatsApp } from '@/lib/whatsapp'
 import CryptoSelect from '@/components/CryptoSelect'
 import PriceChart from '@/components/PriceChart'
+import FeeCalculator from '@/components/FeeCalculator'
 import { 
   ArrowDownUp, 
   TrendingUp, 
@@ -759,6 +760,11 @@ export default function CotacaoDinamica() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Calculadora de Taxas */}
+        <div className="mt-12">
+          <FeeCalculator />
         </div>
 
         {/* Informações Adicionais */}
