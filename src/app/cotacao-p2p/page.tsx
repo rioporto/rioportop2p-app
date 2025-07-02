@@ -18,20 +18,20 @@ import {
   Info
 } from 'lucide-react'
 
-// Lista de criptomoedas suportadas com cores
+// Lista de criptomoedas suportadas com classes Tailwind
 const SUPPORTED_CRYPTOS = [
-  { symbol: 'BTC', name: 'Bitcoin', color: '#F7931A', icon: '₿' },
-  { symbol: 'ETH', name: 'Ethereum', color: '#627EEA', icon: 'Ξ' },
-  { symbol: 'USDT', name: 'Tether', color: '#26A17B', icon: '₮' },
-  { symbol: 'BNB', name: 'Binance Coin', color: '#F3BA2F', icon: 'BNB' },
-  { symbol: 'SOL', name: 'Solana', color: '#00FFA3', icon: 'SOL' },
-  { symbol: 'XRP', name: 'Ripple', color: '#23292F', icon: 'XRP' },
-  { symbol: 'ADA', name: 'Cardano', color: '#0033AD', icon: 'ADA' },
-  { symbol: 'DOGE', name: 'Dogecoin', color: '#C2A633', icon: 'Ð' },
-  { symbol: 'AVAX', name: 'Avalanche', color: '#E84142', icon: 'AVAX' },
-  { symbol: 'DOT', name: 'Polkadot', color: '#E6007A', icon: 'DOT' },
-  { symbol: 'MATIC', name: 'Polygon', color: '#8247E5', icon: 'MATIC' },
-  { symbol: 'LTC', name: 'Litecoin', color: '#BFBBBB', icon: 'Ł' },
+  { symbol: 'BTC', name: 'Bitcoin', colorClass: 'bg-orange-500', icon: '₿' },
+  { symbol: 'ETH', name: 'Ethereum', colorClass: 'bg-indigo-500', icon: 'Ξ' },
+  { symbol: 'USDT', name: 'Tether', colorClass: 'bg-green-500', icon: '₮' },
+  { symbol: 'BNB', name: 'Binance Coin', colorClass: 'bg-yellow-500', icon: 'BNB' },
+  { symbol: 'SOL', name: 'Solana', colorClass: 'bg-purple-500', icon: 'SOL' },
+  { symbol: 'XRP', name: 'Ripple', colorClass: 'bg-gray-700', icon: 'XRP' },
+  { symbol: 'ADA', name: 'Cardano', colorClass: 'bg-blue-600', icon: 'ADA' },
+  { symbol: 'DOGE', name: 'Dogecoin', colorClass: 'bg-yellow-600', icon: 'Ð' },
+  { symbol: 'AVAX', name: 'Avalanche', colorClass: 'bg-red-500', icon: 'AVAX' },
+  { symbol: 'DOT', name: 'Polkadot', colorClass: 'bg-pink-500', icon: 'DOT' },
+  { symbol: 'MATIC', name: 'Polygon', colorClass: 'bg-purple-600', icon: 'MATIC' },
+  { symbol: 'LTC', name: 'Litecoin', colorClass: 'bg-gray-500', icon: 'Ł' },
 ]
 
 // Estrutura de taxas (spread) baseada no volume
@@ -244,8 +244,7 @@ export default function CotacaoDinamica() {
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <div 
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold"
-                      style={{ backgroundColor: crypto.color }}
+                      className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${crypto.colorClass}`}
                     >
                       {crypto.icon}
                     </div>
@@ -300,7 +299,7 @@ export default function CotacaoDinamica() {
                   className={`flex-1 py-3 px-6 rounded-lg font-semibold transition-all duration-200 ${
                     operationType === 'buy'
                       ? 'bg-green-600 text-white shadow-lg transform scale-105'
-                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                   }`}
                 >
                   <span className="flex items-center justify-center gap-2">
@@ -313,8 +312,8 @@ export default function CotacaoDinamica() {
                   onClick={() => setOperationType('sell')}
                   className={`flex-1 py-3 px-6 rounded-lg font-semibold transition-all duration-200 ${
                     operationType === 'sell'
-                      ? 'bg-red-600 text-white shadow-lg transform scale-105'
-                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900'
+                      ? 'bg-red-500 text-white shadow-lg transform scale-105'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                   }`}
                 >
                   <span className="flex items-center justify-center gap-2">
@@ -337,8 +336,7 @@ export default function CotacaoDinamica() {
                   >
                     <div className="flex items-center gap-3">
                       <div 
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold"
-                        style={{ backgroundColor: selectedCryptoInfo?.color }}
+                        className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${selectedCryptoInfo?.colorClass || 'bg-gray-500'}`}
                       >
                         {selectedCryptoInfo?.icon}
                       </div>
@@ -369,8 +367,7 @@ export default function CotacaoDinamica() {
                           className="w-full p-3 hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center gap-3 transition-colors"
                         >
                           <div 
-                            className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold"
-                            style={{ backgroundColor: crypto.color }}
+                            className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${crypto.colorClass}`}
                           >
                             {crypto.icon}
                           </div>
@@ -456,7 +453,7 @@ export default function CotacaoDinamica() {
               <button
                 type="button"
                 onClick={() => setShowDetails(!showDetails)}
-                className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors font-medium"
+                className="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors font-medium"
               >
                 {showDetails ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 {showDetails ? 'Ocultar' : 'Mostrar'} dados pessoais
@@ -579,8 +576,7 @@ export default function CotacaoDinamica() {
                     <span className="text-gray-600 dark:text-gray-400">Criptomoeda:</span>
                     <div className="flex items-center gap-2">
                       <div 
-                        className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold"
-                        style={{ backgroundColor: selectedCryptoInfo?.color }}
+                        className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold ${selectedCryptoInfo?.colorClass || 'bg-gray-500'}`}
                       >
                         {selectedCryptoInfo?.icon}
                       </div>
