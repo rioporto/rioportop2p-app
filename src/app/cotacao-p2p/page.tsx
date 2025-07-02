@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useWhatsApp } from '@/lib/whatsapp'
 import CryptoSelect from '@/components/CryptoSelect'
+import PriceChart from '@/components/PriceChart'
 import { 
   ArrowDownUp, 
   TrendingUp, 
@@ -16,7 +17,8 @@ import {
   ChevronDown,
   Eye,
   EyeOff,
-  Info
+  Info,
+  BarChart2
 } from 'lucide-react'
 
 // Lista de criptomoedas suportadas
@@ -74,6 +76,8 @@ export default function CotacaoDinamica() {
   const [cryptoValue, setCryptoValue] = useState('')
   const [showDetails, setShowDetails] = useState(false)
   const [cryptoError, setCryptoError] = useState('')
+  const [showChart, setShowChart] = useState(false)
+  const [chartPeriod, setChartPeriod] = useState<'1D' | '1W' | '1M' | '3M' | '1Y' | 'ALL'>('1D')
 
   // Dados do cliente
   const [clientData, setClientData] = useState({
@@ -369,6 +373,50 @@ export default function CotacaoDinamica() {
               </div>
             )
           })}
+        </div>
+
+        {/* Gráfico de Preços */}
+        <div className="mb-8">
+          <button
+            onClick={() => setShowChart(!showChart)}
+            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors mb-4"
+          >
+            <BarChart2 className="w-5 h-5 text-orange-500" />
+            <span className="font-medium">
+              {showChart ? 'Ocultar' : 'Mostrar'} Gráfico de Preços
+            </span>
+            <ChevronDown className={`w-4 h-4 transition-transform ${showChart ? 'rotate-180' : ''}`} />
+          </button>
+
+          {showChart && (
+            <div className="bg-white dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700/50 p-6">
+              {/* Period Selector */}
+              <div className="flex flex-wrap gap-2 mb-6">
+                {(['1D', '1W', '1M', '3M', '1Y', 'ALL'] as const).map((period) => (
+                  <button
+                    key={period}
+                    onClick={() => setChartPeriod(period)}
+                    className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                      chartPeriod === period
+                        ? 'bg-orange-500 text-white'
+                        : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-slate-600'
+                    }`}
+                  >
+                    {period === '1D' ? '24h' : period === '1W' ? '7d' : period === '1M' ? '1m' : period === '3M' ? '3m' : period === '1Y' ? '1a' : 'Tudo'}
+                  </button>
+                ))}
+              </div>
+
+              {/* Chart Component */}
+              <PriceChart
+                crypto={selectedCrypto as 'BTC' | 'ETH' | 'USDT'}
+                period={chartPeriod}
+                chartType="area"
+                showVolume={true}
+                height={400}
+              />
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
