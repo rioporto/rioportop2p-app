@@ -87,7 +87,7 @@ export default function DashboardPage() {
         const statsData = await statsResponse.json()
         setStats(statsData.stats)
         if (statsData.user) {
-          setUser(prev => ({ ...prev, ...statsData.user }))
+          setUser((prev: any) => ({ ...prev, ...statsData.user }))
         }
       }
 
