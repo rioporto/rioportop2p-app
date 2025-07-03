@@ -6,10 +6,18 @@
  */
 
 const https = require('https');
+const path = require('path');
+
+// Carregar variáveis de ambiente do .env.local
+try {
+  require('dotenv').config({ path: path.join(__dirname, '..', '.env.local') });
+} catch (e) {
+  // Se dotenv não estiver instalado, continuar sem ele
+}
 
 // Configurações
 const VERCEL_TOKEN = process.env.VERCEL_TOKEN;
-const PROJECT_NAME = 'rioportop2p-app';
+const PROJECT_ID = process.env.VERCEL_PROJECT_ID || 'rioportop2p-app';
 const TEAM_ID = process.env.VERCEL_TEAM_ID;
 const MAX_WAIT_TIME = 5 * 60 * 1000; // 5 minutos
 const CHECK_INTERVAL = 10 * 1000; // 10 segundos
@@ -51,7 +59,7 @@ function makeRequest(path, method = 'GET') {
 
 async function getLatestDeployment() {
   const teamQuery = TEAM_ID ? `&teamId=${TEAM_ID}` : '';
-  const path = `/v6/deployments?projectId=${PROJECT_NAME}&limit=1${teamQuery}`;
+  const path = `/v6/deployments?projectId=${PROJECT_ID}&limit=1${teamQuery}`;
   
   try {
     const response = await makeRequest(path);
