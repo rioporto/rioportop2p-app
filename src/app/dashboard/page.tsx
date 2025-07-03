@@ -59,7 +59,7 @@ export default function DashboardPage() {
     pendingTransactions: 0,
     favoritesCrypto: 'BTC'
   })
-  const [activeTab, setActiveTab] = useState<'overview' | 'transactions' | 'profile'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'profile'>('overview')
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -241,16 +241,12 @@ export default function DashboardPage() {
             >
               Visão Geral
             </button>
-            <button
-              onClick={() => setActiveTab('transactions')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                activeTab === 'transactions'
-                  ? 'border-orange-500 text-orange-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
-              }`}
+            <Link
+              href="/dashboard/transactions"
+              className="py-4 px-1 border-b-2 font-medium text-sm transition-colors border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
             >
               Transações
-            </button>
+            </Link>
             <button
               onClick={() => setActiveTab('profile')}
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
@@ -390,7 +386,7 @@ export default function DashboardPage() {
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Transações Recentes</h2>
                 <Link
-                  href="/transactions"
+                  href="/dashboard/transactions"
                   className="text-sm text-orange-600 hover:text-orange-700"
                 >
                   Ver todas
@@ -443,101 +439,6 @@ export default function DashboardPage() {
                   </div>
                 ))}
               </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'transactions' && (
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700">
-            <div className="p-6 border-b border-gray-200 dark:border-slate-700">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Histórico de Transações</h2>
-            </div>
-            
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 dark:bg-slate-700">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Tipo
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Crypto
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Valor
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Taxa
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Data
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Ações
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 dark:divide-slate-700">
-                  {transactions.map((transaction) => (
-                    <tr key={transaction.id} className="hover:bg-gray-50 dark:hover:bg-slate-700 cursor-pointer" onClick={() => handleTransactionClick(transaction)}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          transaction.type === 'buy'
-                            ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
-                            : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
-                        }`}>
-                          {transaction.type === 'buy' ? 'Compra' : 'Venda'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <Bitcoin className="h-4 w-4 text-orange-500 mr-2" />
-                          <span className="text-sm font-medium text-gray-900 dark:text-white">
-                            {transaction.crypto}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                        {transaction.amount.toLocaleString('pt-BR', {
-                          style: 'currency',
-                          currency: 'BRL'
-                        })}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                        {transaction.fee.toLocaleString('pt-BR', {
-                          style: 'currency',
-                          currency: 'BRL'
-                        })}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center space-x-1">
-                          {getStatusIcon(transaction.status)}
-                          <span className="text-sm text-gray-900 dark:text-white">
-                            {getStatusText(transaction.status)}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                        {new Date(transaction.createdAt).toLocaleDateString('pt-BR')}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button 
-                          className="text-orange-600 hover:text-orange-900"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleTransactionClick(transaction)
-                          }}
-                        >
-                          Detalhes
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
             </div>
           </div>
         )}

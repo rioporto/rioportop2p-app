@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
 import { cookies } from 'next/headers'
+import { supabase, queries } from '@/lib/supabase/typed-client'
+import { createServiceSupabase } from '@/lib/supabase/typed-client'
 
 export async function GET(request: NextRequest) {
-  if (!supabase) {
-    return NextResponse.json({ error: 'Service unavailable' }, { status: 503 })
-  }
-
   try {
     const cookieStore = await cookies()
     const token = cookieStore.get('sb-access-token')
@@ -15,26 +12,58 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
     }
 
+    // Verificar o usuário autenticado
     const { data: { user }, error: authError } = await supabase.auth.getUser(token.value)
     
     if (authError || !user) {
       return NextResponse.json({ error: 'Sessão inválida' }, { status: 401 })
     }
 
-    // Buscar todas as transações do usuário para calcular estatísticas
-    const { data: transactions, error } = await supabase
-      .from('transactions')
-      .select('*')
-      .eq('user_id', user.id)
+    // Usar service client para queries administrativas
+    const serviceSupabase = createServiceSupabase()
 
-    if (error) {
-      console.error('Error fetching stats:', error)
-      return NextResponse.json({ error: 'Erro ao buscar estatísticas' }, { status: 500 })
+    // Buscar perfil do usuário
+    let { data: userProfile, error: profileError } = await serviceSupabase
+      .from('users_profile')
+      .select('*')
+      .eq('id', user.id)
+      .single()
+
+    // Se o perfil não existe, criar um
+    if (profileError && profileError.code === 'PGRST116') {
+      const { data: newProfile, error: createError } = await serviceSupabase
+        .from('users_profile')
+        .insert({
+          id: user.id,
+          email: user.email!,
+          full_name: user.user_metadata?.full_name || user.user_metadata?.name || null,
+          phone: user.user_metadata?.phone || null,
+        })
+        .select()
+        .single()
+      
+      if (!createError) {
+        userProfile = newProfile
+      }
+    }
+
+    // Buscar transações do usuário
+    const { data: transactions, error: txError } = await serviceSupabase
+      .from('transactions')
+      .select(`
+        *,
+        crypto:crypto_id(symbol, name)
+      `)
+      .or(`buyer_id.eq.${user.id},seller_id.eq.${user.id}`)
+      .order('created_at', { ascending: false })
+
+    if (txError) {
+      console.error('Error fetching transactions:', txError)
     }
 
     // Calcular estatísticas
     const stats = {
-      totalTransactions: transactions?.length || 0,
+      totalTransactions: 0,
       totalVolume: 0,
       completedTransactions: 0,
       pendingTransactions: 0,
@@ -43,7 +72,8 @@ export async function GET(request: NextRequest) {
       cryptoVolumes: {} as Record<string, number>,
       favoritesCrypto: 'BTC',
       monthlyVolume: 0,
-      weeklyVolume: 0
+      weeklyVolume: 0,
+      successRate: 0
     }
 
     if (transactions && transactions.length > 0) {
@@ -51,18 +81,18 @@ export async function GET(request: NextRequest) {
       const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
       const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
 
-      transactions.forEach((tx: any) => {
-        // Volume total em BRL
-        if (tx.type === 'buy') {
-          stats.totalVolume += tx.from_amount
-        } else if (tx.type === 'sell') {
-          stats.totalVolume += tx.to_amount
+      stats.totalTransactions = transactions.length
+
+      transactions.forEach((tx) => {
+        // Volume total
+        stats.totalVolume += Number(tx.total_amount)
+
+        // Taxas (apenas para transações onde o usuário foi o comprador)
+        if (tx.buyer_id === user.id) {
+          stats.totalFees += Number(tx.fee_amount)
         }
 
-        // Taxas totais
-        stats.totalFees += tx.fee_amount || 0
-
-        // Status
+        // Status das transações
         switch (tx.status) {
           case 'completed':
             stats.completedTransactions++
@@ -72,19 +102,18 @@ export async function GET(request: NextRequest) {
             stats.pendingTransactions++
             break
           case 'cancelled':
+          case 'failed':
             stats.cancelledTransactions++
             break
         }
 
-        // Volume por crypto
-        const crypto = tx.type === 'buy' ? tx.to_currency : tx.from_currency
-        if (crypto !== 'BRL') {
-          stats.cryptoVolumes[crypto] = (stats.cryptoVolumes[crypto] || 0) + 1
-        }
+        // Volume por criptomoeda
+        const cryptoSymbol = tx.crypto?.symbol || 'UNKNOWN'
+        stats.cryptoVolumes[cryptoSymbol] = (stats.cryptoVolumes[cryptoSymbol] || 0) + 1
 
         // Volume semanal e mensal
         const txDate = new Date(tx.created_at)
-        const txAmount = tx.type === 'buy' ? tx.from_amount : tx.to_amount
+        const txAmount = Number(tx.total_amount)
         
         if (txDate >= oneWeekAgo) {
           stats.weeklyVolume += txAmount
@@ -101,18 +130,17 @@ export async function GET(request: NextRequest) {
       if (sortedCryptos.length > 0) {
         stats.favoritesCrypto = sortedCryptos[0][0]
       }
+
+      // Taxa de sucesso
+      stats.successRate = (stats.completedTransactions / stats.totalTransactions) * 100
     }
 
-    // Buscar informações do usuário
-    const { data: userData, error: userError } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', user.id)
-      .single()
-
-    if (userError) {
-      console.error('Error fetching user data:', userError)
-    }
+    // Buscar notificações não lidas
+    const { count: unreadCount } = await serviceSupabase
+      .from('notifications')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .eq('is_read', false)
 
     return NextResponse.json({
       stats: {
@@ -124,17 +152,23 @@ export async function GET(request: NextRequest) {
         totalFees: stats.totalFees,
         monthlyVolume: stats.monthlyVolume,
         weeklyVolume: stats.weeklyVolume,
-        successRate: stats.totalTransactions > 0 
-          ? (stats.completedTransactions / stats.totalTransactions * 100).toFixed(1)
-          : '0'
+        successRate: stats.successRate.toFixed(1)
       },
       user: {
-        email: user.email,
-        name: userData?.full_name || user.user_metadata?.full_name || 'Usuário',
-        phone: userData?.phone || user.user_metadata?.phone || '',
-        kycLevel: userData?.kyc_level || 1,
-        kycVerified: userData?.kyc_verified_at ? true : false,
-        createdAt: user.created_at
+        id: user.id,
+        email: user.email || '',
+        name: userProfile?.full_name || user.user_metadata?.full_name || 'Usuário',
+        phone: userProfile?.phone || '',
+        cpf: userProfile?.cpf || null,
+        avatarUrl: userProfile?.avatar_url || null,
+        kycLevel: userProfile?.kyc_level || 'basic',
+        kycVerified: userProfile?.kyc_verified_at ? true : false,
+        createdAt: user.created_at,
+        role: userProfile?.role || 'user',
+        reputationScore: userProfile?.reputation_score || 0,
+        totalTrades: userProfile?.total_trades || 0,
+        volumeTraded: userProfile?.volume_traded || 0,
+        unreadNotifications: unreadCount || 0
       }
     })
   } catch (error) {

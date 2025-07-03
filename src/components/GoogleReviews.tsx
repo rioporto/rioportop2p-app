@@ -47,10 +47,10 @@ export function GoogleReviews({ placeId = 'ChIJfbBquYSBmQARFwAerehRUew' }: Googl
         fields: ['reviews', 'rating', 'user_ratings_total', 'name']
       };
 
-      service.getDetails(request, (place, status) => {
+      service.getDetails(request, (place: google.maps.places.PlaceResult | null, status: google.maps.places.PlacesServiceStatus) => {
         if (status === google.maps.places.PlacesServiceStatus.OK && place) {
           // Type-safe conversion of Google reviews to our Review interface
-          const convertedReviews: Review[] = (place.reviews || []).map(review => ({
+          const convertedReviews: Review[] = (place.reviews || []).map((review: google.maps.places.PlaceReview) => ({
             author_name: review.author_name || '',
             rating: review.rating || 0,
             text: review.text || '',

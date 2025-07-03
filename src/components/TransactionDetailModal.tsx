@@ -14,7 +14,8 @@ import {
   CheckCircle,
   XCircle,
   Copy,
-  ExternalLink
+  ExternalLink,
+  User
 } from 'lucide-react'
 
 interface TransactionDetailModalProps {
@@ -24,13 +25,27 @@ interface TransactionDetailModalProps {
     id: string
     type: 'buy' | 'sell'
     crypto: string
+    cryptoName?: string
+    cryptoLogo?: string
     amount: number
     cryptoAmount: number
-    status: 'pending' | 'completed' | 'cancelled'
+    status: 'pending' | 'processing' | 'completed' | 'cancelled'
     createdAt: string
     totalBRL: number
     fee: number
     paymentMethod?: string
+    pricePerUnit?: number
+    counterparty?: {
+      id: string
+      name: string
+      avatar?: string
+    }
+    paymentProof?: string
+    paymentConfirmedAt?: string
+    cryptoTxHash?: string
+    completedAt?: string
+    cancelledAt?: string
+    cancellationReason?: string
     notes?: string
   } | null
 }
@@ -42,6 +57,8 @@ export default function TransactionDetailModal({ isOpen, onClose, transaction }:
     switch (status) {
       case 'completed':
         return <CheckCircle className="h-5 w-5 text-green-500" />
+      case 'processing':
+        return <Clock className="h-5 w-5 text-blue-500" />
       case 'pending':
         return <Clock className="h-5 w-5 text-yellow-500" />
       case 'cancelled':
@@ -55,6 +72,8 @@ export default function TransactionDetailModal({ isOpen, onClose, transaction }:
     switch (status) {
       case 'completed':
         return 'Concluída'
+      case 'processing':
+        return 'Processando'
       case 'pending':
         return 'Pendente'
       case 'cancelled':
@@ -126,10 +145,19 @@ export default function TransactionDetailModal({ isOpen, onClose, transaction }:
                           <ArrowDownRight className="h-5 w-5 text-red-600" />
                         )}
                       </div>
-                      <div>
-                        <p className="font-medium text-gray-900 dark:text-white">
-                          {transaction.type === 'buy' ? 'Compra' : 'Venda'} de {transaction.crypto}
-                        </p>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          {transaction.cryptoLogo && (
+                            <img
+                              src={transaction.cryptoLogo}
+                              alt={transaction.crypto}
+                              className="h-5 w-5 rounded-full"
+                            />
+                          )}
+                          <p className="font-medium text-gray-900 dark:text-white">
+                            {transaction.type === 'buy' ? 'Compra' : 'Venda'} de {transaction.crypto}
+                          </p>
+                        </div>
                         <div className="flex items-center space-x-1 mt-1">
                           {getStatusIcon(transaction.status)}
                           <span className="text-sm text-gray-500 dark:text-gray-400">
@@ -139,6 +167,33 @@ export default function TransactionDetailModal({ isOpen, onClose, transaction }:
                       </div>
                     </div>
                   </div>
+
+                  {/* Counterparty Info */}
+                  {transaction.counterparty && (
+                    <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-slate-700 rounded-lg">
+                      <div className="flex items-center space-x-3">
+                        {transaction.counterparty.avatar ? (
+                          <img
+                            className="h-10 w-10 rounded-full"
+                            src={transaction.counterparty.avatar}
+                            alt={transaction.counterparty.name}
+                          />
+                        ) : (
+                          <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-slate-600 flex items-center justify-center">
+                            <User className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                          </div>
+                        )}
+                        <div>
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            {transaction.type === 'buy' ? 'Vendedor' : 'Comprador'}
+                          </p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            {transaction.counterparty.name}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Detalhes */}
                   <div className="space-y-3">
@@ -244,17 +299,45 @@ export default function TransactionDetailModal({ isOpen, onClose, transaction }:
                         <button className="flex-1 px-4 py-2 bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400 rounded-lg font-medium hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors">
                           Cancelar
                         </button>
-                        <button className="flex-1 px-4 py-2 bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400 rounded-lg font-medium hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors">
-                          Confirmar Pagamento
-                        </button>
+                        {transaction.type === 'buy' && (
+                          <button className="flex-1 px-4 py-2 bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400 rounded-lg font-medium hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors">
+                            Confirmar Pagamento
+                          </button>
+                        )}
+                      </>
+                    )}
+                    
+                    {transaction.status === 'processing' && (
+                      <>
+                        {transaction.type === 'sell' && (
+                          <button className="flex-1 px-4 py-2 bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400 rounded-lg font-medium hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors">
+                            Liberar Crypto
+                          </button>
+                        )}
+                        {transaction.type === 'buy' && transaction.paymentProof && (
+                          <button className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors flex items-center justify-center gap-2">
+                            <ExternalLink className="h-4 w-4" />
+                            Ver Comprovante
+                          </button>
+                        )}
                       </>
                     )}
                     
                     {transaction.status === 'completed' && (
-                      <button className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors flex items-center justify-center gap-2">
-                        <ExternalLink className="h-4 w-4" />
-                        Ver Comprovante
-                      </button>
+                      <>
+                        {transaction.paymentProof && (
+                          <button className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors flex items-center justify-center gap-2">
+                            <ExternalLink className="h-4 w-4" />
+                            Ver Comprovante
+                          </button>
+                        )}
+                        {transaction.cryptoTxHash && (
+                          <button className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors flex items-center justify-center gap-2">
+                            <ExternalLink className="h-4 w-4" />
+                            Ver na Blockchain
+                          </button>
+                        )}
+                      </>
                     )}
                   </div>
                 </div>
