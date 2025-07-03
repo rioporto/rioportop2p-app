@@ -1,13 +1,21 @@
-# Deployment Guide for RioPortoP2P App
+# RioPorto P2P - Comprehensive Deployment Guide
 
-This guide provides comprehensive instructions for deploying the RioPortoP2P application to Vercel, including environment variable configuration, troubleshooting common issues, and post-deployment verification steps.
+This guide provides detailed instructions for deploying the RioPorto P2P cryptocurrency trading platform to Vercel, including environment configuration, database setup, monitoring, and maintenance procedures.
 
 ## Table of Contents
+
 1. [Prerequisites](#prerequisites)
-2. [Vercel Deployment Instructions](#vercel-deployment-instructions)
-3. [Environment Variables](#environment-variables)
-4. [Troubleshooting Common Issues](#troubleshooting-common-issues)
-5. [Post-Deployment Checklist](#post-deployment-checklist)
+2. [Pre-Deployment Checklist](#pre-deployment-checklist)
+3. [Vercel Deployment Instructions](#vercel-deployment-instructions)
+4. [Environment Variables](#environment-variables)
+5. [Database Setup](#database-setup)
+6. [Domain Configuration](#domain-configuration)
+7. [Security Configuration](#security-configuration)
+8. [Post-Deployment Verification](#post-deployment-verification)
+9. [Monitoring and Maintenance](#monitoring-and-maintenance)
+10. [Troubleshooting](#troubleshooting)
+11. [Rollback Procedures](#rollback-procedures)
+12. [Performance Optimization](#performance-optimization)
 
 ## Prerequisites
 
@@ -277,6 +285,476 @@ If you encounter issues not covered in this guide:
 3. Consult Next.js GitHub Issues
 4. Check service-specific documentation (Supabase, Stack Auth, Resend)
 
+## Pre-Deployment Checklist
+
+Complete these tasks before deploying to production:
+
+### Code Quality
+- [ ] All tests passing: `npm test`
+- [ ] No TypeScript errors: `npm run build`
+- [ ] No ESLint warnings: `npm run lint`
+- [ ] Code review completed
+- [ ] Security audit passed
+
+### Environment Preparation
+- [ ] Production environment variables ready
+- [ ] SSL certificates configured (automatic with Vercel)
+- [ ] Domain DNS prepared
+- [ ] Backup of current production data (if updating)
+- [ ] Maintenance window scheduled (if needed)
+
+### External Services
+- [ ] Supabase production project created
+- [ ] Stack Auth production configuration
+- [ ] Resend domain verified
+- [ ] Cloudinary production setup
+- [ ] PIX provider production credentials
+- [ ] Google APIs production keys
+
+## Database Setup
+
+### Production Database Migration
+
+1. **Access Production Supabase**:
+   ```bash
+   # Connect to production database
+   psql "postgresql://postgres.[project-id]:[password]@aws-0-us-west-1.pooler.supabase.com:6543/postgres"
+   ```
+
+2. **Run Migrations in Order**:
+   ```sql
+   -- Execute each migration file
+   \i supabase/migrations/001_initial_schema.sql
+   \i supabase/migrations/002_blog_schema.sql
+   \i supabase/migrations/003_courses_schema.sql
+   \i supabase/migrations/004_kyc_schema.sql
+   \i supabase/migrations/005_admin_schema.sql
+   \i supabase/migrations/006_pix_payment_system.sql
+   \i supabase/migrations/007_create_storage_buckets.sql
+   \i supabase/migrations/008_two_factor_auth.sql
+   \i supabase/migrations/20250103_create_crypto_prices_table.sql
+   \i supabase/migrations/create_notifications_table.sql
+   ```
+
+3. **Seed Production Data**:
+   ```sql
+   \i supabase/seeds/cryptocurrencies.sql
+   ```
+
+4. **Configure Backups**:
+   - Enable point-in-time recovery
+   - Set daily backup schedule
+   - Configure 30-day retention
+
+## Domain Configuration
+
+### Custom Domain Setup
+
+1. **Add Domain in Vercel**:
+   ```bash
+   vercel domains add rioportop2p.com
+   ```
+
+2. **Configure DNS Records**:
+   ```
+   Type    Name    Value                   TTL
+   A       @       76.76.21.21            Auto
+   CNAME   www     cname.vercel-dns.com   Auto
+   ```
+
+3. **Email DNS Records** (for Resend):
+   ```
+   Type    Name              Value
+   TXT     @                 v=spf1 include:resend.io ~all
+   TXT     resend._domainkey dkim=...
+   MX      @                 feedback-smtp.us-east-1.amazonses.com
+   ```
+
+## Security Configuration
+
+### 1. Security Headers
+
+Add to `next.config.ts`:
+
+```typescript
+const securityHeaders = [
+  {
+    key: 'X-DNS-Prefetch-Control',
+    value: 'on'
+  },
+  {
+    key: 'X-XSS-Protection',
+    value: '1; mode=block'
+  },
+  {
+    key: 'X-Frame-Options',
+    value: 'DENY'
+  },
+  {
+    key: 'X-Content-Type-Options',
+    value: 'nosniff'
+  },
+  {
+    key: 'Referrer-Policy',
+    value: 'strict-origin-when-cross-origin'
+  },
+  {
+    key: 'Content-Security-Policy',
+    value: `
+      default-src 'self';
+      script-src 'self' 'unsafe-eval' 'unsafe-inline' *.vercel-insights.com *.google-analytics.com;
+      style-src 'self' 'unsafe-inline';
+      img-src 'self' blob: data: *.cloudinary.com;
+      font-src 'self';
+      connect-src 'self' *.supabase.co *.stack-auth.com wss://*.supabase.co;
+    `.replace(/\s{2,}/g, ' ').trim()
+  }
+];
+```
+
+### 2. API Rate Limiting
+
+Implement rate limiting for API routes:
+
+```typescript
+// src/lib/rate-limit.ts
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
+
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+});
+
+export const rateLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(10, '10 s'),
+});
+```
+
+### 3. Environment Variable Security
+
+- Never commit `.env` files
+- Use different keys for production/development
+- Rotate keys regularly
+- Monitor for exposed secrets
+
+## Post-Deployment Verification
+
+### Critical Path Testing
+
+1. **Authentication Flow**:
+   - [ ] User registration with email
+   - [ ] Email verification
+   - [ ] Login/logout
+   - [ ] Google OAuth
+   - [ ] 2FA setup and verification
+   - [ ] Password reset
+
+2. **KYC Process**:
+   - [ ] Document upload
+   - [ ] Status updates
+   - [ ] Admin approval workflow
+   - [ ] Email notifications
+
+3. **Trading Operations**:
+   - [ ] Create P2P order
+   - [ ] Accept order
+   - [ ] PIX payment flow
+   - [ ] Payment confirmation
+   - [ ] Crypto release
+   - [ ] Transaction completion
+
+4. **Payment System**:
+   - [ ] PIX key registration
+   - [ ] QR code generation
+   - [ ] Payment proof upload
+   - [ ] Webhook processing
+
+5. **Admin Functions**:
+   - [ ] User management
+   - [ ] Transaction monitoring
+   - [ ] Content management
+   - [ ] System statistics
+
+### Performance Verification
+
+1. **Core Web Vitals**:
+   - LCP < 2.5s
+   - FID < 100ms
+   - CLS < 0.1
+
+2. **API Response Times**:
+   - Authentication: < 500ms
+   - Data fetching: < 1s
+   - File uploads: < 5s
+
+## Monitoring and Maintenance
+
+### 1. Setup Monitoring
+
+**Vercel Analytics**:
+```typescript
+// src/app/layout.tsx
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
+
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <body>
+        {children}
+        <Analytics />
+        <SpeedInsights />
+      </body>
+    </html>
+  );
+}
+```
+
+**Error Tracking (Sentry)**:
+```bash
+npm install @sentry/nextjs
+npx @sentry/wizard@latest -i nextjs
+```
+
+### 2. Health Monitoring
+
+Create health check endpoint:
+```typescript
+// src/app/api/health/route.ts
+export async function GET() {
+  const checks = {
+    database: await checkDatabase(),
+    auth: await checkAuth(),
+    storage: await checkStorage(),
+    email: await checkEmail(),
+  };
+  
+  const healthy = Object.values(checks).every(v => v);
+  
+  return Response.json({
+    status: healthy ? 'healthy' : 'unhealthy',
+    timestamp: new Date().toISOString(),
+    checks,
+  }, {
+    status: healthy ? 200 : 503,
+  });
+}
+```
+
+### 3. Log Management
+
+**Access Logs**:
+```bash
+# Real-time logs
+vercel logs --follow
+
+# Filter by function
+vercel logs --filter="api/auth"
+
+# Export logs
+vercel logs --output=raw > logs.txt
+```
+
+### 4. Database Maintenance
+
+**Regular Tasks**:
+- Weekly vacuum operations
+- Index optimization
+- Query performance analysis
+- Connection pool monitoring
+
+**Monitoring Queries**:
+```sql
+-- Check slow queries
+SELECT query, mean_exec_time, calls
+FROM pg_stat_statements
+ORDER BY mean_exec_time DESC
+LIMIT 10;
+
+-- Monitor connections
+SELECT count(*) FROM pg_stat_activity;
+```
+
+## Rollback Procedures
+
+### 1. Instant Rollback
+
+**Via Dashboard**:
+1. Go to Vercel Dashboard → Deployments
+2. Find last stable deployment
+3. Click menu → "Promote to Production"
+
+**Via CLI**:
+```bash
+# List deployments
+vercel ls
+
+# Rollback to specific deployment
+vercel rollback [deployment-url]
+```
+
+### 2. Database Rollback
+
+**Point-in-time Recovery**:
+```sql
+-- Restore to specific timestamp
+SELECT pg_restore_point('before_deployment_2024_01_15');
+```
+
+**From Backup**:
+1. Access Supabase Dashboard → Backups
+2. Select backup point
+3. Restore to new database
+4. Update connection string
+
+### 3. Emergency Procedures
+
+**Enable Maintenance Mode**:
+```typescript
+// src/middleware.ts
+export function middleware(request: NextRequest) {
+  if (process.env.MAINTENANCE_MODE === 'true') {
+    return NextResponse.rewrite(new URL('/maintenance', request.url));
+  }
+}
+```
+
+## Performance Optimization
+
+### 1. Build Optimization
+
+```json
+// vercel.json
+{
+  "functions": {
+    "src/app/api/*/route.ts": {
+      "maxDuration": 30
+    },
+    "src/app/api/cron/*/route.ts": {
+      "maxDuration": 60
+    }
+  },
+  "images": {
+    "domains": ["res.cloudinary.com"]
+  }
+}
+```
+
+### 2. Caching Strategy
+
+**Static Assets**:
+```typescript
+// next.config.ts
+module.exports = {
+  async headers() {
+    return [
+      {
+        source: '/fonts/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+    ];
+  },
+};
+```
+
+**API Caching**:
+```typescript
+// Add caching headers to API responses
+return Response.json(data, {
+  headers: {
+    'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+  },
+});
+```
+
+### 3. Database Optimization
+
+**Indexes**:
+```sql
+-- Ensure critical indexes exist
+CREATE INDEX idx_transactions_user_status ON transactions(user_id, status);
+CREATE INDEX idx_notifications_user_read ON notifications(user_id, read);
+```
+
+### 4. Image Optimization
+
+Configure Cloudinary transformations:
+```typescript
+const optimizedUrl = `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_auto,w_${width}/${publicId}`;
+```
+
+## Continuous Deployment
+
+### GitHub Actions Setup
+
+Create `.github/workflows/deploy.yml`:
+
+```yaml
+name: Production Deployment
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.ORG_ID }}
+          vercel-project-id: ${{ secrets.PROJECT_ID }}
+          vercel-args: '--prod'
+```
+
+## Cost Management
+
+### Monitor Usage
+
+Track these metrics in Vercel Dashboard:
+- Function invocations
+- Bandwidth usage
+- Build minutes
+- Edge middleware executions
+
+### Optimization Tips
+
+1. **Reduce Function Calls**:
+   - Implement caching
+   - Use ISR for dynamic pages
+   - Batch API requests
+
+2. **Optimize Images**:
+   - Use WebP format
+   - Implement lazy loading
+   - Serve responsive images
+
+3. **Minimize Build Time**:
+   - Cache dependencies
+   - Parallelize builds
+   - Use turborepo
+
 ---
 
-Last updated: 2025-07-01
+Last updated: 2025-07-03

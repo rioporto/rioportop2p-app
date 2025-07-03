@@ -17,7 +17,8 @@ import {
   FileCheck,
   TrendingUp,
   Bell,
-  Shield
+  Shield,
+  Key
 } from 'lucide-react'
 
 interface MenuItem {
@@ -62,7 +63,8 @@ const menuItems: MenuItem[] = [
     submenu: [
       { name: 'Cotações', href: '/admin/cotacoes' },
       { name: 'Taxas', href: '/admin/taxas' },
-      { name: 'Faturamento', href: '/admin/faturamento' }
+      { name: 'Faturamento', href: '/admin/faturamento' },
+      { name: 'Chaves PIX', href: '/admin/pix-keys' }
     ]
   },
   { name: 'Notificações', href: '/admin/notificacoes', icon: Bell },

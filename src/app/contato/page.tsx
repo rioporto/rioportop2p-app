@@ -39,7 +39,7 @@ export default function ContatoPage() {
                 <Mail className="w-5 h-5 text-primary mt-1" />
                 <div>
                   <p className="font-semibold">Email</p>
-                  <p className="text-gray-600 dark:text-gray-400">contato@rioportop2p.com.br</p>
+                  <p className="text-gray-600 dark:text-gray-400">contato@rioporto.com</p>
                 </div>
               </div>
 

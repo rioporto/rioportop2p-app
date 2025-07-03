@@ -462,6 +462,135 @@ export interface Database {
           created_at?: string
         }
       }
+      pix_keys: {
+        Row: {
+          id: string
+          user_id: string
+          key_type: 'cpf' | 'cnpj' | 'email' | 'phone' | 'random'
+          key_value: string
+          bank_name: string | null
+          account_holder_name: string
+          account_holder_document: string
+          is_active: boolean
+          is_verified: boolean
+          verified_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          key_type: 'cpf' | 'cnpj' | 'email' | 'phone' | 'random'
+          key_value: string
+          bank_name?: string | null
+          account_holder_name: string
+          account_holder_document: string
+          is_active?: boolean
+          is_verified?: boolean
+          verified_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          key_type?: 'cpf' | 'cnpj' | 'email' | 'phone' | 'random'
+          key_value?: string
+          bank_name?: string | null
+          account_holder_name?: string
+          account_holder_document?: string
+          is_active?: boolean
+          is_verified?: boolean
+          verified_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      pix_payment_details: {
+        Row: {
+          id: string
+          transaction_id: string
+          pix_key_id: string | null
+          pix_key_type: string
+          pix_key_value: string
+          bank_name: string | null
+          account_holder_name: string
+          qr_code_string: string | null
+          qr_code_image_url: string | null
+          payment_id: string | null
+          end_to_end_id: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          transaction_id: string
+          pix_key_id?: string | null
+          pix_key_type: string
+          pix_key_value: string
+          bank_name?: string | null
+          account_holder_name: string
+          qr_code_string?: string | null
+          qr_code_image_url?: string | null
+          payment_id?: string | null
+          end_to_end_id?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          transaction_id?: string
+          pix_key_id?: string | null
+          pix_key_type?: string
+          pix_key_value?: string
+          bank_name?: string | null
+          account_holder_name?: string
+          qr_code_string?: string | null
+          qr_code_image_url?: string | null
+          payment_id?: string | null
+          end_to_end_id?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      pix_webhooks: {
+        Row: {
+          id: string
+          provider: string
+          webhook_id: string | null
+          transaction_id: string | null
+          event_type: string
+          payload: Json
+          processed: boolean
+          processed_at: string | null
+          error_message: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          provider: string
+          webhook_id?: string | null
+          transaction_id?: string | null
+          event_type: string
+          payload: Json
+          processed?: boolean
+          processed_at?: string | null
+          error_message?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          provider?: string
+          webhook_id?: string | null
+          transaction_id?: string | null
+          event_type?: string
+          payload?: Json
+          processed?: boolean
+          processed_at?: string | null
+          error_message?: string | null
+          created_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never
@@ -477,6 +606,8 @@ export interface Database {
       kyc_level: 'basic' | 'intermediate' | 'complete'
       order_status: 'open' | 'matched' | 'completed' | 'cancelled' | 'expired'
       user_role: 'user' | 'admin' | 'moderator'
+      pix_key_type: 'cpf' | 'cnpj' | 'email' | 'phone' | 'random'
+      pix_provider: 'mercadopago' | 'pagseguro' | 'gerencianet' | 'banco_inter' | 'manual'
     }
   }
 }

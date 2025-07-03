@@ -7,11 +7,11 @@ export async function POST(request: NextRequest) {
   }
   
   try {
-    const { email, password, name, phone } = await request.json()
+    const { email, password, name, phone, cpf } = await request.json()
 
-    if (!email || !password || !name) {
+    if (!email || !password || !name || !phone || !cpf) {
       return NextResponse.json(
-        { error: 'Nome, email e senha são obrigatórios' },
+        { error: 'Nome, email, telefone, CPF e senha são obrigatórios' },
         { status: 400 }
       )
     }
@@ -25,7 +25,8 @@ export async function POST(request: NextRequest) {
 
     const { data, error } = await signUp(email, password, {
       full_name: name,
-      phone: phone || '',
+      phone: phone,
+      cpf: cpf,
       kyc_level: 1,
       is_admin: false
     })

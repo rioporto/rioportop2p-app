@@ -18,6 +18,8 @@ export interface Database {
           kyc_level: number
           kyc_verified_at: string | null
           is_admin: boolean
+          two_factor_enabled: boolean
+          two_factor_verified_at: string | null
           created_at: string
           updated_at: string
         }
@@ -29,6 +31,8 @@ export interface Database {
           kyc_level?: number
           kyc_verified_at?: string | null
           is_admin?: boolean
+          two_factor_enabled?: boolean
+          two_factor_verified_at?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -40,6 +44,8 @@ export interface Database {
           kyc_level?: number
           kyc_verified_at?: string | null
           is_admin?: boolean
+          two_factor_enabled?: boolean
+          two_factor_verified_at?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -270,6 +276,155 @@ export interface Database {
           updated_at?: string
         }
       }
+      notifications: {
+        Row: {
+          id: string
+          user_id: string
+          type: 'transaction' | 'kyc' | 'course' | 'system' | 'p2p_trade' | 'price_alert'
+          title: string
+          message: string
+          metadata: Json | null
+          read: boolean
+          read_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          type: 'transaction' | 'kyc' | 'course' | 'system' | 'p2p_trade' | 'price_alert'
+          title: string
+          message: string
+          metadata?: Json | null
+          read?: boolean
+          read_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          type?: 'transaction' | 'kyc' | 'course' | 'system' | 'p2p_trade' | 'price_alert'
+          title?: string
+          message?: string
+          metadata?: Json | null
+          read?: boolean
+          read_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      two_factor_auth: {
+        Row: {
+          id: string
+          user_id: string
+          secret: string
+          enabled: boolean
+          verified: boolean
+          backup_codes_generated: boolean
+          created_at: string
+          updated_at: string
+          verified_at: string | null
+          last_used_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          secret: string
+          enabled?: boolean
+          verified?: boolean
+          backup_codes_generated?: boolean
+          created_at?: string
+          updated_at?: string
+          verified_at?: string | null
+          last_used_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          secret?: string
+          enabled?: boolean
+          verified?: boolean
+          backup_codes_generated?: boolean
+          created_at?: string
+          updated_at?: string
+          verified_at?: string | null
+          last_used_at?: string | null
+        }
+      }
+      backup_codes: {
+        Row: {
+          id: string
+          user_id: string
+          code_hash: string
+          used: boolean
+          used_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          code_hash: string
+          used?: boolean
+          used_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          code_hash?: string
+          used?: boolean
+          used_at?: string | null
+          created_at?: string
+        }
+      }
+      crypto_prices: {
+        Row: {
+          id: string
+          symbol: string
+          price_brl: number
+          price_usd: number
+          percent_change_24h: number
+          percent_change_7d: number | null
+          volume_24h: number
+          market_cap: number | null
+          high_24h: number | null
+          low_24h: number | null
+          source: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          symbol: string
+          price_brl: number
+          price_usd: number
+          percent_change_24h: number
+          percent_change_7d?: number | null
+          volume_24h: number
+          market_cap?: number | null
+          high_24h?: number | null
+          low_24h?: number | null
+          source: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          symbol?: string
+          price_brl?: number
+          price_usd?: number
+          percent_change_24h?: number
+          percent_change_7d?: number | null
+          volume_24h?: number
+          market_cap?: number | null
+          high_24h?: number | null
+          low_24h?: number | null
+          source?: string
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never
@@ -283,6 +438,7 @@ export interface Database {
       transaction_status: 'pending' | 'processing' | 'completed' | 'cancelled'
       course_level: 'beginner' | 'intermediate' | 'advanced'
       enrollment_status: 'enrolled' | 'in_progress' | 'completed'
+      notification_type: 'transaction' | 'kyc' | 'course' | 'system' | 'p2p_trade' | 'price_alert'
     }
   }
 }

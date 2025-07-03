@@ -1,357 +1,465 @@
 'use client'
 
-import React, { useState } from 'react'
-import Link from 'next/link'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { 
   Shield, 
-  CheckCircle, 
-  FileText, 
+  Check, 
+  X,
+  Upload,
+  Phone,
+  MapPin,
+  CreditCard,
   Camera,
-  User,
-  Building,
-  Globe,
+  FileText,
   AlertCircle,
-  ChevronDown,
-  ChevronUp,
-  Lock,
-  Zap,
-  TrendingUp
+  ChevronRight,
+  Loader2
 } from 'lucide-react'
 
+interface KYCLevel {
+  level: 'basic' | 'intermediate' | 'complete'
+  name: string
+  description: string
+  limits: {
+    daily: string
+    monthly: string
+    perTransaction: string
+  }
+  requirements: string[]
+  features: string[]
+}
+
+const kycLevels: KYCLevel[] = [
+  {
+    level: 'basic',
+    name: 'Básico',
+    description: 'Verificação inicial para começar a usar a plataforma',
+    limits: {
+      daily: 'R$ 1.000',
+      monthly: 'R$ 5.000',
+      perTransaction: 'R$ 1.000'
+    },
+    requirements: ['Email verificado'],
+    features: ['Comprar crypto', 'Vender crypto']
+  },
+  {
+    level: 'intermediate',
+    name: 'Intermediário',
+    description: 'Aumenta seus limites e desbloqueia mais recursos',
+    limits: {
+      daily: 'R$ 10.000',
+      monthly: 'R$ 50.000',
+      perTransaction: 'R$ 5.000'
+    },
+    requirements: ['Email verificado', 'CPF validado', 'Telefone verificado'],
+    features: ['Comprar crypto', 'Vender crypto', 'Sacar para conta bancária']
+  },
+  {
+    level: 'complete',
+    name: 'Completo',
+    description: 'Acesso total a todos os recursos da plataforma',
+    limits: {
+      daily: 'R$ 100.000',
+      monthly: 'R$ 500.000',
+      perTransaction: 'R$ 50.000'
+    },
+    requirements: [
+      'Email verificado',
+      'CPF validado',
+      'Telefone verificado',
+      'Documento com foto',
+      'Comprovante de residência',
+      'Selfie de verificação'
+    ],
+    features: [
+      'Comprar crypto',
+      'Vender crypto',
+      'Sacar para conta bancária',
+      'Transações OTC',
+      'Conta merchant'
+    ]
+  }
+]
+
+interface VerificationStep {
+  id: string
+  name: string
+  description: string
+  icon: any
+  status: 'pending' | 'verified' | 'failed'
+  requiredFor: ('basic' | 'intermediate' | 'complete')[]
+}
+
 export default function KYCPage() {
-  const [openFAQ, setOpenFAQ] = useState<number | null>(null)
-
-  const verificationLevels = [
+  const router = useRouter()
+  const [currentLevel, setCurrentLevel] = useState<'basic' | 'intermediate' | 'complete'>('basic')
+  const [loading, setLoading] = useState(false)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [activeStep, setActiveStep] = useState<string | null>(null)
+  
+  const [verificationSteps, setVerificationSteps] = useState<VerificationStep[]>([
     {
-      level: 1,
-      name: 'Verificação Básica',
-      icon: <User className="w-8 h-8" />,
-      limits: 'Até R$ 10.000/mês',
-      documents: [
-        'CPF válido',
-        'Nome completo',
-        'Data de nascimento',
-        'E-mail verificado'
-      ],
-      benefits: [
-        'Compra e venda de Bitcoin',
-        'Transferências P2P básicas',
-        'Acesso ao suporte padrão'
-      ],
-      color: 'blue'
+      id: 'email',
+      name: 'Email',
+      description: 'Email verificado',
+      icon: FileText,
+      status: 'verified',
+      requiredFor: ['basic', 'intermediate', 'complete']
     },
     {
-      level: 2,
-      name: 'Verificação Intermediária',
-      icon: <Building className="w-8 h-8" />,
-      limits: 'Até R$ 50.000/mês',
-      documents: [
-        'Documento com foto (RG ou CNH)',
-        'Selfie com documento',
-        'Comprovante de residência',
-        'Telefone verificado'
-      ],
-      benefits: [
-        'Todos os benefícios do Nível 1',
-        'Limites aumentados',
-        'Taxas reduzidas',
-        'Suporte prioritário'
-      ],
-      color: 'green'
+      id: 'cpf',
+      name: 'CPF',
+      description: 'Validação do CPF',
+      icon: CreditCard,
+      status: 'pending',
+      requiredFor: ['intermediate', 'complete']
     },
     {
-      level: 3,
-      name: 'Verificação Completa',
-      icon: <Globe className="w-8 h-8" />,
-      limits: 'Sem limites',
-      documents: [
-        'Todos os documentos anteriores',
-        'Comprovante de renda',
-        'Declaração de origem dos recursos',
-        'Videochamada (se necessário)'
-      ],
-      benefits: [
-        'Todos os benefícios anteriores',
-        'Acesso ao OTC',
-        'Limites personalizados',
-        'Gerente de conta dedicado',
-        'Melhores taxas do mercado'
-      ],
-      color: 'purple'
+      id: 'phone',
+      name: 'Telefone',
+      description: 'Verificação por SMS',
+      icon: Phone,
+      status: 'pending',
+      requiredFor: ['intermediate', 'complete']
+    },
+    {
+      id: 'document',
+      name: 'Documento',
+      description: 'RG, CNH ou Passaporte',
+      icon: FileText,
+      status: 'pending',
+      requiredFor: ['complete']
+    },
+    {
+      id: 'address',
+      name: 'Endereço',
+      description: 'Comprovante de residência',
+      icon: MapPin,
+      status: 'pending',
+      requiredFor: ['complete']
+    },
+    {
+      id: 'selfie',
+      name: 'Selfie',
+      description: 'Foto de verificação',
+      icon: Camera,
+      status: 'pending',
+      requiredFor: ['complete']
     }
-  ]
+  ])
 
-  const kycProcess = [
-    {
-      step: 1,
-      title: 'Cadastro Inicial',
-      description: 'Crie sua conta com informações básicas',
-      icon: <User className="w-6 h-6" />
-    },
-    {
-      step: 2,
-      title: 'Envio de Documentos',
-      description: 'Faça upload dos documentos necessários',
-      icon: <FileText className="w-6 h-6" />
-    },
-    {
-      step: 3,
-      title: 'Verificação Automática',
-      description: 'Nossa IA valida seus documentos em minutos',
-      icon: <Zap className="w-6 h-6" />
-    },
-    {
-      step: 4,
-      title: 'Aprovação',
-      description: 'Receba a confirmação e comece a operar',
-      icon: <CheckCircle className="w-6 h-6" />
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      setSelectedFile(file)
     }
-  ]
+  }
 
-  const faqItems = [
-    {
-      question: 'Por que preciso verificar minha identidade?',
-      answer: 'A verificação KYC é uma exigência legal para prevenir fraudes, lavagem de dinheiro e garantir a segurança de todos os usuários. Ela também permite que oferecemos limites maiores e melhores taxas.'
-    },
-    {
-      question: 'Quanto tempo leva o processo de verificação?',
-      answer: 'A verificação do Nível 1 é instantânea. O Nível 2 geralmente leva de 5 a 30 minutos. O Nível 3 pode levar até 24 horas úteis, dependendo da complexidade da análise.'
-    },
-    {
-      question: 'Meus documentos estão seguros?',
-      answer: 'Sim! Utilizamos criptografia de ponta a ponta e armazenamento seguro em conformidade com a LGPD. Seus documentos são acessados apenas para fins de verificação e são mantidos em servidores seguros.'
-    },
-    {
-      question: 'Posso aumentar meu nível de verificação depois?',
-      answer: 'Sim! Você pode fazer upgrade para um nível superior a qualquer momento através do seu painel de usuário. O processo é simples e você mantém todos os benefícios anteriores.'
-    },
-    {
-      question: 'O que acontece se minha verificação for rejeitada?',
-      answer: 'Você receberá um e-mail explicando o motivo da rejeição e as instruções para corrigir o problema. Nossa equipe de suporte está disponível para ajudar em todo o processo.'
-    },
-    {
-      question: 'Preciso renovar minha verificação?',
-      answer: 'Geralmente não. A verificação é permanente, mas podemos solicitar documentos atualizados se houver mudanças regulatórias ou se seus documentos expirarem.'
-    }
-  ]
+  const handleVerification = async (stepId: string) => {
+    setLoading(true)
+    // Simulate API call
+    setTimeout(() => {
+      setVerificationSteps(steps =>
+        steps.map(step =>
+          step.id === stepId ? { ...step, status: 'verified' } : step
+        )
+      )
+      setLoading(false)
+      setActiveStep(null)
+    }, 2000)
+  }
+
+  const getNextLevel = () => {
+    if (currentLevel === 'basic') return 'intermediate'
+    if (currentLevel === 'intermediate') return 'complete'
+    return 'complete'
+  }
+
+  const canUpgradeToLevel = (level: 'basic' | 'intermediate' | 'complete') => {
+    const requiredSteps = verificationSteps.filter(step => step.requiredFor.includes(level))
+    return requiredSteps.every(step => step.status === 'verified')
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-purple-600 to-blue-600 text-white py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <Shield className="w-20 h-20 mx-auto mb-6" />
-            <h1 className="text-5xl font-bold mb-6">Verificação KYC</h1>
-            <p className="text-xl mb-8">
-              Desbloqueie todo o potencial da plataforma com nossa verificação segura e rápida
-            </p>
-            <button className="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
-              Iniciar Verificação
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* Why KYC Section */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Por que o KYC é importante?</h2>
-            <p className="text-lg text-gray-600">
-              A verificação KYC (Know Your Customer) garante um ambiente seguro para todos,
-              além de desbloquear benefícios exclusivos para você.
-            </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <div className="text-center">
-              <Lock className="w-12 h-12 text-purple-600 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Segurança</h3>
-              <p className="text-gray-600">Proteja sua conta contra fraudes e acessos não autorizados</p>
-            </div>
-            <div className="text-center">
-              <TrendingUp className="w-12 h-12 text-purple-600 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Maiores Limites</h3>
-              <p className="text-gray-600">Aumente seus limites de transação conforme seu nível</p>
-            </div>
-            <div className="text-center">
-              <Zap className="w-12 h-12 text-purple-600 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Benefícios VIP</h3>
-              <p className="text-gray-600">Acesse taxas especiais e atendimento prioritário</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Verification Levels Section */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Níveis de Verificação</h2>
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {verificationLevels.map((level) => (
-              <div
-                key={level.level}
-                className={`border-2 rounded-lg p-6 hover:shadow-xl transition ${
-                  level.color === 'blue' ? 'border-blue-200 hover:border-blue-400' :
-                  level.color === 'green' ? 'border-green-200 hover:border-green-400' :
-                  'border-purple-200 hover:border-purple-400'
-                }`}
-              >
-                <div className={`mb-4 ${
-                  level.color === 'blue' ? 'text-blue-600' :
-                  level.color === 'green' ? 'text-green-600' :
-                  'text-purple-600'
-                }`}>
-                  {level.icon}
-                </div>
-                <h3 className="text-2xl font-bold mb-2">Nível {level.level}</h3>
-                <h4 className="text-lg font-semibold mb-4">{level.name}</h4>
-                <p className={`text-lg font-semibold mb-4 ${
-                  level.color === 'blue' ? 'text-blue-600' :
-                  level.color === 'green' ? 'text-green-600' :
-                  'text-purple-600'
-                }`}>
-                  {level.limits}
-                </p>
-                
-                <div className="mb-6">
-                  <h5 className="font-semibold mb-2">Documentos necessários:</h5>
-                  <ul className="space-y-1">
-                    {level.documents.map((doc, index) => (
-                      <li key={index} className="flex items-start gap-2 text-sm text-gray-600">
-                        <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span>{doc}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                
-                <div className="mb-6">
-                  <h5 className="font-semibold mb-2">Benefícios:</h5>
-                  <ul className="space-y-1">
-                    {level.benefits.map((benefit, index) => (
-                      <li key={index} className="flex items-start gap-2 text-sm text-gray-600">
-                        <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span>{benefit}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                
-                <Link 
-                  href={`/kyc/verify?level=${level.level}`}
-                  className={`block w-full py-2 rounded-lg font-semibold transition text-center ${
-                    level.color === 'blue' ? 'bg-blue-600 text-white hover:bg-blue-700' :
-                    level.color === 'green' ? 'bg-green-600 text-white hover:bg-green-700' :
-                    'bg-purple-600 text-white hover:bg-purple-700'
-                  }`}
-                >
-                  Verificar Nível {level.level}
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Process Section */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Como funciona o processo?</h2>
-          <div className="max-w-4xl mx-auto">
-            <div className="grid md:grid-cols-4 gap-8">
-              {kycProcess.map((item, index) => (
-                <div key={index} className="text-center">
-                  <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-purple-600">
-                    {item.icon}
-                  </div>
-                  <div className="relative">
-                    {index < kycProcess.length - 1 && (
-                      <div className="hidden md:block absolute top-8 left-1/2 w-full h-0.5 bg-purple-200"></div>
-                    )}
-                    <div className="bg-purple-600 text-white w-8 h-8 rounded-full flex items-center justify-center mx-auto mb-4 font-bold relative z-10">
-                      {item.step}
-                    </div>
-                  </div>
-                  <h3 className="font-semibold mb-2">{item.title}</h3>
-                  <p className="text-sm text-gray-600">{item.description}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Perguntas Frequentes</h2>
-          <div className="max-w-3xl mx-auto">
-            {faqItems.map((item, index) => (
-              <div key={index} className="mb-4">
-                <button
-                  onClick={() => setOpenFAQ(openFAQ === index ? null : index)}
-                  className="w-full bg-gray-50 hover:bg-gray-100 p-4 rounded-lg flex items-center justify-between transition"
-                >
-                  <span className="font-semibold text-left">{item.question}</span>
-                  {openFAQ === index ? (
-                    <ChevronUp className="w-5 h-5 text-gray-500 flex-shrink-0" />
-                  ) : (
-                    <ChevronDown className="w-5 h-5 text-gray-500 flex-shrink-0" />
-                  )}
-                </button>
-                {openFAQ === index && (
-                  <div className="bg-white p-4 rounded-b-lg border-x border-b">
-                    <p className="text-gray-600">{item.answer}</p>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-br from-purple-600 to-blue-600 text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-6">Pronto para começar?</h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Complete sua verificação em minutos e desbloqueie todos os recursos da plataforma
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Verificação KYC</h1>
+          <p className="mt-2 text-gray-600 dark:text-gray-400">
+            Complete sua verificação para aumentar seus limites e desbloquear novos recursos
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link 
-              href="/kyc/verify?level=2"
-              className="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition text-center"
-            >
-              Iniciar Verificação Agora
-            </Link>
-            <a 
-              href="https://wa.me/552120187776?text=Olá! Preciso de ajuda com a verificação KYC."
-              target="_blank"
-              rel="noopener noreferrer"
-              className="border-2 border-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-purple-600 transition text-center"
-            >
-              Falar com Suporte
-            </a>
-          </div>
         </div>
-      </section>
 
-      {/* Notice Section */}
-      <section className="py-8 bg-yellow-50 border-t border-yellow-200">
-        <div className="container mx-auto px-4">
-          <div className="flex items-start gap-4 max-w-4xl mx-auto">
-            <AlertCircle className="w-6 h-6 text-yellow-600 flex-shrink-0 mt-0.5" />
+        {/* Current Level */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
+          <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-semibold text-yellow-800 mb-1">Importante</h3>
-              <p className="text-sm text-yellow-700">
-                A verificação KYC é obrigatória para operar em conformidade com as regulamentações brasileiras.
-                Seus dados são protegidos pela LGPD e utilizados exclusivamente para fins de verificação e segurança.
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Seu Nível Atual</h2>
+              <p className="text-3xl font-bold text-orange-600 mt-2">
+                {kycLevels.find(l => l.level === currentLevel)?.name}
               </p>
             </div>
+            <div className="h-20 w-20 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center">
+              <Shield className="h-10 w-10 text-orange-600" />
+            </div>
           </div>
         </div>
-      </section>
+
+        {/* KYC Levels */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {kycLevels.map((level) => {
+            const isCurrentLevel = level.level === currentLevel
+            const isCompleted = currentLevel === 'complete' || 
+              (currentLevel === 'intermediate' && level.level === 'basic') ||
+              (currentLevel === 'complete' && level.level !== 'complete')
+            
+            return (
+              <div
+                key={level.level}
+                className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm border-2 p-6 ${
+                  isCurrentLevel
+                    ? 'border-orange-500'
+                    : isCompleted
+                    ? 'border-green-500'
+                    : 'border-gray-200 dark:border-gray-700'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    {level.name}
+                  </h3>
+                  {isCompleted && (
+                    <div className="h-8 w-8 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center">
+                      <Check className="h-5 w-5 text-green-600" />
+                    </div>
+                  )}
+                </div>
+                
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  {level.description}
+                </p>
+
+                <div className="space-y-3 mb-4">
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Limites</p>
+                    <p className="text-sm text-gray-900 dark:text-white">
+                      Diário: {level.limits.daily}
+                    </p>
+                    <p className="text-sm text-gray-900 dark:text-white">
+                      Mensal: {level.limits.monthly}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Requisitos</p>
+                  {level.requirements.map((req, index) => (
+                    <div key={index} className="flex items-center text-sm text-gray-700 dark:text-gray-300">
+                      <Check className="h-4 w-4 text-gray-400 mr-2" />
+                      {req}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Verification Steps */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+              Etapas de Verificação
+            </h2>
+          </div>
+          
+          <div className="divide-y divide-gray-200 dark:divide-gray-700">
+            {verificationSteps.map((step) => {
+              const Icon = step.icon
+              const isActive = activeStep === step.id
+              
+              return (
+                <div key={step.id} className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className={`h-12 w-12 rounded-full flex items-center justify-center ${
+                        step.status === 'verified'
+                          ? 'bg-green-100 dark:bg-green-900/20'
+                          : step.status === 'failed'
+                          ? 'bg-red-100 dark:bg-red-900/20'
+                          : 'bg-gray-100 dark:bg-gray-700'
+                      }`}>
+                        {step.status === 'verified' ? (
+                          <Check className="h-6 w-6 text-green-600" />
+                        ) : step.status === 'failed' ? (
+                          <X className="h-6 w-6 text-red-600" />
+                        ) : (
+                          <Icon className="h-6 w-6 text-gray-600 dark:text-gray-400" />
+                        )}
+                      </div>
+                      
+                      <div>
+                        <h3 className="font-medium text-gray-900 dark:text-white">
+                          {step.name}
+                        </h3>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          {step.description}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    {step.status === 'pending' && (
+                      <button
+                        onClick={() => setActiveStep(isActive ? null : step.id)}
+                        className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors flex items-center space-x-2"
+                      >
+                        <span>Verificar</span>
+                        <ChevronRight className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                  
+                  {isActive && (
+                    <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                      {step.id === 'cpf' && (
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                              CPF
+                            </label>
+                            <input
+                              type="text"
+                              placeholder="000.000.000-00"
+                              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 dark:bg-gray-800 dark:text-white"
+                            />
+                          </div>
+                          <button
+                            onClick={() => handleVerification(step.id)}
+                            disabled={loading}
+                            className="w-full px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors disabled:opacity-50 flex items-center justify-center"
+                          >
+                            {loading ? (
+                              <Loader2 className="h-5 w-5 animate-spin" />
+                            ) : (
+                              'Validar CPF'
+                            )}
+                          </button>
+                        </div>
+                      )}
+                      
+                      {step.id === 'phone' && (
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                              Telefone
+                            </label>
+                            <input
+                              type="tel"
+                              placeholder="(00) 00000-0000"
+                              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 dark:bg-gray-800 dark:text-white"
+                            />
+                          </div>
+                          <button
+                            onClick={() => handleVerification(step.id)}
+                            disabled={loading}
+                            className="w-full px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors disabled:opacity-50 flex items-center justify-center"
+                          >
+                            {loading ? (
+                              <Loader2 className="h-5 w-5 animate-spin" />
+                            ) : (
+                              'Enviar SMS'
+                            )}
+                          </button>
+                        </div>
+                      )}
+                      
+                      {(step.id === 'document' || step.id === 'address' || step.id === 'selfie') && (
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                              Fazer upload do documento
+                            </label>
+                            <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg">
+                              <div className="space-y-1 text-center">
+                                <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                                <div className="flex text-sm text-gray-600 dark:text-gray-400">
+                                  <label htmlFor={`file-upload-${step.id}`} className="relative cursor-pointer rounded-md font-medium text-orange-600 hover:text-orange-500">
+                                    <span>Enviar arquivo</span>
+                                    <input
+                                      id={`file-upload-${step.id}`}
+                                      name={`file-upload-${step.id}`}
+                                      type="file"
+                                      className="sr-only"
+                                      onChange={handleFileUpload}
+                                      accept="image/*,.pdf"
+                                    />
+                                  </label>
+                                  <p className="pl-1">ou arraste e solte</p>
+                                </div>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">
+                                  PNG, JPG, PDF até 10MB
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {selectedFile && (
+                            <div className="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                              <span className="text-sm text-gray-700 dark:text-gray-300">
+                                {selectedFile.name}
+                              </span>
+                              <button
+                                onClick={() => setSelectedFile(null)}
+                                className="text-red-600 hover:text-red-700"
+                              >
+                                <X className="h-4 w-4" />
+                              </button>
+                            </div>
+                          )}
+                          
+                          <button
+                            onClick={() => handleVerification(step.id)}
+                            disabled={loading || !selectedFile}
+                            className="w-full px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors disabled:opacity-50 flex items-center justify-center"
+                          >
+                            {loading ? (
+                              <Loader2 className="h-5 w-5 animate-spin" />
+                            ) : (
+                              'Enviar Documento'
+                            )}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* Info Alert */}
+        <div className="mt-8 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+          <div className="flex">
+            <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5" />
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300">
+                Informações importantes
+              </h3>
+              <div className="mt-2 text-sm text-blue-700 dark:text-blue-400">
+                <ul className="list-disc list-inside space-y-1">
+                  <li>Seus documentos são protegidos com criptografia de ponta a ponta</li>
+                  <li>A verificação pode levar até 24 horas úteis</li>
+                  <li>Você será notificado por email sobre o status da verificação</li>
+                  <li>Em caso de dúvidas, entre em contato com nosso suporte</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

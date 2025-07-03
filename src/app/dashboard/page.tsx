@@ -22,7 +22,8 @@ import {
   Bell,
   Settings,
   ChevronRight,
-  Loader2
+  Loader2,
+  Key
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import TransactionDetailModal from '@/components/TransactionDetailModal'
@@ -330,7 +331,7 @@ export default function DashboardPage() {
             {/* Quick Actions */}
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Ações Rápidas</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <Link
                   href="/cotacao-p2p"
                   className="flex items-center justify-between p-4 border border-gray-200 dark:border-slate-700 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
@@ -374,6 +375,22 @@ export default function DashboardPage() {
                     <div>
                       <p className="font-medium text-gray-900 dark:text-white">Verificar Conta</p>
                       <p className="text-sm text-gray-500 dark:text-gray-400">Aumente seus limites</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-5 w-5 text-gray-400" />
+                </Link>
+
+                <Link
+                  href="/dashboard/pix-settings"
+                  className="flex items-center justify-between p-4 border border-gray-200 dark:border-slate-700 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className="h-10 w-10 bg-orange-100 dark:bg-orange-900/20 rounded-lg flex items-center justify-center">
+                      <Key className="h-5 w-5 text-orange-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900 dark:text-white">Chaves PIX</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">Gerencie suas chaves</p>
                     </div>
                   </div>
                   <ChevronRight className="h-5 w-5 text-gray-400" />
@@ -493,9 +510,12 @@ export default function DashboardPage() {
                       Adicione uma camada extra de segurança
                     </p>
                   </div>
-                  <button className="px-4 py-2 text-sm font-medium text-orange-600 border border-orange-600 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-900/20">
-                    Ativar
-                  </button>
+                  <Link 
+                    href="/dashboard/security" 
+                    className="px-4 py-2 text-sm font-medium text-orange-600 border border-orange-600 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-900/20"
+                  >
+                    Configurar
+                  </Link>
                 </div>
                 
                 <div className="flex items-center justify-between">

@@ -3,10 +3,12 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Bitcoin, Mail, Lock, Eye, EyeOff, Loader2, AlertCircle, User, Phone } from 'lucide-react'
+import { Bitcoin, Mail, Lock, Eye, EyeOff, Loader2, AlertCircle, User, Phone, CreditCard } from 'lucide-react'
+import { useNotification } from '@/contexts/NotificationContext'
 
 export default function SignUpPage() {
   const router = useRouter()
+  const { addNotification } = useNotification()
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
@@ -16,13 +18,63 @@ export default function SignUpPage() {
     name: '',
     email: '',
     phone: '',
+    cpf: '',
     password: '',
     confirmPassword: ''
   })
 
+  // Função para validar CPF
+  const validateCPF = (cpf: string) => {
+    // Remove caracteres não numéricos
+    cpf = cpf.replace(/[^\d]/g, '')
+    
+    // Verifica se tem 11 dígitos
+    if (cpf.length !== 11) return false
+    
+    // Verifica se todos os dígitos são iguais
+    if (/^(\d)\1+$/.test(cpf)) return false
+    
+    // Validação do primeiro dígito verificador
+    let sum = 0
+    for (let i = 0; i < 9; i++) {
+      sum += parseInt(cpf.charAt(i)) * (10 - i)
+    }
+    let remainder = 11 - (sum % 11)
+    if (remainder === 10 || remainder === 11) remainder = 0
+    if (remainder !== parseInt(cpf.charAt(9))) return false
+    
+    // Validação do segundo dígito verificador
+    sum = 0
+    for (let i = 0; i < 10; i++) {
+      sum += parseInt(cpf.charAt(i)) * (11 - i)
+    }
+    remainder = 11 - (sum % 11)
+    if (remainder === 10 || remainder === 11) remainder = 0
+    if (remainder !== parseInt(cpf.charAt(10))) return false
+    
+    return true
+  }
+
+  // Função para formatar CPF
+  const formatCPF = (value: string) => {
+    const numbers = value.replace(/[^\d]/g, '')
+    if (numbers.length <= 11) {
+      return numbers
+        .replace(/(\d{3})(\d)/, '$1.$2')
+        .replace(/(\d{3})(\d)/, '$1.$2')
+        .replace(/(\d{3})(\d{1,2})/, '$1-$2')
+    }
+    return value.slice(0, 14)
+  }
+
   const validateForm = () => {
-    if (!formData.name || !formData.email || !formData.password) {
+    if (!formData.name || !formData.email || !formData.password || !formData.cpf || !formData.phone) {
       setError('Preencha todos os campos obrigatórios')
+      return false
+    }
+
+    if (!validateCPF(formData.cpf)) {
+      setError('CPF inválido')
       return false
     }
 
@@ -60,6 +112,7 @@ export default function SignUpPage() {
           name: formData.name,
           email: formData.email,
           phone: formData.phone,
+          cpf: formData.cpf.replace(/[^\d]/g, ''), // Remove formatação do CPF
           password: formData.password
         })
       })
@@ -69,6 +122,14 @@ export default function SignUpPage() {
       if (!response.ok) {
         throw new Error(data.error || 'Erro ao criar conta')
       }
+
+      // Mostrar notificação de sucesso
+      addNotification({
+        type: 'success',
+        title: 'Conta criada com sucesso!',
+        message: 'Verifique seu email para ativar sua conta',
+        duration: 5000
+      })
 
       // Redirecionar para página de verificação
       router.push('/verify-email?email=' + encodeURIComponent(formData.email))
@@ -165,7 +226,7 @@ export default function SignUpPage() {
             {/* Telefone */}
             <div>
               <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Telefone (opcional)
+                Telefone *
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -176,10 +237,35 @@ export default function SignUpPage() {
                   name="phone"
                   type="tel"
                   autoComplete="tel"
+                  required
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   className="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                   placeholder="(11) 98765-4321"
+                />
+              </div>
+            </div>
+
+            {/* CPF */}
+            <div>
+              <label htmlFor="cpf" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                CPF *
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <CreditCard className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  id="cpf"
+                  name="cpf"
+                  type="text"
+                  autoComplete="off"
+                  required
+                  value={formData.cpf}
+                  onChange={(e) => setFormData({ ...formData, cpf: formatCPF(e.target.value) })}
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  placeholder="123.456.789-00"
+                  maxLength={14}
                 />
               </div>
             </div>
@@ -256,11 +342,11 @@ export default function SignUpPage() {
               />
               <label htmlFor="accept-terms" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
                 Li e aceito os{' '}
-                <Link href="/termos" className="text-orange-600 hover:text-orange-500">
+                <Link href="/termos-de-uso" className="text-orange-600 hover:text-orange-500">
                   Termos de Uso
                 </Link>{' '}
                 e a{' '}
-                <Link href="/privacidade" className="text-orange-600 hover:text-orange-500">
+                <Link href="/politica-de-privacidade" className="text-orange-600 hover:text-orange-500">
                   Política de Privacidade
                 </Link>
               </label>

@@ -36,6 +36,20 @@ export default function LoginPage() {
         throw new Error(data.error || 'Erro ao fazer login')
       }
 
+      // Check if 2FA is required
+      if (data.requiresTwoFactor) {
+        addNotification({
+          type: 'info',
+          title: 'Verificação 2FA necessária',
+          message: 'Por favor, insira seu código de autenticação',
+          duration: 3000
+        })
+        
+        // Redirect to 2FA verification page
+        router.push(`/auth/2fa/verify?userId=${data.userId}`)
+        return
+      }
+
       // Mostrar notificação de sucesso
       addNotification({
         type: 'success',
@@ -48,6 +62,33 @@ export default function LoginPage() {
       router.push('/dashboard')
     } catch (err: any) {
       setError(err.message || 'Erro ao fazer login')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleGoogleLogin = async () => {
+    setError('')
+    setIsLoading(true)
+
+    try {
+      const response = await fetch('/api/auth/signin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ provider: 'google' })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erro ao fazer login com Google')
+      }
+
+      if (data.url) {
+        window.location.href = data.url
+      }
+    } catch (err: any) {
+      setError(err.message || 'Erro ao fazer login com Google')
     } finally {
       setIsLoading(false)
     }
@@ -198,7 +239,9 @@ export default function LoginPage() {
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
-                className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 dark:border-slate-600 rounded-lg shadow-sm bg-white dark:bg-slate-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-600 transition-colors"
+                onClick={handleGoogleLogin}
+                disabled={isLoading}
+                className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 dark:border-slate-600 rounded-lg shadow-sm bg-white dark:bg-slate-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>

@@ -8,6 +8,12 @@
   "env": {
     "NODE_ENV": "production"
   },
+  "crons": [
+    {
+      "path": "/api/cron/update-prices",
+      "schedule": "*/5 * * * *"
+    }
+  ],
   "headers": [
     {
       "source": "/api/(.*)",
