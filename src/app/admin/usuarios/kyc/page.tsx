@@ -14,7 +14,8 @@ import {
   Camera,
   MapPin,
   Phone,
-  CreditCard
+  CreditCard,
+  X
 } from 'lucide-react'
 
 interface KYCVerification {

@@ -14,7 +14,7 @@ interface NotificationSettings {
 }
 
 export default function NotificationManager() {
-  const { addNotification } = useNotification()
+  const { addToastNotification } = useNotification()
   const [permission, setPermission] = useState<NotificationPermission>('default')
   const [settings, setSettings] = useState<NotificationSettings>({
     enabled: false,
@@ -45,7 +45,7 @@ export default function NotificationManager() {
 
   const requestPermission = async () => {
     if (!('Notification' in window)) {
-      addNotification({
+      addToastNotification({
         type: 'error',
         title: 'Notificações não suportadas',
         message: 'Seu navegador não suporta notificações.'
@@ -59,7 +59,7 @@ export default function NotificationManager() {
       
       if (permission === 'granted') {
         setSettings(prev => ({ ...prev, enabled: true }))
-        addNotification({
+        addToastNotification({
           type: 'success',
           title: 'Notificações ativadas',
           message: 'Você receberá notificações importantes sobre suas transações.'
@@ -72,7 +72,7 @@ export default function NotificationManager() {
           '/icon-192x192.png'
         )
       } else {
-        addNotification({
+        addToastNotification({
           type: 'warning',
           title: 'Permissão negada',
           message: 'Você pode ativar as notificações nas configurações do navegador.'
@@ -127,7 +127,7 @@ export default function NotificationManager() {
     const message = messages[type as keyof typeof messages]
     if (message && settings[type]) {
       sendBrowserNotification(message.title, message.body)
-      addNotification({
+      addToastNotification({
         type: 'info',
         title: message.title,
         message: message.body

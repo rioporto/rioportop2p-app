@@ -8,7 +8,7 @@ import { useNotification } from '@/contexts/NotificationContext'
 
 export default function LoginPage() {
   const router = useRouter()
-  const { addNotification } = useNotification()
+  const { addToastNotification } = useNotification()
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
@@ -38,7 +38,7 @@ export default function LoginPage() {
 
       // Check if 2FA is required
       if (data.requiresTwoFactor) {
-        addNotification({
+        addToastNotification({
           type: 'info',
           title: 'Verificação 2FA necessária',
           message: 'Por favor, insira seu código de autenticação',
@@ -51,7 +51,7 @@ export default function LoginPage() {
       }
 
       // Mostrar notificação de sucesso
-      addNotification({
+      addToastNotification({
         type: 'success',
         title: 'Login realizado!',
         message: 'Bem-vindo de volta à Rio Porto P2P',

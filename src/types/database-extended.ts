@@ -1,5 +1,5 @@
 // Extended database types including blog, courses, KYC, and admin tables
-import { Database as BaseDatabase } from './database'
+import { Database as BaseDatabase, Json } from './database'
 
 export interface ExtendedDatabase extends BaseDatabase {
   public: BaseDatabase['public'] & {

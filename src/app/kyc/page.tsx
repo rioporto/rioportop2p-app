@@ -212,8 +212,7 @@ export default function KYCPage() {
           {kycLevels.map((level) => {
             const isCurrentLevel = level.level === currentLevel
             const isCompleted = currentLevel === 'complete' || 
-              (currentLevel === 'intermediate' && level.level === 'basic') ||
-              (currentLevel === 'complete' && level.level !== 'complete')
+              (currentLevel === 'intermediate' && level.level === 'basic')
             
             return (
               <div

@@ -9,7 +9,7 @@ interface TwoFactorSetupProps {
 }
 
 export default function TwoFactorSetup({ onComplete }: TwoFactorSetupProps) {
-  const { addNotification } = useNotification()
+  const { addToastNotification } = useNotification()
   const [step, setStep] = useState<'initial' | 'qrcode' | 'verify' | 'backup'>('initial')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
@@ -75,7 +75,7 @@ export default function TwoFactorSetup({ onComplete }: TwoFactorSetupProps) {
         setBackupCodes(backupData.backupCodes)
         setStep('backup')
       } else {
-        addNotification({
+        addToastNotification({
           type: 'success',
           title: '2FA Ativado!',
           message: 'Autenticação de dois fatores foi ativada com sucesso',
@@ -94,7 +94,7 @@ export default function TwoFactorSetup({ onComplete }: TwoFactorSetupProps) {
     navigator.clipboard.writeText(secret)
     setCopiedSecret(true)
     setTimeout(() => setCopiedSecret(false), 2000)
-    addNotification({
+    addToastNotification({
       type: 'success',
       title: 'Copiado!',
       message: 'Chave secreta copiada para a área de transferência',
@@ -315,7 +315,7 @@ Data de geração: ${new Date().toLocaleString('pt-BR')}
             </button>
             <button
               onClick={() => {
-                addNotification({
+                addToastNotification({
                   type: 'success',
                   title: '2FA Ativado!',
                   message: 'Autenticação de dois fatores foi ativada com sucesso',

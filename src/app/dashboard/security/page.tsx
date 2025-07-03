@@ -6,7 +6,7 @@ import { useNotification } from '@/contexts/NotificationContext'
 import TwoFactorSetup from '@/components/auth/TwoFactorSetup'
 
 export default function SecuritySettingsPage() {
-  const { addNotification } = useNotification()
+  const { addToastNotification } = useNotification()
   const [isLoading, setIsLoading] = useState(true)
   const [twoFactorStatus, setTwoFactorStatus] = useState({
     enabled: false,
@@ -65,7 +65,7 @@ export default function SecuritySettingsPage() {
         throw new Error(data.error || 'Erro ao desativar 2FA')
       }
 
-      addNotification({
+      addToastNotification({
         type: 'success',
         title: '2FA Desativado',
         message: 'Autenticação de dois fatores foi desativada',
@@ -120,7 +120,7 @@ Data de geração: ${new Date().toLocaleString('pt-BR')}
       document.body.removeChild(a)
       URL.revokeObjectURL(url)
 
-      addNotification({
+      addToastNotification({
         type: 'success',
         title: 'Novos códigos gerados!',
         message: 'Seus códigos de backup foram regenerados e baixados',
@@ -129,7 +129,7 @@ Data de geração: ${new Date().toLocaleString('pt-BR')}
 
       await fetchTwoFactorStatus()
     } catch (err: any) {
-      addNotification({
+      addToastNotification({
         type: 'error',
         title: 'Erro',
         message: err.message || 'Erro ao gerar códigos de backup',

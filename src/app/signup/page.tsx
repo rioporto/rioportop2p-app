@@ -8,7 +8,7 @@ import { useNotification } from '@/contexts/NotificationContext'
 
 export default function SignUpPage() {
   const router = useRouter()
-  const { addNotification } = useNotification()
+  const { addToastNotification } = useNotification()
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
@@ -124,7 +124,7 @@ export default function SignUpPage() {
       }
 
       // Mostrar notificação de sucesso
-      addNotification({
+      addToastNotification({
         type: 'success',
         title: 'Conta criada com sucesso!',
         message: 'Verifique seu email para ativar sua conta',

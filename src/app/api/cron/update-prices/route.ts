@@ -8,7 +8,7 @@ import { updateAllCryptoPrices } from '@/lib/crypto-price-service'
 export async function GET(request: Request) {
   try {
     // Verify the request is authorized (implement your own security)
-    const headersList = headers()
+    const headersList = await headers()
     const authHeader = headersList.get('authorization')
     
     // For Vercel Cron Jobs

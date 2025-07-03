@@ -330,7 +330,7 @@ async function getPriceHistoryFromDatabase(
 
     if (error || !data) return []
 
-    return data.map(row => ({
+    return data.map((row: any) => ({
       timestamp: row.created_at,
       price: row.price_brl,
       volume: row.volume_24h

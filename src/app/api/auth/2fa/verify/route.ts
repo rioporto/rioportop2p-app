@@ -1,15 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import speakeasy from 'speakeasy'
-import { Database } from '@/lib/database.types'
+import { supabase, getUser } from '@/lib/supabase'
 
 export async function POST(request: NextRequest) {
   try {
     const cookieStore = await cookies()
-    const supabase = createRouteHandlerClient<Database>({ 
-      cookies: () => cookieStore 
-    })
 
     const body = await request.json()
     const { token, action = 'verify' } = body
@@ -22,7 +18,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get current user
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    const { user, error: userError } = await getUser()
     if (userError || !user) {
       return NextResponse.json(
         { error: 'Unauthorized' },

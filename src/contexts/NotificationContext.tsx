@@ -232,7 +232,7 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
           table: 'notifications',
           filter: `user_id=eq.${userId}`
         },
-        (payload) => {
+        (payload: any) => {
           const newNotification = payload.new as DatabaseNotification
           setNotifications(prev => [newNotification, ...prev])
           setUnreadCount(prev => prev + 1)
@@ -254,7 +254,7 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
           table: 'notifications',
           filter: `user_id=eq.${userId}`
         },
-        (payload) => {
+        (payload: any) => {
           const updatedNotification = payload.new as DatabaseNotification
           setNotifications(prev => 
             prev.map(n => n.id === updatedNotification.id ? updatedNotification : n)
@@ -274,7 +274,7 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
           table: 'notifications',
           filter: `user_id=eq.${userId}`
         },
-        (payload) => {
+        (payload: any) => {
           const deletedNotification = payload.old as DatabaseNotification
           setNotifications(prev => prev.filter(n => n.id !== deletedNotification.id))
           if (!deletedNotification.read) {

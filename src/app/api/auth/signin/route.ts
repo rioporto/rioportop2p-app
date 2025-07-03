@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { signIn, supabase } from '@/lib/supabase'
 import { cookies } from 'next/headers'
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { Database } from '@/lib/database.types'
 
 export async function POST(request: NextRequest) {
   if (!supabase) {
@@ -54,17 +52,14 @@ export async function POST(request: NextRequest) {
 
     // Check if user has 2FA enabled
     const cookieStore = await cookies()
-    const supabaseClient = createRouteHandlerClient<Database>({ 
-      cookies: () => cookieStore 
-    })
 
-    const { data: userData } = await supabaseClient
+    const { data: userData } = await supabase
       .from('users')
       .select('two_factor_enabled')
       .eq('id', data.user.id)
       .single()
 
-    const { data: twoFactorAuth } = await supabaseClient
+    const { data: twoFactorAuth } = await supabase
       .from('two_factor_auth')
       .select('enabled, verified')
       .eq('user_id', data.user.id)

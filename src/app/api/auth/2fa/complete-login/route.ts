@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import speakeasy from 'speakeasy'
-import { Database } from '@/lib/database.types'
+import { supabase } from '@/lib/supabase'
 
 export async function POST(request: NextRequest) {
   try {
@@ -34,9 +33,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const supabase = createRouteHandlerClient<Database>({ 
-      cookies: () => cookieStore 
-    })
+    // Use the shared supabase client
 
     // Get user's 2FA settings
     const { data: twoFactorAuth, error: fetchError } = await supabase

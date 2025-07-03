@@ -5,7 +5,7 @@ import NotificationManager from '@/components/NotificationManager'
 import { useNotification } from '@/contexts/NotificationContext'
 
 export default function NotificationsPage() {
-  const { addNotification } = useNotification()
+  const { addToastNotification } = useNotification()
 
   const testNotifications = [
     {
@@ -35,7 +35,7 @@ export default function NotificationsPage() {
   ]
 
   const sendTestNotification = (notification: typeof testNotifications[0]) => {
-    addNotification({
+    addToastNotification({
       type: notification.type,
       title: notification.title,
       message: notification.message,
@@ -44,7 +44,7 @@ export default function NotificationsPage() {
   }
 
   const sendNotificationWithAction = () => {
-    addNotification({
+    addToastNotification({
       type: 'info',
       title: 'Documento Pendente',
       message: 'Você tem um documento aguardando verificação.',
@@ -67,7 +67,7 @@ export default function NotificationsPage() {
   }
 
   const sendPersistentNotification = () => {
-    addNotification({
+    addToastNotification({
       type: 'warning',
       title: 'Manutenção Programada',
       message: 'O sistema estará em manutenção hoje às 22h por 2 horas.',

@@ -127,7 +127,7 @@ export default function AdminSidebar() {
                         <ChevronRight className="w-4 h-4" />
                       )}
                     </button>
-                    {isExpanded && (
+                    {isExpanded && item.submenu && (
                       <div className="mt-1 ml-4 space-y-1">
                         {item.submenu.map((subitem) => (
                           <Link

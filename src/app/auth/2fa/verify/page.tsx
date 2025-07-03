@@ -8,7 +8,7 @@ import { useNotification } from '@/contexts/NotificationContext'
 function TwoFactorVerifyContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { addNotification } = useNotification()
+  const { addToastNotification } = useNotification()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [token, setToken] = useState('')
@@ -38,7 +38,7 @@ function TwoFactorVerifyContent() {
         throw new Error(data.error || 'Erro ao verificar código')
       }
 
-      addNotification({
+      addToastNotification({
         type: 'success',
         title: 'Login realizado!',
         message: 'Autenticação de dois fatores verificada com sucesso',
@@ -122,7 +122,7 @@ function TwoFactorVerifyContent() {
                 type="button"
                 className="text-sm font-medium text-orange-600 hover:text-orange-500"
                 onClick={() => {
-                  addNotification({
+                  addToastNotification({
                     type: 'info',
                     title: 'Use um código de backup',
                     message: 'Se você salvou seus códigos de backup, pode usar um deles no lugar do código do aplicativo',

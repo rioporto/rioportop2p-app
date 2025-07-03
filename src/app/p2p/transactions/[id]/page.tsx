@@ -131,9 +131,9 @@ export default function P2PTransactionDetailPage() {
           payment_confirmed_at: new Date().toISOString(),
           pix_end_to_end_id: endToEndId,
           metadata: {
-            ...transaction?.metadata,
+            ...(typeof transaction?.metadata === 'object' && transaction?.metadata !== null ? transaction.metadata : {}),
             payment_confirmation_method: 'manual'
-          }
+          } as any
         })
         .eq('id', transaction?.id)
 
@@ -436,9 +436,20 @@ export default function P2PTransactionDetailPage() {
 
             {transaction.status === 'processing' && isSeller && (
               <CryptoReleasePanel
-                transaction={transaction}
+                transaction={{
+                  id: transaction.id,
+                  crypto_amount: transaction.crypto_amount,
+                  fiat_amount: transaction.fiat_amount,
+                  payment_proof_url: transaction.payment_proof_url ?? undefined,
+                  buyer: {
+                    full_name: transaction.buyer.full_name || 'Cliente'
+                  },
+                  crypto: {
+                    symbol: transaction.crypto.symbol,
+                    name: transaction.crypto.name
+                  }
+                }}
                 onRelease={handleReleaseCrypto}
-                onDispute={() => setShowDispute(true)}
               />
             )}
 
@@ -599,13 +610,12 @@ export default function P2PTransactionDetailPage() {
 
       {/* Chat Modal */}
       {showChat && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-slate-800 rounded-xl w-full max-w-2xl h-[600px] flex flex-col">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" onClick={() => setShowChat(false)}>
+          <div className="bg-white dark:bg-slate-800 rounded-xl w-full max-w-2xl h-[600px] flex flex-col" onClick={(e) => e.stopPropagation()}>
             <TransactionChat
               transactionId={transaction.id}
               currentUserId={currentUser.id}
-              otherUser={counterparty}
-              onClose={() => setShowChat(false)}
+              otherPartyName={counterparty.full_name || counterparty.email}
             />
           </div>
         </div>
@@ -614,30 +624,11 @@ export default function P2PTransactionDetailPage() {
       {/* Dispute Modal */}
       {showDispute && (
         <DisputeModal
+          isOpen={showDispute}
           transactionId={transaction.id}
           onClose={() => setShowDispute(false)}
-          onSubmit={async (reason, description) => {
-            try {
-              const { error } = await supabase
-                .from('disputes')
-                .insert({
-                  transaction_id: transaction.id,
-                  reporter_id: currentUser.id,
-                  reason,
-                  description
-                })
-
-              if (!error) {
-                await supabase
-                  .from('transactions')
-                  .update({ status: 'disputed' })
-                  .eq('id', transaction.id)
-
-                await loadTransaction()
-              }
-            } catch (error) {
-              console.error('Error creating dispute:', error)
-            }
+          onDisputeCreated={async () => {
+            await loadTransaction()
           }}
         />
       )}

@@ -5,9 +5,10 @@ import { getUser } from '@/lib/supabase'
 // PATCH /api/notifications/[id] - Mark notification as read/unread
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const { user, error: authError } = await getUser()
     
     if (authError || !user) {
@@ -34,7 +35,7 @@ export async function PATCH(
         read,
         read_at: read ? new Date().toISOString() : null
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id)
       .select()
       .single()
@@ -63,9 +64,10 @@ export async function PATCH(
 // DELETE /api/notifications/[id] - Delete a notification
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const { user, error: authError } = await getUser()
     
     if (authError || !user) {
@@ -79,7 +81,7 @@ export async function DELETE(
     const { error } = await supabase
       .from('notifications')
       .delete()
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id)
 
     if (error) {

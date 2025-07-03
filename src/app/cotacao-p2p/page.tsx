@@ -64,7 +64,7 @@ interface CryptoListItem {
 
 export default function CotacaoDinamica() {
   const { sendMessage, numbers, templates } = useWhatsApp()
-  const { addNotification } = useNotification()
+  const { addToastNotification } = useNotification()
   
   // Estados
   const [loading, setLoading] = useState(false)
@@ -298,7 +298,7 @@ export default function CotacaoDinamica() {
     sendMessage(numbers.main, message)
     
     // Mostrar notificação de sucesso
-    addNotification({
+    addToastNotification({
       type: 'success',
       title: 'Cotação enviada!',
       message: `Sua ${operationType === 'buy' ? 'compra' : 'venda'} de ${values.crypto.toFixed(8)} ${selectedCrypto} foi enviada para análise.`,

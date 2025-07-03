@@ -392,7 +392,7 @@ export default function PixKeyManager() {
                 </label>
                 <input
                   type="text"
-                  value={formData.bank_name}
+                  value={formData.bank_name || ''}
                   onChange={(e) => setFormData({ ...formData, bank_name: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white"
                   placeholder="Ex: Banco do Brasil"
