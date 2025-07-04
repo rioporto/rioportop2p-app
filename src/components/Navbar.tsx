@@ -85,8 +85,8 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* Desktop Navigation - Hidden on mobile */}
-          <div className="hidden md:flex items-center space-x-1">
+          {/* Desktop Navigation - Hidden on mobile and tablet */}
+          <div className="hidden lg:flex items-center space-x-1">
             {menuItems.map((item) => (
               <Link
                 key={item.name}
@@ -98,8 +98,8 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Desktop Actions - Hidden on mobile */}
-          <div className="hidden md:flex items-center space-x-3">
+          {/* Desktop Actions - Hidden on mobile and tablet */}
+          <div className="hidden lg:flex items-center space-x-3">
             {/* Toggle Dark/Light Mode */}
             <button
               onClick={toggleTheme}
@@ -122,8 +122,8 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* Mobile Actions */}
-          <div className="flex items-center gap-2 md:hidden">
+          {/* Mobile Actions - Show only on mobile and tablet */}
+          <div className="flex items-center gap-2 lg:hidden">
             {/* Mobile Theme Toggle */}
             <button
               onClick={toggleTheme}
@@ -152,9 +152,9 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu - Show only on mobile and tablet */}
         {isMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 dark:border-slate-800">
+          <div className="lg:hidden border-t border-gray-200 dark:border-slate-800">
             <div className="px-2 py-3 space-y-1">
               {menuItems.map((item) => (
                 <Link
