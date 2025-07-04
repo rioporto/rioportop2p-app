@@ -97,12 +97,12 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Navigation - Hidden on smaller screens */}
-          <div className="hidden 2xl:flex items-center space-x-1">
+          <div className="hidden lg:flex items-center space-x-1">
             {menuItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-gray-100 dark:hover:bg-slate-800/50 transition-all duration-200"
+                className="px-2 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-gray-100 dark:hover:bg-slate-800/50 transition-all duration-200"
               >
                 {item.name}
               </Link>
@@ -110,7 +110,7 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Actions - Hidden on smaller screens */}
-          <div className="hidden 2xl:flex items-center space-x-3">
+          <div className="hidden lg:flex items-center space-x-3">
             {/* Toggle Dark/Light Mode */}
             <button
               onClick={toggleTheme}
@@ -134,7 +134,7 @@ const Navbar = () => {
           </div>
 
           {/* Mobile Actions - Show only on smaller screens */}
-          <div className="flex items-center gap-2 2xl:hidden">
+          <div className="flex items-center gap-2 lg:hidden">
             {/* Mobile Theme Toggle */}
             <button
               onClick={toggleTheme}
@@ -165,7 +165,7 @@ const Navbar = () => {
 
         {/* Mobile Menu - Show only on smaller screens */}
         {isMenuOpen && (
-          <div className="2xl:hidden border-t border-gray-200 dark:border-slate-800">
+          <div className="lg:hidden border-t border-gray-200 dark:border-slate-800">
             <div className="px-2 py-3 space-y-1">
               {menuItems.map((item) => (
                 <Link

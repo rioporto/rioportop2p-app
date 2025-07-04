@@ -8,6 +8,9 @@ This guide will walk you through setting up the Rio Porto P2P platform for devel
 - **npm or yarn** - Package manager
 - **Git** - Version control
 - **Supabase account** - [Sign up here](https://supabase.com/)
+- **Stack Auth account** - [Sign up here](https://stack-auth.com/)
+- **Resend account** - [Sign up here](https://resend.com/) for email
+- **Google Cloud account** - For Maps API and Analytics
 - **Vercel account** - [Sign up here](https://vercel.com/) (optional for deployment)
 
 ## 1. Project Setup
@@ -40,6 +43,19 @@ cp .env.example .env.local
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+
+# Stack Auth Configuration (Required)
+STACK_AUTH_SECRET_SERVER_KEY=your_stack_auth_server_key
+NEXT_PUBLIC_STACK_PROJECT_ID=your_stack_project_id
+NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY=your_stack_client_key
+NEXT_PUBLIC_STACK_URL=https://api.stack-auth.com
+
+# Email Configuration (Required)
+RESEND_API_KEY=your_resend_api_key
+
+# Google Services (Required)
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_key
+NEXT_PUBLIC_GA_MEASUREMENT_ID=your_google_analytics_id
 ```
 
 #### Optional Variables
@@ -49,7 +65,7 @@ VERCEL_TOKEN=your_vercel_token
 VERCEL_PROJECT_ID=your_vercel_project_id
 VERCEL_TEAM_ID=your_vercel_team_id
 
-# PIX Payment Providers
+# PIX Payment Providers (Pending Setup)
 MERCADOPAGO_ACCESS_TOKEN=your_mercadopago_token
 PAGSEGURO_TOKEN=your_pagseguro_token
 GERENCIANET_CLIENT_ID=your_gerencianet_client_id
@@ -75,13 +91,33 @@ CRYPTOCOMPARE_API_KEY=your_cryptocompare_key
    - **anon public key** → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - **service_role secret key** → `SUPABASE_SERVICE_ROLE_KEY`
 
-### Configure Google OAuth (Optional)
-1. Go to Authentication > Settings
-2. Enable Google provider
-3. Configure OAuth settings:
-   - **Client ID**: Your Google OAuth client ID
-   - **Client Secret**: Your Google OAuth client secret
-   - **Redirect URL**: `https://your-domain.com/api/auth/callback`
+### Configure Stack Auth
+1. Create a Stack Auth project at [stack-auth.com](https://stack-auth.com)
+2. Get your project credentials:
+   - Project ID
+   - Publishable Client Key
+   - Secret Server Key
+3. Configure OAuth providers in Stack Auth dashboard:
+   - Enable Google OAuth
+   - Set redirect URLs
+
+### Configure Google Services
+1. **Google Maps API**:
+   - Go to [Google Cloud Console](https://console.cloud.google.com)
+   - Create a new project or select existing
+   - Enable Maps JavaScript API
+   - Create API key and restrict it
+
+2. **Google Analytics**:
+   - Go to [Google Analytics](https://analytics.google.com)
+   - Create a new property
+   - Get your Measurement ID (G-XXXXXXXXXX)
+
+### Configure Email (Resend)
+1. Sign up at [resend.com](https://resend.com)
+2. Verify your domain
+3. Get your API key
+4. Configure email templates
 
 ## 4. Database Setup
 
@@ -106,9 +142,9 @@ supabase db push
 ```
 
 This will create all necessary tables:
-- `users_profile` - User profiles
+- `users_profile` - User profiles with Stack Auth integration
 - `transactions` - Transaction records
-- `crypto_prices` - Price history
+- `crypto_prices` - Real-time price data
 - `notifications` - Real-time notifications
 - `two_factor_auth` - 2FA settings
 - `backup_codes` - 2FA backup codes
@@ -117,6 +153,11 @@ This will create all necessary tables:
 - `blog_posts` - Blog content
 - `courses` - Course content
 - `kyc_applications` - KYC applications
+- `contact_messages` - Contact form submissions
+- `faqs` - FAQ content
+- `enrollments` - Course enrollments
+
+**Note**: All database migrations have been successfully executed as of 2025-07-04.
 
 ### Configure Storage Buckets
 ```bash
@@ -158,13 +199,15 @@ npm run db:types     # Generate TypeScript types
 
 ### Check Database Connection
 1. Visit `http://localhost:3000`
-2. Try to sign up with a new account
-3. Check if user appears in Supabase Auth dashboard
+2. Check system status at `/api/system-check`
+3. Verify Supabase connection in logs
 
-### Test Authentication
+### Test Authentication (Stack Auth)
 1. Sign up with email/password
-2. Try Google OAuth login
-3. Test logout functionality
+2. Check email verification
+3. Try Google OAuth login
+4. Test logout functionality
+5. Verify session management
 
 ### Test Core Features
 1. **Dashboard**: Access user dashboard
@@ -186,11 +229,14 @@ The platform uses multiple free APIs:
 - **CoinGecko**: Free tier available
 - **CryptoCompare**: Free tier available
 
-### Email Configuration
-Supabase handles email by default, but you can configure custom SMTP:
-1. Go to Authentication > Settings
-2. Configure SMTP settings
-3. Customize email templates
+### Email Configuration (Resend)
+The platform uses Resend for all transactional emails:
+1. Email verification
+2. Password reset
+3. Transaction notifications
+4. KYC status updates
+
+Templates are managed in the codebase at `src/lib/resend.ts`
 
 ## 8. Development Tips
 
@@ -220,23 +266,51 @@ When making database changes:
 - Check if your IP is whitelisted
 - Ensure service role key has correct permissions
 
-### Authentication Problems
-- Check Google OAuth configuration
-- Verify redirect URLs
-- Ensure email verification is configured
+### Stack Auth Problems
+- Verify all three Stack Auth keys are set
+- Check OAuth redirect URLs in Stack dashboard
+- Ensure cookies are enabled for session management
 
 ### Database Migration Errors
-- Check migration syntax
-- Verify table relationships
-- Ensure RLS policies are correct
+- Migrations have been successfully applied
+- If issues arise, check `supabase/migrations/` directory
+- Use `supabase db reset` for fresh start
+
+### Hydration Errors
+- Check server/client component boundaries
+- Ensure consistent data between server and client
+- Review Next.js 15 App Router requirements
+
+### CSS/Responsive Issues
+- Hamburger menu on desktop: Check Tailwind breakpoints
+- Use browser DevTools to debug media queries
 
 ## 10. Next Steps
 
 After successful setup:
-1. Review the [API Documentation](./API_DOCUMENTATION.md)
-2. Check [Database Schema](./DATABASE_SCHEMA.md)
-3. Read [Contributing Guide](./CONTRIBUTING.md)
-4. Deploy to production with [Deployment Guide](./DEPLOYMENT.md)
+1. Review the [API Documentation](../API_DOCUMENTATION.md)
+2. Check [Claude AI Instructions](../CLAUDE.md) for development guidance
+3. Deploy to production with [Deployment Guide](./DEPLOYMENT.md)
+4. Configure domain and SSL certificates
+
+## 11. Current Status Notes (2025-07-04)
+
+### Working Features
+- Full authentication system with Stack Auth
+- Database schema fully migrated
+- Email system via Resend
+- Google Maps and Analytics integration
+- Admin dashboard (hydration issue fixed)
+- New pages: Features, Pricing, Help
+
+### Known Issues
+- Hamburger menu appearing on desktop (CSS debugging needed)
+- WhatsApp Business API not available (Meta restriction)
+
+### Pending Configuration
+- Domain setup (rioporto.com)
+- PIX payment gateway integration
+- CPF validation implementation
 
 ## Support
 

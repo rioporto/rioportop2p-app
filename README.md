@@ -46,13 +46,17 @@ Rio Porto P2P is a full-featured cryptocurrency peer-to-peer trading platform th
 ### Backend
 - **Next.js API Routes**: Serverless API endpoints
 - **Supabase**: PostgreSQL database with real-time subscriptions
+- **Stack Auth**: Authentication and user management
 - **Vercel**: Deployment and hosting platform
 - **Cron Jobs**: Automated price updates and notifications
 
 ### Integrations
-- **PIX APIs**: MercadoPago, PagSeguro, Gerencianet
+- **Email**: Resend for transactional emails
+- **Maps**: Google Maps for location services
+- **Analytics**: Google Analytics for tracking
+- **PIX APIs**: MercadoPago, PagSeguro, Gerencianet (pending integration)
 - **Crypto APIs**: Binance, CoinGecko, CryptoCompare
-- **Authentication**: Supabase Auth with Google OAuth
+- **Authentication**: Stack Auth with email/password and Google OAuth
 
 ## 🚀 Quick Start
 
@@ -87,12 +91,25 @@ NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 
+# Stack Auth Configuration
+STACK_AUTH_SECRET_SERVER_KEY=your_stack_auth_server_key
+NEXT_PUBLIC_STACK_PROJECT_ID=your_stack_project_id
+NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY=your_stack_client_key
+NEXT_PUBLIC_STACK_URL=https://api.stack-auth.com
+
+# Email Configuration (Resend)
+RESEND_API_KEY=your_resend_api_key
+
+# Google Services
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_key
+NEXT_PUBLIC_GA_MEASUREMENT_ID=your_google_analytics_id
+
 # Vercel Configuration (optional)
 VERCEL_TOKEN=your_vercel_token
 VERCEL_PROJECT_ID=your_project_id
 VERCEL_TEAM_ID=your_team_id
 
-# PIX Configuration (optional)
+# PIX Configuration (pending)
 MERCADOPAGO_ACCESS_TOKEN=your_mercadopago_token
 PAGSEGURO_TOKEN=your_pagseguro_token
 ```
@@ -113,9 +130,9 @@ Visit [http://localhost:3000](http://localhost:3000) to see the application.
 
 - **[Setup Guide](./docs/SETUP.md)** - Detailed setup instructions
 - **[Deployment Guide](./docs/DEPLOYMENT.md)** - Production deployment
-- **[API Documentation](./docs/API_DOCUMENTATION.md)** - Complete API reference
-- **[Database Schema](./docs/DATABASE_SCHEMA.md)** - Database structure
-- **[Contributing Guide](./docs/CONTRIBUTING.md)** - How to contribute
+- **[API Documentation](./API_DOCUMENTATION.md)** - Complete API reference
+- **[Claude AI Instructions](./CLAUDE.md)** - AI assistant development guide
+- **[Database Schema](./DATABASE_SCHEMA.md)** - Database structure
 
 ## 🏗 Project Structure
 
@@ -173,18 +190,20 @@ npx supabase gen types typescript --local > src/lib/database.types.ts
 
 ### Environment Variables
 Set these in your Vercel dashboard:
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- Additional PIX and crypto API keys as needed
+- All Supabase variables
+- All Stack Auth variables
+- `RESEND_API_KEY` for email
+- Google Maps and Analytics keys
+- PIX provider keys (when configured)
 
 ## 📊 Features in Detail
 
 ### User Authentication
-- Email/password registration and login
+- Email/password registration and login via Stack Auth
 - Google OAuth integration
 - Two-factor authentication with TOTP
 - Password reset functionality
+- Session management with HTTP-only cookies
 
 ### KYC Verification
 - Multi-level verification (Basic, Intermediate, Complete)
@@ -207,13 +226,33 @@ Set these in your Vercel dashboard:
 - Financial overview and reports
 - System configuration
 
+## 🚧 Current Status
+
+### ✅ Completed
+- Database migrations executed successfully
+- Authentication system with Stack Auth
+- New pages: Features, Pricing, Help
+- Email integration with Resend
+- Google Maps and Analytics configured
+- Fixed deployment errors (createClient, replyTo)
+- Fixed hydration error in admin dashboard
+
+### 🔧 In Progress
+- Debugging hamburger menu appearing on desktop
+- Configuring rioporto.com domain
+- PIX payment gateway integration
+- CPF validation implementation
+
+### ⚠️ Known Limitations
+- WhatsApp Business API not available (Meta blocks crypto companies)
+
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](./docs/CONTRIBUTING.md) for details on how to get started.
+We welcome contributions! Please see our documentation for development guidelines.
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
+This project is proprietary software. All rights reserved.
 
 ## 🆘 Support
 

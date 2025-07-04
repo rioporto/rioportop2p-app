@@ -22,10 +22,12 @@ This document provides comprehensive documentation for all API endpoints in the 
 
 ## Overview
 
-- **Base URL**: `https://api.rioportop2p.com` (production) or `http://localhost:3000` (development)
+- **Base URL**: `https://rioportop2p.vercel.app` (current) or `https://rioporto.com` (pending) or `http://localhost:3000` (development)
 - **API Version**: v1
 - **Authentication**: Bearer token (Stack Auth)
 - **Content-Type**: `application/json`
+
+**Last Updated**: 2025-07-04
 
 ## Authentication
 
@@ -35,7 +37,7 @@ Most endpoints require authentication via Bearer token:
 Authorization: Bearer <token>
 ```
 
-Tokens are obtained through the Stack Auth authentication flow.
+Tokens are obtained through the Stack Auth authentication flow. Authentication is handled by Stack Auth with session management via HTTP-only cookies.
 
 ## API Endpoints
 
@@ -1038,10 +1040,12 @@ X-RateLimit-Reset: 1640995200
 
 ## Webhooks
 
-### PIX Payment Webhook
+### PIX Payment Webhook (Pending Configuration)
 
 **Endpoint**: Configure in PIX provider dashboard
-**URL**: `https://api.rioportop2p.com/api/webhooks/pix`
+**URL**: `https://rioportop2p.vercel.app/api/webhooks/pix`
+
+**Note**: PIX integration is pending as of 2025-07-04.
 
 **Security**: Validate webhook signature:
 ```javascript
@@ -1120,9 +1124,30 @@ The API uses URL versioning. The current version is v1. When breaking changes ar
 Future versions will be accessible at:
 - `https://api.rioportop2p.com/v2/...`
 
+## API Status (2025-07-04)
+
+### ✅ Working Endpoints
+- All authentication endpoints (Stack Auth)
+- User profile management
+- KYC upload and status
+- Cryptocurrency prices and listings
+- Blog and course content
+- FAQ management
+- Contact form
+- Email notifications (Resend)
+- System health checks
+
+### 🔧 In Development
+- PIX payment endpoints
+- Transaction chat system
+- Advanced order matching
+
+### ⚠️ Known Limitations
+- WhatsApp integration not available
+- CPF validation pending implementation
+
 ## Support
 
 For API support:
-- Documentation: https://docs.rioportop2p.com
-- Email: api-support@rioportop2p.com
-- Discord: https://discord.gg/rioporto
+- Email: contato@rioporto.com
+- WhatsApp: +55 21 2018-7776 (manual support only)

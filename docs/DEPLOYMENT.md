@@ -8,6 +8,9 @@ This guide covers deploying the Rio Porto P2P platform to production using Verce
 - Vercel account
 - GitHub repository
 - Production Supabase project
+- Production Stack Auth project
+- Resend account with verified domain
+- Google Cloud project with APIs enabled
 
 ## 1. Production Supabase Setup
 
@@ -25,11 +28,12 @@ supabase link --project-ref your-production-project-ref
 supabase db push
 ```
 
-### Configure Auth Settings
-1. Go to Authentication > Settings
-2. Set Site URL to your production domain
-3. Add production domain to redirect URLs
-4. Configure Google OAuth with production credentials
+### Configure Stack Auth for Production
+1. Create production Stack Auth project
+2. Update OAuth redirect URLs to production domain
+3. Configure Google OAuth with production credentials
+4. Set production domain in Stack Auth settings
+5. Update CORS settings for your domain
 
 ### Configure Storage
 1. Create storage buckets:
@@ -63,13 +67,26 @@ NEXT_PUBLIC_SUPABASE_URL=your_production_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_production_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_production_service_role_key
 
+# Stack Auth (Production)
+STACK_AUTH_SECRET_SERVER_KEY=your_production_stack_server_key
+NEXT_PUBLIC_STACK_PROJECT_ID=your_production_stack_project_id
+NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY=your_production_stack_client_key
+NEXT_PUBLIC_STACK_URL=https://api.stack-auth.com
+
+# Email (Production)
+RESEND_API_KEY=your_production_resend_key
+
+# Google Services (Production)
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_production_maps_key
+NEXT_PUBLIC_GA_MEASUREMENT_ID=your_production_ga_id
+
 # Vercel
 VERCEL_TOKEN=your_vercel_token
 VERCEL_PROJECT_ID=your_vercel_project_id
 VERCEL_TEAM_ID=your_vercel_team_id
 ```
 
-#### Optional Variables
+#### Optional Variables (Pending Configuration)
 ```bash
 # PIX Payment Providers
 MERCADOPAGO_ACCESS_TOKEN=your_production_mercadopago_token
@@ -105,6 +122,8 @@ Type: CNAME
 Name: www
 Value: cname.vercel-dns.com
 ```
+
+**Note**: Domain rioporto.com configuration is pending as of 2025-07-04.
 
 ### SSL Certificate
 Vercel automatically provisions SSL certificates for custom domains.
@@ -213,18 +232,23 @@ CREATE INDEX idx_crypto_prices_symbol_timestamp ON crypto_prices(symbol, created
 ## 9. Deployment Checklist
 
 ### Pre-deployment
-- [ ] All environment variables configured
-- [ ] Database migrations applied
-- [ ] SSL certificates active
-- [ ] DNS records configured
-- [ ] Cron jobs setup
+- [x] All environment variables configured
+- [x] Database migrations applied
+- [ ] SSL certificates active (pending domain)
+- [ ] DNS records configured (pending domain)
+- [x] Cron jobs setup
+- [x] Stack Auth production project configured
+- [x] Resend email service configured
+- [x] Google services configured
 
 ### Post-deployment
-- [ ] Test all authentication flows
-- [ ] Verify PIX payment integration
-- [ ] Check real-time notifications
-- [ ] Test admin dashboard
-- [ ] Monitor error logs
+- [x] Test all authentication flows
+- [ ] Verify PIX payment integration (pending)
+- [x] Check real-time notifications
+- [x] Test admin dashboard
+- [x] Monitor error logs
+- [ ] Configure custom domain
+- [ ] Implement CPF validation
 
 ### Performance Checks
 - [ ] Page load times < 3 seconds
@@ -293,18 +317,26 @@ jobs:
 
 #### Build Failures
 - Check TypeScript errors
-- Verify environment variables
-- Review build logs
+- Verify all environment variables are set
+- Review build logs in Vercel
+- Ensure Next.js 15 compatibility
 
 #### Runtime Errors
-- Check server logs
-- Verify API endpoints
+- Check Vercel function logs
+- Verify Stack Auth configuration
 - Test database connections
+- Review Resend email logs
+
+#### Known Issues (2025-07-04)
+- Hamburger menu CSS on desktop (debugging)
+- WhatsApp Business API unavailable
+- Domain configuration pending
 
 #### Performance Issues
 - Analyze bundle size
 - Check database queries
 - Monitor API response times
+- Review Google Analytics for bottlenecks
 
 ### Support Resources
 - Vercel Documentation
@@ -324,11 +356,33 @@ jobs:
 - API versioning
 - Database schema evolution
 
+## Current Deployment Status (2025-07-04)
+
+### ✅ Successfully Deployed
+- Application running on Vercel
+- Database migrations completed
+- Authentication system working
+- Email notifications functional
+- Google Maps and Analytics integrated
+- Admin dashboard operational
+
+### 🔧 Pending Tasks
+- Configure rioporto.com domain
+- Complete PIX gateway integration
+- Implement CPF validation
+- Fix hamburger menu CSS issue
+
+### ⚠️ Important Notes
+- WhatsApp Business API not available (Meta restriction)
+- Using Resend for all email communications
+- Stack Auth handles all authentication flows
+
 ## Support
 
 For deployment issues:
 - Check Vercel deployment logs
 - Review Supabase project logs
+- Monitor Stack Auth dashboard
 - Contact support at contato@rioporto.com
 
 ---
