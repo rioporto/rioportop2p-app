@@ -497,7 +497,7 @@ export async function POST(request: NextRequest) {
         const teamEmailResult = await resend.emails.send({
           from: 'Rio Porto P2P <noreply@rioportop2p.com>',
           to: process.env.CONTACT_EMAIL || 'contato@rioportop2p.com',
-          reply_to: formData.email,
+          replyTo: formData.email,
           subject: teamEmail.subject,
           html: teamEmail.html,
           text: teamEmail.text,
