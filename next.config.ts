@@ -218,6 +218,22 @@ const nextConfig: NextConfig = {
         destination: '/dashboard',
         permanent: false,
       },
+      // Redirects for Portuguese versions to English pages
+      {
+        source: '/recursos',
+        destination: '/features',
+        permanent: true,
+      },
+      {
+        source: '/precos',
+        destination: '/pricing',
+        permanent: true,
+      },
+      {
+        source: '/ajuda',
+        destination: '/help',
+        permanent: true,
+      },
     ];
   },
   

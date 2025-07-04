@@ -93,7 +93,7 @@ const eventTypeConfig = {
   '2fa_disabled': { label: '2FA Desativado', icon: Shield, color: 'text-red-600' }
 }
 
-const deviceIcons = {
+const deviceIcons: Record<string, any> = {
   'iPhone': Smartphone,
   'Android': Smartphone,
   'Windows': Monitor,

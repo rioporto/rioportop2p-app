@@ -17,6 +17,9 @@ const Footer = () => {
     { name: 'Cotação P2P', href: '/cotacao-p2p' },
     { name: 'OTC', href: '/otc' },
     { name: 'KYC', href: '/kyc' },
+    { name: 'Features', href: '/features' },
+    { name: 'Pricing', href: '/pricing' },
+    { name: 'Help', href: '/help' },
     { name: 'Blog', href: '/blog' },
     { name: 'FAQ', href: '/faq' }
   ];

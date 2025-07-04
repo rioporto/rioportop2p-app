@@ -12,6 +12,8 @@ const Navbar = () => {
   // Links do menu
   const menuItems = [
     { name: 'Home', href: '/' },
+    { name: 'Features', href: '/features' },
+    { name: 'Preços', href: '/pricing' },
     { name: 'Ordens', href: '/orders' },
     { name: 'Cotação P2P', href: '/cotacao-p2p' },
     { name: 'OTC', href: '/otc' },
