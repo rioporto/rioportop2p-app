@@ -75,6 +75,149 @@ const nextConfig: NextConfig = {
         destination: '/',
         permanent: true,
       },
+      // Redirects for broken links
+      {
+        source: '/register',
+        destination: '/signup',
+        permanent: true,
+      },
+      {
+        source: '/about',
+        destination: '/sobre',
+        permanent: true,
+      },
+      {
+        source: '/contact',
+        destination: '/contato',
+        permanent: true,
+      },
+      {
+        source: '/privacy',
+        destination: '/politica-de-privacidade',
+        permanent: true,
+      },
+      {
+        source: '/terms',
+        destination: '/termos-de-uso',
+        permanent: true,
+      },
+      // Additional redirects for common variations
+      {
+        source: '/profile',
+        destination: '/dashboard',
+        permanent: false,
+      },
+      {
+        source: '/perfil',
+        destination: '/dashboard',
+        permanent: false,
+      },
+      {
+        source: '/test-contact-form',
+        destination: '/contato',
+        permanent: true,
+      },
+      {
+        source: '/blog/post/:slug',
+        destination: '/blog/:slug',
+        permanent: true,
+      },
+      {
+        source: '/posts/:slug',
+        destination: '/blog/:slug',
+        permanent: true,
+      },
+      {
+        source: '/admin/blog/create',
+        destination: '/admin/blog',
+        permanent: false,
+      },
+      {
+        source: '/admin/blog/edit/:id',
+        destination: '/admin/blog',
+        permanent: false,
+      },
+      // Redirects for old or alternative URLs
+      {
+        source: '/p2p',
+        destination: '/cotacao-p2p',
+        permanent: true,
+      },
+      {
+        source: '/cotacao',
+        destination: '/cotacao-p2p',
+        permanent: true,
+      },
+      {
+        source: '/cotacoes',
+        destination: '/cotacao-p2p',
+        permanent: true,
+      },
+      {
+        source: '/curso',
+        destination: '/cursos',
+        permanent: true,
+      },
+      {
+        source: '/course',
+        destination: '/cursos',
+        permanent: true,
+      },
+      {
+        source: '/courses',
+        destination: '/cursos',
+        permanent: true,
+      },
+      {
+        source: '/politica-privacidade',
+        destination: '/politica-de-privacidade',
+        permanent: true,
+      },
+      {
+        source: '/termos',
+        destination: '/termos-de-uso',
+        permanent: true,
+      },
+      {
+        source: '/termos-uso',
+        destination: '/termos-de-uso',
+        permanent: true,
+      },
+      {
+        source: '/cadastro',
+        destination: '/signup',
+        permanent: true,
+      },
+      {
+        source: '/cadastrar',
+        destination: '/signup',
+        permanent: true,
+      },
+      {
+        source: '/entrar',
+        destination: '/login',
+        permanent: true,
+      },
+      {
+        source: '/signin',
+        destination: '/login',
+        permanent: true,
+      },
+      {
+        source: '/minha-conta',
+        destination: '/dashboard',
+        permanent: false,
+      },
+      {
+        source: '/my-account',
+        destination: '/dashboard',
+        permanent: false,
+      },
+      {
+        source: '/painel',
+        destination: '/dashboard',
+        permanent: false,
+      },
     ];
   },
   
@@ -88,6 +231,23 @@ const nextConfig: NextConfig = {
       {
         source: '/robots.txt',
         destination: '/api/robots',
+      },
+      // API standardization rewrites
+      {
+        source: '/api/quote',
+        destination: '/api/cotacao',
+      },
+      {
+        source: '/api/quotation',
+        destination: '/api/cotacao',
+      },
+      {
+        source: '/api/user/profile',
+        destination: '/api/users/profile',
+      },
+      {
+        source: '/api/user/kyc',
+        destination: '/api/users/kyc',
       },
     ];
   },
