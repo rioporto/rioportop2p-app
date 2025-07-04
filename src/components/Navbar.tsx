@@ -8,6 +8,17 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  
+  // DEBUG: Verificar largura da viewport
+  useEffect(() => {
+    const checkWidth = () => {
+      console.log('Largura da viewport:', window.innerWidth, 'px');
+      console.log('Breakpoint xl (1280px):', window.innerWidth >= 1280 ? 'Ativo' : 'Inativo');
+    };
+    checkWidth();
+    window.addEventListener('resize', checkWidth);
+    return () => window.removeEventListener('resize', checkWidth);
+  }, [])
 
   // Links do menu
   const menuItems = [
@@ -86,7 +97,7 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Navigation - Hidden on smaller screens */}
-          <div className="hidden xl:flex items-center space-x-1">
+          <div className="hidden 2xl:flex items-center space-x-1">
             {menuItems.map((item) => (
               <Link
                 key={item.name}
@@ -99,7 +110,7 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Actions - Hidden on smaller screens */}
-          <div className="hidden xl:flex items-center space-x-3">
+          <div className="hidden 2xl:flex items-center space-x-3">
             {/* Toggle Dark/Light Mode */}
             <button
               onClick={toggleTheme}
@@ -123,7 +134,7 @@ const Navbar = () => {
           </div>
 
           {/* Mobile Actions - Show only on smaller screens */}
-          <div className="flex items-center gap-2 xl:hidden">
+          <div className="flex items-center gap-2 2xl:hidden">
             {/* Mobile Theme Toggle */}
             <button
               onClick={toggleTheme}
@@ -154,7 +165,7 @@ const Navbar = () => {
 
         {/* Mobile Menu - Show only on smaller screens */}
         {isMenuOpen && (
-          <div className="xl:hidden border-t border-gray-200 dark:border-slate-800">
+          <div className="2xl:hidden border-t border-gray-200 dark:border-slate-800">
             <div className="px-2 py-3 space-y-1">
               {menuItems.map((item) => (
                 <Link
