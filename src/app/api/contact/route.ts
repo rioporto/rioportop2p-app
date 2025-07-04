@@ -465,7 +465,9 @@ export async function POST(request: NextRequest) {
     };
     
     // Salvar no banco de dados Supabase
-    const supabase = createClient();
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key';
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
     const { data: dbData, error: dbError } = await supabase
       .from('contact_messages')
       .insert({
