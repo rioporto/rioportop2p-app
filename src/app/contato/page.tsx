@@ -3,8 +3,9 @@
 import { GoogleMap } from '@/components/GoogleMap';
 import { GoogleReviews } from '@/components/GoogleReviews';
 import { WhatsAppButton } from '@/components/ui/WhatsAppButton';
+import { ContactForm } from '@/components/ContactForm';
 import { useWhatsApp } from '@/lib/whatsapp';
-import { Mail, Phone, MapPin, Clock } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, MessageSquare } from 'lucide-react';
 
 export default function ContatoPage() {
   const { numbers, templates } = useWhatsApp();
@@ -13,6 +14,17 @@ export default function ContatoPage() {
     <div className="min-h-screen py-12 px-4">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-4xl font-bold mb-8 text-center">Entre em Contato</h1>
+
+        {/* Formulário de Contato */}
+        <div className="max-w-2xl mx-auto mb-12">
+          <div className="bg-card rounded-lg p-6 shadow-lg">
+            <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
+              <MessageSquare className="w-6 h-6 text-primary" />
+              Envie sua Mensagem
+            </h2>
+            <ContactForm />
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
           {/* Informações de Contato */}

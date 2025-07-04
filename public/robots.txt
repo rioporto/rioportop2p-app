@@ -1,0 +1,97 @@
+# Robots.txt for rioporto.com
+# Generated 2025
+
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Optimize crawl rate
+Crawl-delay: 1
+
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /api/
+Disallow: /auth/
+Disallow: /verify-email/
+Disallow: /kyc/verify/
+Disallow: /_next/
+Disallow: /test-*
+
+# Allow specific API endpoints for structured data
+Allow: /api/blog
+Allow: /api/courses
+Allow: /api/faqs
+Allow: /api/cotacao
+
+# Disallow query parameters that create duplicate content
+Disallow: /*?sort=
+Disallow: /*?filter=
+Disallow: /*?page=
+Disallow: /*?ref=
+Disallow: /*?utm_
+
+# Allow important resources
+Allow: /*.js$
+Allow: /*.css$
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.gif$
+Allow: /*.svg$
+Allow: /*.webp$
+Allow: /*.woff$
+Allow: /*.woff2$
+
+# Sitemap location
+Sitemap: https://rioporto.com/sitemap.xml
+Sitemap: https://rioporto.com/sitemap-blog.xml
+
+# Special directives for major search engines
+# Google
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+# Google Images
+User-agent: Googlebot-Image
+Allow: /
+Disallow: /kyc/
+
+# Bing
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# Specific bots to block
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+User-agent: MJ12bot
+Disallow: /
+
+# Block malicious bots
+User-agent: ia_archiver
+Disallow: /
+
+User-agent: Yandex
+Disallow: /
+
+# Social media crawlers - Allow all
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: WhatsApp
+Allow: /
+
+User-agent: Slackbot
+Allow: /
