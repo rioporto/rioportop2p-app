@@ -10,6 +10,7 @@ import {
   Bitcoin,
   BookOpen
 } from 'lucide-react'
+import { useState, useEffect } from 'react'
 
 const stats = [
   {
@@ -103,6 +104,13 @@ const topUsers = [
 ]
 
 export default function AdminDashboard() {
+  const [lastUpdate, setLastUpdate] = useState<string>('');
+
+  useEffect(() => {
+    // Só atualiza no cliente para evitar erro de hydration
+    setLastUpdate(new Date().toLocaleString('pt-BR'));
+  }, []);
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -110,9 +118,12 @@ export default function AdminDashboard() {
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
         <div className="flex items-center space-x-4">
           <span className="text-sm text-gray-500 dark:text-gray-400">
-            Última atualização: {new Date().toLocaleString('pt-BR')}
+            {lastUpdate && `Última atualização: ${lastUpdate}`}
           </span>
-          <button className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
+          <button 
+            onClick={() => setLastUpdate(new Date().toLocaleString('pt-BR'))}
+            className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+          >
             Atualizar
           </button>
         </div>
