@@ -7,9 +7,12 @@ interface PixPayment {
   id: string
   qrCode?: string
   qrCodeText: string
+  pixKey?: string
+  pixKeyType?: string
   amount: number
   expiresAt: string
   status?: string
+  isManual?: boolean
 }
 
 interface UsePixPaymentOptions {
