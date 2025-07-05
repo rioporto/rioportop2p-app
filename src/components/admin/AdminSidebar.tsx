@@ -64,7 +64,8 @@ const menuItems: MenuItem[] = [
       { name: 'Cotações', href: '/admin/cotacoes' },
       { name: 'Taxas', href: '/admin/taxas' },
       { name: 'Faturamento', href: '/admin/faturamento' },
-      { name: 'Chaves PIX', href: '/admin/pix-keys' }
+      { name: 'Chaves PIX', href: '/admin/pix-keys' },
+      { name: 'Pagamentos PIX', href: '/admin/pix-payments' }
     ]
   },
   { name: 'Notificações', href: '/admin/notificacoes', icon: Bell },
