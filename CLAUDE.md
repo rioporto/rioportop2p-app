@@ -44,27 +44,42 @@ npx supabase gen types typescript --local > src/lib/database.types.ts
 
 ```
 rioportop2p-app/
-├── src/
-│   ├── app/                 # Next.js App Router
-│   │   ├── admin/          # Admin dashboard
-│   │   ├── api/            # API routes
-│   │   ├── auth/           # Authentication pages
-│   │   ├── dashboard/      # User dashboard
+├── src/                    # Source code
+│   ├── app/               # Next.js App Router
+│   │   ├── admin/        # Admin dashboard
+│   │   ├── api/          # API routes
+│   │   ├── auth/         # Authentication pages
+│   │   ├── dashboard/    # User dashboard
 │   │   └── ...
-│   ├── components/         # React components
-│   │   ├── admin/          # Admin components
-│   │   ├── auth/           # Auth components
-│   │   ├── crypto/         # Crypto components
-│   │   ├── notifications/  # Notification components
-│   │   └── ui/             # UI components
-│   ├── contexts/           # React contexts
-│   ├── lib/                # Utilities
-│   └── types/              # TypeScript types
-├── supabase/
-│   ├── migrations/         # Database migrations
-│   └── seed.sql           # Sample data
-├── docs/                   # Documentation
-└── scripts/                # Deployment scripts
+│   ├── components/        # React components
+│   │   ├── admin/        # Admin components
+│   │   ├── auth/         # Auth components
+│   │   ├── crypto/       # Crypto components
+│   │   ├── notifications/# Notification components
+│   │   └── ui/           # UI components
+│   ├── contexts/          # React contexts
+│   ├── lib/               # Utilities
+│   └── types/             # TypeScript types
+├── supabase/              # Database files
+│   ├── migrations/        # Database migrations
+│   ├── seeds/            # Seed data
+│   └── *.sql             # Admin scripts
+├── docs/                  # All documentation
+│   ├── api/              # API documentation
+│   ├── setup/            # Setup guides
+│   ├── deployment/       # Deployment docs
+│   ├── architecture/     # System architecture
+│   ├── features/         # Feature docs
+│   ├── reports/          # Status reports
+│   └── misc/             # Other docs
+├── scripts/               # All scripts
+│   ├── db/               # Database scripts
+│   └── deploy/           # Deployment scripts
+├── logs/                  # All logs
+│   └── deploy/           # Deployment logs
+├── public/                # Static files
+├── backend/               # Python backend
+└── coverage/              # Test coverage
 ```
 
 ## 🔐 Authentication Flow
@@ -329,35 +344,50 @@ When user provides password "ATUALIZAR DADOS AGORA!", update all documentation w
 - User analytics (Google Analytics)
 - System health
 
-## 🚧 Current Project Status (Updated: 2025-07-04)
+## 🚧 Current Project Status (Updated: 2025-07-05)
 
 ### ✅ Completed Features
-- Database migrations executed and working
-- Stack Auth integration complete
-- New pages created: Features, Pricing, Help
-- Email system configured with Resend
-- Google Maps integration working
-- Google Analytics configured
-- Fixed deployment errors:
-  - createClient parameter issues
-  - replyTo email configuration
-- Fixed hydration error in admin dashboard
+- **Database**: All 32 tables created and configured
+  - notifications, two_factor_auth, pix_keys, crypto_prices tables added
+  - All migrations executed successfully
+- **Authentication**: Stack Auth fully integrated
+  - Email/password login working
+  - Google OAuth configured
+  - 2FA system ready
+- **Admin System**: Admin user created and functional
+- **Email**: Resend configured and working
+- **APIs**: All core APIs operational
+  - /api/cotacao - Crypto prices
+  - /api/auth/* - Authentication
+  - /api/dashboard/* - Dashboard metrics
+- **Integrations**: Google Maps and Analytics working
+- **Project Organization**: Clean folder structure implemented
+  - All SQL files moved to /supabase
+  - Documentation organized in /docs
+  - Scripts organized in /scripts
+  - Logs organized in /logs
 
 ### 🔧 In Progress
-- Debugging hamburger menu CSS (appearing on desktop)
-- Domain configuration for rioporto.com
-- PIX payment gateway integration
-- CPF validation implementation
+- Choosing PIX payment gateway (MercadoPago, PagSeguro, or Gerencianet)
+- Setting up CPF/CNPJ validation service
 
 ### ⚠️ Known Limitations
-- WhatsApp Business API unavailable (Meta blocks crypto companies)
-- Must use alternative communication methods
+- WhatsApp Business API unavailable for crypto companies
+- Using direct WhatsApp links (wa.me) as alternative
 
-### 🔮 Pending Tasks
-- Configure production domain
-- Complete PIX gateway setup
-- Implement CPF validation
-- Fix responsive menu issues
+### 🔮 Next Priority Tasks
+1. **Payment Gateway PIX** - Choose and integrate provider
+2. **Document Validation** - Setup CPF/CNPJ verification
+3. **Domain Configuration** - Setup rioporto.com
+4. **Complete Testing** - Full system test with transactions
+
+### 📂 Important File Locations
+- **Admin SQL Scripts**: `/supabase/*.sql`
+- **Database Migrations**: `/supabase/migrations/`
+- **Documentation**: `/docs/`
+- **Status Reports**: `/docs/reports/`
+- **Setup Guides**: `/docs/setup/`
+- **Deployment Logs**: `/logs/deploy/`
 
 ## 📞 Support
 

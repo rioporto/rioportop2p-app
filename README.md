@@ -1,10 +1,13 @@
-# 🚀 Rio Porto P2P
+# Rio Porto P2P - Plataforma de Trading P2P de Criptomoedas
 
-**A comprehensive cryptocurrency P2P trading platform built with Next.js, Supabase, and modern web technologies.**
+![Next.js](https://img.shields.io/badge/Next.js-15.0-black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
+![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-green)
+![Vercel](https://img.shields.io/badge/Deploy-Vercel-black)
 
-## 🎯 Overview
+## 🚀 Sobre o Projeto
 
-Rio Porto P2P is a full-featured cryptocurrency peer-to-peer trading platform that enables users to buy and sell cryptocurrencies using PIX payments. The platform includes advanced features like KYC verification, real-time notifications, price tracking, and a complete admin dashboard.
+Rio Porto P2P é uma plataforma completa para trading peer-to-peer de criptomoedas, oferecendo segurança, rapidez e as melhores taxas do mercado brasileiro.
 
 ## ✨ Key Features
 
