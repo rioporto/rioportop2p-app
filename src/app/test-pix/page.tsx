@@ -65,7 +65,7 @@ export default function TestPixPage() {
               <div>
                 <PixQRCodeDisplay
                   qrCode={payment.qrCode}
-                  qrCodeText={payment.qrCodeText || payment.pixKey}
+                  qrCodeText={payment.qrCodeText || payment.pixKey || ''}
                   pixKey={payment.pixKey}
                   pixKeyType={payment.pixKeyType}
                   amount={payment.amount}
