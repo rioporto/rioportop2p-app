@@ -21,7 +21,7 @@ export async function rateLimiter(
     uniqueTokenPerInterval: 10, // 10 requisições por minuto
   }
 ): Promise<RateLimitResult> {
-  const ip = request.ip ?? request.headers.get('x-forwarded-for') ?? 'anonymous'
+  const ip = request.headers.get('x-forwarded-for') ?? request.headers.get('x-real-ip') ?? 'anonymous'
   const key = `${ip}:${request.nextUrl.pathname}`
   
   const now = Date.now()
