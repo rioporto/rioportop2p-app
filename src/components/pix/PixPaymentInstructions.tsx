@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Copy, CheckCircle, Clock, AlertCircle, QrCode, Smartphone } from 'lucide-react'
-import PixQRCodeDisplay from './PixQRCodeDisplay'
+import { PixQRCodeDisplay } from './PixQRCodeDisplay'
 import PixPaymentConfirmation from './PixPaymentConfirmation'
 import CountdownTimer from '../transactions/CountdownTimer'
 import { supabase } from '@/lib/supabase'

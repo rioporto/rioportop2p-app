@@ -5,9 +5,10 @@ import { logger } from '@/lib/logger'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { txid: string } }
+  context: { params: Promise<{ txid: string }> }
 ) {
   try {
+    const params = await context.params
     const { txid } = params
 
     if (!txid) {

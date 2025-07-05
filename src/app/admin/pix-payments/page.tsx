@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { Check, X, Clock, AlertCircle } from 'lucide-react'
 import { manualPixProvider } from '@/lib/pix/manual-provider'
 import { useAuth } from '@/hooks/useAuth'
-import AdminGuard from '@/components/auth/AdminGuard'
+import { AdminGuard } from '@/components/auth/AdminGuard'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
