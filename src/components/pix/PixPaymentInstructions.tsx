@@ -232,12 +232,12 @@ export default function PixPaymentInstructions({
 
         {showQRCode ? (
           <PixQRCodeDisplay
+            qrCodeText={pixDetails.key_value}
             pixKey={pixDetails.key_value}
             pixKeyType={pixDetails.key_type}
             amount={transaction.fiat_amount}
-            recipientName={pixDetails.account_holder_name}
-            transactionId={transaction.id}
-            bankName={pixDetails.bank_name || undefined}
+            expiresAt={new Date(Date.now() + 30 * 60 * 1000).toISOString()}
+            isManual={true}
           />
         ) : (
           <div className="space-y-4">
