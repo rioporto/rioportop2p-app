@@ -87,6 +87,9 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className="dark">
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <JsonLd data={[organizationSchema, websiteSchema]} />
       </head>
       <body className={`${inter.className} bg-gray-50 dark:bg-slate-950 text-gray-900 dark:text-gray-100`}>
