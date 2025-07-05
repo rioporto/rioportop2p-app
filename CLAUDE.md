@@ -284,6 +284,14 @@ PAGSEGURO_TOKEN=
 ### Documentation Update Protocol
 When user provides password "ATUALIZAR DADOS AGORA!", update all documentation with latest project status.
 
+### Work Resume Protocol
+When user provides password "Retomar dados agora!", read essential files and provide complete status report:
+1. Read CLAUDE.md, recent reports, package.json, and git status
+2. Inform what was done in the last session
+3. Show exactly where we stopped
+4. List pending tasks and priorities
+5. Report any urgent issues
+
 ### Documentation Standards
 - Clear explanations
 - Code examples
