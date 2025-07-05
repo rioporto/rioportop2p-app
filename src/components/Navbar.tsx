@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Bitcoin, Menu, X, Sun, Moon } from 'lucide-react'
+import { Bitcoin, Menu, X, Sun, Moon, Instagram, Twitter, Linkedin } from 'lucide-react'
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)

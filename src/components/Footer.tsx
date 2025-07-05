@@ -7,7 +7,10 @@ import {
   Phone, 
   Building2, 
   ExternalLink,
-  ChevronRight
+  ChevronRight,
+  Instagram,
+  Twitter,
+  Linkedin
 } from 'lucide-react';
 
 const Footer = () => {
@@ -114,9 +117,41 @@ const Footer = () => {
         {/* Linha divisória */}
         <div className="border-t border-gray-800 mt-8 pt-8">
           <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
-            <p className="text-sm text-center sm:text-left">
-              © {currentYear} Todos os direitos reservados.
-            </p>
+            <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-8">
+              <p className="text-sm text-center sm:text-left">
+                © {currentYear} Todos os direitos reservados.
+              </p>
+              {/* Redes Sociais */}
+              <div className="flex space-x-4">
+                <a
+                  href="https://www.instagram.com/rioportop2p"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-white transition-colors duration-200"
+                  aria-label="Instagram"
+                >
+                  <Instagram className="w-5 h-5" />
+                </a>
+                <a
+                  href="https://x.com/RioPortoP2P/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-white transition-colors duration-200"
+                  aria-label="Twitter/X"
+                >
+                  <Twitter className="w-5 h-5" />
+                </a>
+                <a
+                  href="https://www.linkedin.com/company/rioportop2p/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-white transition-colors duration-200"
+                  aria-label="LinkedIn"
+                >
+                  <Linkedin className="w-5 h-5" />
+                </a>
+              </div>
+            </div>
             <div className="flex space-x-6">
               <Link 
                 href="/termos-de-uso" 
