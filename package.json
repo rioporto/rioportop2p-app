@@ -9,7 +9,9 @@
     "lint": "next lint",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "test:a11y": "jest src/__tests__/accessibility",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.4",
@@ -38,9 +40,11 @@
     "recharts": "^3.0.2",
     "resend": "^4.6.0",
     "speakeasy": "^2.0.0",
-    "tailwind-merge": "^3.3.1"
+    "tailwind-merge": "^3.3.1",
+    "zod": "^3.25.74"
   },
   "devDependencies": {
+    "@axe-core/react": "^4.10.2",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@types/google.maps": "^3.58.1",
@@ -52,6 +56,7 @@
     "@types/testing-library__jest-dom": "^5.14.9",
     "autoprefixer": "^10.4.21",
     "jest": "^30.0.3",
+    "jest-axe": "^10.0.0",
     "jest-environment-jsdom": "^30.0.2",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17",

@@ -1,0 +1,180 @@
+/* High Contrast Mode */
+.high-contrast {
+  /* Increase contrast for text */
+  --tw-text-opacity: 1;
+  
+  /* Override grays with pure black/white */
+  --color-gray-50: #ffffff;
+  --color-gray-100: #ffffff;
+  --color-gray-200: #ffffff;
+  --color-gray-300: #cccccc;
+  --color-gray-400: #999999;
+  --color-gray-500: #666666;
+  --color-gray-600: #333333;
+  --color-gray-700: #000000;
+  --color-gray-800: #000000;
+  --color-gray-900: #000000;
+}
+
+.high-contrast .dark {
+  --color-gray-50: #000000;
+  --color-gray-100: #000000;
+  --color-gray-200: #000000;
+  --color-gray-300: #333333;
+  --color-gray-400: #666666;
+  --color-gray-500: #999999;
+  --color-gray-600: #cccccc;
+  --color-gray-700: #ffffff;
+  --color-gray-800: #ffffff;
+  --color-gray-900: #ffffff;
+}
+
+/* High contrast borders */
+.high-contrast * {
+  border-color: currentColor !important;
+}
+
+.high-contrast button,
+.high-contrast a,
+.high-contrast input,
+.high-contrast textarea,
+.high-contrast select {
+  outline: 2px solid currentColor !important;
+  outline-offset: 2px;
+}
+
+/* High contrast focus states */
+.high-contrast *:focus {
+  outline: 3px solid #0066cc !important;
+  outline-offset: 2px !important;
+}
+
+/* High contrast links */
+.high-contrast a {
+  text-decoration: underline !important;
+  text-decoration-thickness: 2px !important;
+}
+
+/* Reduced Motion */
+.reduce-motion,
+.reduce-motion * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+.reduce-motion .animate-spin {
+  animation: none !important;
+}
+
+.reduce-motion .animate-pulse {
+  animation: none !important;
+}
+
+.reduce-motion .animate-bounce {
+  animation: none !important;
+}
+
+/* Disable parallax effects */
+.reduce-motion [data-parallax] {
+  transform: none !important;
+}
+
+/* Disable auto-advancing carousels */
+.reduce-motion [data-carousel-auto] {
+  animation-play-state: paused !important;
+}
+
+/* Font Size Adjustments */
+html {
+  font-size: 16px; /* Default */
+}
+
+/* Small font size */
+html[data-font-size="small"] {
+  font-size: 14px;
+}
+
+/* Large font size */
+html[data-font-size="large"] {
+  font-size: 18px;
+}
+
+/* Ensure proper scaling for specific elements */
+html[data-font-size="small"] .text-xs {
+  font-size: 0.7rem;
+}
+
+html[data-font-size="small"] .text-sm {
+  font-size: 0.8rem;
+}
+
+html[data-font-size="large"] .text-xs {
+  font-size: 0.8rem;
+}
+
+html[data-font-size="large"] .text-sm {
+  font-size: 0.9rem;
+}
+
+/* Focus visible improvements */
+:focus-visible {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+}
+
+.high-contrast :focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 3px;
+}
+
+/* Skip links visible on focus */
+.sr-only:focus-within {
+  position: absolute;
+  width: auto;
+  height: auto;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* Improved button states */
+button:disabled,
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+/* Improved form field states */
+input[aria-invalid="true"],
+textarea[aria-invalid="true"],
+select[aria-invalid="true"] {
+  border-color: #dc2626;
+  border-width: 2px;
+}
+
+input[aria-invalid="true"]:focus,
+textarea[aria-invalid="true"]:focus,
+select[aria-invalid="true"]:focus {
+  outline-color: #dc2626;
+}
+
+/* Loading states */
+[aria-busy="true"] {
+  cursor: progress;
+}
+
+/* Selection colors for high contrast */
+.high-contrast ::selection {
+  background-color: #0066cc;
+  color: #ffffff;
+}
+
+.high-contrast.dark ::selection {
+  background-color: #ffff00;
+  color: #000000;
+}

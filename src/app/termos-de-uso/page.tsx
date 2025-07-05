@@ -1,138 +1,201 @@
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Termos de Uso - Rio Porto P2P',
+  description: 'Termos e condições de uso da plataforma Rio Porto P2P para compra e venda de Bitcoin.',
+}
+
 export default function TermosDeUso() {
   return (
-    <div className="min-h-screen py-12 px-4">
-      <div className="max-w-4xl mx-auto prose prose-lg dark:prose-invert">
-        <h1>Termos de Uso - Rio Porto P2P</h1>
-        <p className="text-gray-600 dark:text-gray-400">Última atualização: {new Date().toLocaleDateString('pt-BR')}</p>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-8">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
+            Termos de Uso
+          </h1>
+          
+          <div className="prose prose-gray dark:prose-invert max-w-none">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+              Última atualização: {new Date().toLocaleDateString('pt-BR')}
+            </p>
 
-        <h2>1. Aceitação dos Termos</h2>
-        <p>
-          Ao acessar e utilizar a plataforma Rio Porto P2P, você concorda com estes Termos de Uso. 
-          Se você não concordar com qualquer parte destes termos, não deve utilizar nossos serviços.
-        </p>
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold mb-4">1. Aceitação dos Termos</h2>
+              <p className="mb-4">
+                Ao acessar e usar a plataforma Rio Porto P2P, você concorda em cumprir e estar vinculado 
+                aos seguintes termos e condições de uso. Se você não concordar com qualquer parte destes 
+                termos, não deve usar nossa plataforma.
+              </p>
+            </section>
 
-        <h2>2. Descrição dos Serviços</h2>
-        <p>
-          A Rio Porto P2P é uma plataforma de intermediação para compra e venda de criptomoedas, 
-          facilitando transações peer-to-peer (P2P) entre usuários.
-        </p>
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold mb-4">2. Descrição do Serviço</h2>
+              <p className="mb-4">
+                A Rio Porto P2P é uma plataforma que facilita transações peer-to-peer (P2P) de 
+                criptomoedas entre usuários. Nós não custodiamos fundos, apenas facilitamos o 
+                encontro entre compradores e vendedores.
+              </p>
+              <ul className="list-disc pl-6 mb-4">
+                <li>Matching de ordens entre compradores e vendedores</li>
+                <li>Sistema de escrow para segurança das transações</li>
+                <li>Verificação KYC (Know Your Customer) dos usuários</li>
+                <li>Suporte técnico e resolução de disputas</li>
+              </ul>
+            </section>
 
-        <h2>3. Elegibilidade</h2>
-        <ul>
-          <li>Você deve ter pelo menos 18 anos de idade</li>
-          <li>Deve fornecer informações verdadeiras e precisas</li>
-          <li>Deve cumprir com os requisitos KYC (Know Your Customer)</li>
-          <li>Não pode usar a plataforma para atividades ilegais</li>
-        </ul>
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold mb-4">3. Elegibilidade</h2>
+              <p className="mb-4">Para usar nossa plataforma, você deve:</p>
+              <ul className="list-disc pl-6 mb-4">
+                <li>Ter pelo menos 18 anos de idade</li>
+                <li>Ser legalmente capaz de celebrar contratos vinculativos</li>
+                <li>Não estar proibido de usar o serviço sob as leis aplicáveis</li>
+                <li>Fornecer informações verdadeiras e precisas durante o cadastro</li>
+              </ul>
+            </section>
 
-        <h2>4. Cadastro e Conta</h2>
-        <p>
-          Para utilizar nossos serviços, você deve:
-        </p>
-        <ul>
-          <li>Criar uma conta fornecendo informações precisas</li>
-          <li>Manter a segurança de suas credenciais</li>
-          <li>Notificar-nos imediatamente sobre qualquer uso não autorizado</li>
-          <li>Completar o processo de verificação KYC conforme seu nível desejado</li>
-        </ul>
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold mb-4">4. Cadastro e Conta</h2>
+              <p className="mb-4">
+                Para acessar determinados recursos, você deve criar uma conta fornecendo informações 
+                precisas e completas. Você é responsável por:
+              </p>
+              <ul className="list-disc pl-6 mb-4">
+                <li>Manter a confidencialidade de sua senha</li>
+                <li>Todas as atividades que ocorrem em sua conta</li>
+                <li>Notificar imediatamente sobre qualquer uso não autorizado</li>
+                <li>Manter suas informações de contato atualizadas</li>
+              </ul>
+            </section>
 
-        <h2>5. Níveis KYC</h2>
-        <h3>Nível 1 - Básico</h3>
-        <ul>
-          <li>Nome completo e email</li>
-          <li>Limite: até R$ 1.000/mês</li>
-        </ul>
-        
-        <h3>Nível 2 - Intermediário</h3>
-        <ul>
-          <li>Documentos de identidade</li>
-          <li>Comprovante de residência</li>
-          <li>Limite: até R$ 50.000/mês</li>
-        </ul>
-        
-        <h3>Nível 3 - Avançado</h3>
-        <ul>
-          <li>Verificação completa</li>
-          <li>Comprovante de renda</li>
-          <li>Sem limites</li>
-        </ul>
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold mb-4">5. Verificação KYC</h2>
+              <p className="mb-4">
+                Para garantir a segurança e conformidade regulatória, exigimos verificação de identidade:
+              </p>
+              <ul className="list-disc pl-6 mb-4">
+                <li>Documento de identidade válido (RG ou CNH)</li>
+                <li>Comprovante de residência recente</li>
+                <li>Selfie para verificação biométrica</li>
+                <li>CPF/CNPJ válido e ativo</li>
+              </ul>
+            </section>
 
-        <h2>6. Taxas e Comissões</h2>
-        <p>Nossa estrutura de taxas é baseada no volume de transação:</p>
-        <ul>
-          <li>Até R$ 1.000: 3,5%</li>
-          <li>R$ 1.001 - R$ 5.000: 3,0%</li>
-          <li>R$ 5.001 - R$ 10.000: 2,5%</li>
-          <li>R$ 10.001 - R$ 50.000: 2,0%</li>
-          <li>Acima de R$ 50.000: 1,5%</li>
-        </ul>
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold mb-4">6. Uso Aceitável</h2>
+              <p className="mb-4">Você concorda em NÃO usar a plataforma para:</p>
+              <ul className="list-disc pl-6 mb-4">
+                <li>Atividades ilegais ou fraudulentas</li>
+                <li>Lavagem de dinheiro ou financiamento ao terrorismo</li>
+                <li>Violar direitos de propriedade intelectual</li>
+                <li>Transmitir vírus ou código malicioso</li>
+                <li>Manipular preços ou enganar outros usuários</li>
+                <li>Criar múltiplas contas para contornar limites</li>
+              </ul>
+            </section>
 
-        <h2>7. Responsabilidades do Usuário</h2>
-        <p>Você é responsável por:</p>
-        <ul>
-          <li>Garantir a legalidade de suas transações</li>
-          <li>Pagar todos os impostos aplicáveis</li>
-          <li>Manter suas informações atualizadas</li>
-          <li>Não usar a plataforma para lavagem de dinheiro ou financiamento ao terrorismo</li>
-        </ul>
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold mb-4">7. Taxas e Pagamentos</h2>
+              <p className="mb-4">
+                A Rio Porto P2P cobra taxas pelos serviços prestados:
+              </p>
+              <ul className="list-disc pl-6 mb-4">
+                <li>Taxa de transação: 1% do valor negociado</li>
+                <li>Taxa mínima: R$ 5,00 por transação</li>
+                <li>Saques PIX: Gratuitos</li>
+                <li>Taxas podem ser alteradas com aviso prévio de 30 dias</li>
+              </ul>
+            </section>
 
-        <h2>8. Limitação de Responsabilidade</h2>
-        <p>
-          A Rio Porto P2P atua apenas como intermediária e não se responsabiliza por:
-        </p>
-        <ul>
-          <li>Volatilidade dos preços das criptomoedas</li>
-          <li>Perdas decorrentes de decisões de investimento</li>
-          <li>Problemas técnicos fora de nosso controle</li>
-          <li>Ações de terceiros</li>
-        </ul>
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold mb-4">8. Riscos de Criptomoedas</h2>
+              <p className="mb-4">
+                Você reconhece e aceita que:
+              </p>
+              <ul className="list-disc pl-6 mb-4">
+                <li>Criptomoedas são voláteis e podem perder valor</li>
+                <li>Transações são irreversíveis</li>
+                <li>Você é responsável por suas decisões de investimento</li>
+                <li>A plataforma não oferece consultoria financeira</li>
+              </ul>
+            </section>
 
-        <h2>9. Privacidade e Proteção de Dados</h2>
-        <p>
-          Seus dados são tratados conforme nossa Política de Privacidade e em conformidade com a LGPD 
-          (Lei Geral de Proteção de Dados).
-        </p>
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold mb-4">9. Privacidade e Dados</h2>
+              <p className="mb-4">
+                Suas informações pessoais são tratadas conforme nossa Política de Privacidade. 
+                Ao usar a plataforma, você consente com a coleta e uso de seus dados conforme descrito.
+              </p>
+            </section>
 
-        <h2>10. Suspensão e Encerramento</h2>
-        <p>
-          Podemos suspender ou encerrar sua conta se:
-        </p>
-        <ul>
-          <li>Você violar estes termos</li>
-          <li>Fornecer informações falsas</li>
-          <li>Usar a plataforma para atividades ilegais</li>
-          <li>A pedido de autoridades competentes</li>
-        </ul>
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold mb-4">10. Propriedade Intelectual</h2>
+              <p className="mb-4">
+                Todo o conteúdo da plataforma, incluindo textos, gráficos, logos, ícones e software, 
+                é propriedade da Rio Porto P2P e está protegido por leis de propriedade intelectual.
+              </p>
+            </section>
 
-        <h2>11. Alterações nos Termos</h2>
-        <p>
-          Reservamo-nos o direito de alterar estes termos a qualquer momento. 
-          Alterações significativas serão notificadas por email.
-        </p>
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold mb-4">11. Limitação de Responsabilidade</h2>
+              <p className="mb-4">
+                A Rio Porto P2P não será responsável por:
+              </p>
+              <ul className="list-disc pl-6 mb-4">
+                <li>Perdas resultantes de flutuações de preço</li>
+                <li>Indisponibilidade temporária da plataforma</li>
+                <li>Ações de terceiros ou outros usuários</li>
+                <li>Perdas indiretas ou consequenciais</li>
+              </ul>
+            </section>
 
-        <h2>12. Lei Aplicável e Foro</h2>
-        <p>
-          Estes termos são regidos pelas leis brasileiras. 
-          O foro da comarca do Rio de Janeiro - RJ é competente para dirimir quaisquer controvérsias.
-        </p>
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold mb-4">12. Resolução de Disputas</h2>
+              <p className="mb-4">
+                Em caso de disputas entre usuários, a Rio Porto P2P oferece um sistema de mediação. 
+                Disputas não resolvidas serão submetidas à arbitragem conforme a Lei Brasileira de Arbitragem.
+              </p>
+            </section>
 
-        <h2>13. Contato</h2>
-        <p>
-          Para dúvidas sobre estes termos, entre em contato:
-        </p>
-        <ul>
-          <li>WhatsApp: +55 21 2018-7776</li>
-          <li>Email: contato@rioportop2p.com.br</li>
-          <li>CNPJ: XX.XXX.XXX/0001-XX</li>
-        </ul>
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold mb-4">13. Modificações dos Termos</h2>
+              <p className="mb-4">
+                Podemos modificar estes termos a qualquer momento. Alterações significativas serão 
+                notificadas com 30 dias de antecedência. O uso continuado após as alterações 
+                constitui aceitação dos novos termos.
+              </p>
+            </section>
 
-        <div className="mt-8 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
-          <p className="text-center font-semibold">
-            RIO PORTO MEDIAÇÃO LTDA<br />
-            Todos os direitos reservados
-          </p>
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold mb-4">14. Rescisão</h2>
+              <p className="mb-4">
+                Podemos suspender ou encerrar sua conta se você violar estes termos. Você pode 
+                encerrar sua conta a qualquer momento, sujeito à conclusão de transações pendentes.
+              </p>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold mb-4">15. Lei Aplicável</h2>
+              <p className="mb-4">
+                Estes termos são regidos pelas leis do Brasil. Qualquer disputa será resolvida 
+                nos tribunais do Rio de Janeiro, RJ.
+              </p>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold mb-4">16. Contato</h2>
+              <p className="mb-4">
+                Para questões sobre estes termos, entre em contato:
+              </p>
+              <ul className="list-none mb-4">
+                <li><strong>Email:</strong> legal@rioporto.com</li>
+                <li><strong>Telefone:</strong> +55 21 2018-7776</li>
+                <li><strong>Endereço:</strong> Av. Marechal Câmara 160, sala 1107, Centro, Rio de Janeiro - RJ</li>
+              </ul>
+            </section>
+          </div>
         </div>
       </div>
     </div>
-  );
+  )
 }

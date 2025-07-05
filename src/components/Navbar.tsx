@@ -31,6 +31,9 @@ const Navbar = () => {
     { name: 'KYC', href: '/kyc' },
     { name: 'Blog', href: '/blog' },
     { name: 'Cursos', href: '/cursos' },
+    { name: 'Tutoriais', href: '/tutoriais' },
+    { name: 'Guia Iniciante', href: '/guia-iniciante' },
+    { name: 'Glossário', href: '/glossario' },
     { name: 'FAQ', href: '/faq' },
     { name: 'Contato', href: '/contato' },
   ]

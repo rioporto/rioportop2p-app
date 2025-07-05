@@ -29,7 +29,8 @@ const Footer = () => {
 
   const legalLinks = [
     { name: 'Termos de Uso', href: '/termos-de-uso' },
-    { name: 'Política de Privacidade', href: '/politica-de-privacidade' }
+    { name: 'Política de Privacidade', href: '/politica-de-privacidade' },
+    { name: 'Acessibilidade', href: '/configuracoes/acessibilidade' }
   ];
 
   return (

@@ -1,37 +1,69 @@
 // Learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom'
+import 'jest-axe/extend-expect'
 
 // Mock Next.js router
-jest.mock('next/navigation', () => ({
+jest.mock('next/router', () => ({
   useRouter() {
     return {
+      route: '/',
+      pathname: '/',
+      query: {},
+      asPath: '/',
       push: jest.fn(),
       replace: jest.fn(),
-      prefetch: jest.fn(),
+      reload: jest.fn(),
       back: jest.fn(),
+      prefetch: jest.fn(),
+      beforePopState: jest.fn(),
+      events: {
+        on: jest.fn(),
+        off: jest.fn(),
+        emit: jest.fn(),
+      },
     }
-  },
-  useSearchParams() {
-    return new URLSearchParams()
-  },
-  usePathname() {
-    return ''
   },
 }))
 
-// Mock environment variables
-process.env.NEXT_PUBLIC_SUPABASE_URL = 'http://localhost:54321'
-process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key'
+// Mock Next.js Image component
+jest.mock('next/image', () => ({
+  __esModule: true,
+  default: (props) => {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img {...props} />
+  },
+}))
 
-// Suppress console errors during tests
+// Mock window.matchMedia
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(), // deprecated
+    removeListener: jest.fn(), // deprecated
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+})
+
+// Mock IntersectionObserver
+global.IntersectionObserver = class IntersectionObserver {
+  constructor() {}
+  disconnect() {}
+  observe() {}
+  unobserve() {}
+}
+
+// Suppress console errors in tests
 const originalError = console.error
 beforeAll(() => {
   console.error = (...args) => {
     if (
       typeof args[0] === 'string' &&
-      (args[0].includes('Warning: ReactDOM.render') ||
-       args[0].includes('is unrecognized in this browser') ||
-       args[0].includes('is using incorrect casing'))
+      args[0].includes('Warning: ReactDOM.render')
     ) {
       return
     }
@@ -41,19 +73,4 @@ beforeAll(() => {
 
 afterAll(() => {
   console.error = originalError
-})
-
-// Mock window.matchMedia
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(), // Deprecated
-    removeListener: jest.fn(), // Deprecated
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
 })

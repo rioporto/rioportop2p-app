@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import "./fallback.css";
+import "./accessibility.css";
 import ClientLayout from "@/components/ClientLayout";
 import { StackAuthProvider } from "@/components/StackAuthProvider";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { JsonLd } from "@/components/JsonLd";
 import { organizationSchema, websiteSchema } from "@/components/SEO";
+import { SkipLinks } from "@/components/ui/SkipLinks";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -93,6 +95,7 @@ export default function RootLayout({
         <JsonLd data={[organizationSchema, websiteSchema]} />
       </head>
       <body className={`${inter.className} bg-gray-50 dark:bg-slate-950 text-gray-900 dark:text-gray-100`}>
+        <SkipLinks />
         <GoogleAnalytics />
         <StackAuthProvider>
           <ClientLayout>{children}</ClientLayout>
